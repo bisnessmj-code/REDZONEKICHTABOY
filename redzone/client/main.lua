@@ -88,6 +88,9 @@ local function Initialize()
     -- Démarrage du thread d'interaction du shop armes
     Redzone.Client.Shop.StartInteractionThread()
 
+    -- Démarrage du thread d'interaction du rachat d'armes
+    Redzone.Client.SellWeapon.StartInteractionThread()
+
     -- Démarrage du thread d'interaction de la banque
     Redzone.Client.Bank.StartInteractionThread()
 

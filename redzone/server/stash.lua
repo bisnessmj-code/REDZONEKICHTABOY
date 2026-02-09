@@ -181,6 +181,71 @@ exports('GetPlayerStashName', function(playerId)
 end)
 
 -- =====================================================
+-- WEBHOOK LOGS DISCORD - TRANSFERTS COFFRE
+-- =====================================================
+
+-- Récupérer le webhook depuis server.cfg: set redzone_stash_webhook "URL"
+local stashWebhook = GetConvar('redzone_stash_webhook', '')
+
+---Obtient la license FiveM d'un joueur
+---@param source number ID du joueur
+---@return string license
+local function GetPlayerLicense(playerId)
+    local identifiers = GetPlayerIdentifiers(playerId)
+    for _, id in pairs(identifiers) do
+        if string.find(id, 'license:') then
+            return id
+        end
+    end
+    return 'Inconnue'
+end
+
+---Envoie un log webhook Discord pour un transfert de coffre
+---@param source number ID du joueur
+---@param itemName string Nom de l'item
+---@param amount number Quantité
+---@param action string "deposit" ou "withdraw"
+---@param stashId string ID du stash
+local function SendStashWebhook(source, itemName, amount, action, stashId)
+    if stashWebhook == '' then return end
+
+    local playerName = GetPlayerName(source) or 'Inconnu'
+    local license = GetPlayerLicense(source)
+    local timestamp = os.date('%Y-%m-%d %H:%M:%S')
+    local actionText = action == 'deposit' and 'DEPOT' or 'RETRAIT'
+    local color = action == 'deposit' and 3066993 or 15158332 -- vert ou rouge
+
+    local embed = {
+        {
+            title = actionText .. ' - Coffre Redzone',
+            color = color,
+            fields = {
+                { name = 'Joueur', value = playerName, inline = true },
+                { name = 'ID Joueur', value = tostring(source), inline = true },
+                { name = 'License FiveM', value = license, inline = false },
+                { name = 'Item', value = itemName, inline = true },
+                { name = 'Quantite', value = tostring(amount), inline = true },
+                { name = 'Action', value = actionText, inline = true },
+                { name = 'Coffre', value = stashId, inline = false },
+                { name = 'Heure', value = timestamp, inline = false },
+            },
+            footer = { text = 'Redzone Stash Logs' },
+        }
+    }
+
+    PerformHttpRequest(stashWebhook, function(err, text, headers) end, 'POST', json.encode({
+        username = 'Redzone Logs',
+        embeds = embed,
+    }), { ['Content-Type'] = 'application/json' })
+end
+
+---Événement déclenché par qs-inventory lors d'un transfert de coffre redzone
+RegisterNetEvent('redzone:stash:logTransfer')
+AddEventHandler('redzone:stash:logTransfer', function(playerSource, itemName, amount, action, stashId)
+    SendStashWebhook(playerSource, itemName, amount, action, stashId)
+end)
+
+-- =====================================================
 -- INITIALISATION
 -- =====================================================
 

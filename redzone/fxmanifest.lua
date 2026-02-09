@@ -1,4 +1,4 @@
-shared_script '@WaveShield/resource/include.lua'
+
 
 --[[
     ██████╗ ███████╗██████╗ ███████╗ ██████╗ ███╗   ██╗███████╗
@@ -41,6 +41,7 @@ client_scripts {
     'client/stash.lua',         -- Système de coffre (client)
     'client/vehicle.lua',       -- Système de véhicule (PED)
     'client/shop.lua',          -- Système de shop armes (NUI)
+    'client/sellweapon.lua',    -- Système de rachat d'armes
     'client/bank.lua',          -- Système de banque (RageUI)
     'client/death.lua',         -- Système de mort/réanimation
     'client/loot.lua',          -- Système de loot
@@ -62,6 +63,7 @@ server_scripts {
     'server/leaderboard.lua',   -- Système de leaderboard/classement kills
     'server/stash.lua',         -- Système de coffre (serveur)
     'server/shop.lua',          -- Système de shop armes (serveur)
+    'server/sellweapon.lua',    -- Système de rachat d'armes (serveur)
     'server/death.lua',         -- Système de mort/réanimation (serveur)
     'server/loot.lua',          -- Système de loot (serveur)
     'server/laundering.lua',    -- Système de blanchiment (serveur)

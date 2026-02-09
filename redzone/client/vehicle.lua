@@ -1217,6 +1217,89 @@ function Redzone.Client.Vehicle.StartInstantExitThread()
 end
 
 -- =====================================================
+-- COMMANDE /voiture (Spawn rapide Revolter)
+-- =====================================================
+
+-- Cooldown de 3 minutes (180 secondes)
+local VOITURE_COOLDOWN = 180 * 1000 -- en millisecondes
+local lastVoitureTime = 0
+
+RegisterCommand('voiture', function()
+    -- Vérifier si le joueur est dans le redzone
+    if not Redzone.Client.Teleport.IsInRedzone() then
+        Redzone.Client.Utils.NotifyError('Tu dois être dans la Redzone pour utiliser cette commande.')
+        return
+    end
+
+    -- Vérifier si le joueur est mort
+    if LocalPlayer.state.isDead then
+        Redzone.Client.Utils.NotifyError('Tu ne peux pas faire ça en étant mort.')
+        return
+    end
+
+    -- Vérifier le cooldown
+    local now = GetGameTimer()
+    local elapsed = now - lastVoitureTime
+    if elapsed < VOITURE_COOLDOWN then
+        local remaining = math.ceil((VOITURE_COOLDOWN - elapsed) / 1000)
+        local minutes = math.floor(remaining / 60)
+        local seconds = remaining % 60
+        Redzone.Client.Utils.NotifyError('Cooldown: ' .. minutes .. 'm ' .. seconds .. 's')
+        return
+    end
+
+    -- Générer un point de spawn devant le joueur
+    local playerPed = PlayerPedId()
+    local playerCoords = GetEntityCoords(playerPed)
+    local heading = GetEntityHeading(playerPed)
+    local forwardOffset = GetOffsetFromEntityInWorldCoords(playerPed, 0.0, 3.0, 0.0)
+
+    -- Trouver le sol à cette position
+    local groundZ = playerCoords.z
+    local found, z = GetGroundZFor_3dCoord(forwardOffset.x, forwardOffset.y, forwardOffset.z + 5.0, false)
+    if found then
+        groundZ = z
+    end
+
+    local spawnPoint = vector4(forwardOffset.x, forwardOffset.y, groundZ, heading)
+    local vehicleConfig = { model = 'revolter', name = 'Revolter' }
+
+    -- Mettre à jour le cooldown AVANT le spawn
+    lastVoitureTime = now
+
+    Redzone.Client.Utils.NotifySuccess('Véhicule en approche dans 10 secondes...')
+
+    -- Attendre 10 secondes dans un thread séparé
+    CreateThread(function()
+        Wait(10000)
+
+        -- Re-vérifier les conditions après l'attente
+        if not Redzone.Client.Teleport.IsInRedzone() then
+            Redzone.Client.Utils.NotifyError('Spawn annulé : tu as quitté la Redzone.')
+            return
+        end
+        if LocalPlayer.state.isDead then
+            Redzone.Client.Utils.NotifyError('Spawn annulé : tu es mort.')
+            return
+        end
+
+        -- Recalculer la position devant le joueur au moment du spawn
+        local ped = PlayerPedId()
+        local coords = GetEntityCoords(ped)
+        local h = GetEntityHeading(ped)
+        local offset = GetOffsetFromEntityInWorldCoords(ped, 0.0, 3.0, 0.0)
+        local gz = coords.z
+        local f, z2 = GetGroundZFor_3dCoord(offset.x, offset.y, offset.z + 5.0, false)
+        if f then gz = z2 end
+
+        local sp = vector4(offset.x, offset.y, gz, h)
+        SpawnVehicle(vehicleConfig, sp)
+
+        Redzone.Shared.Debug('[VEHICLE] /voiture utilisé - Revolter spawné')
+    end)
+end, false)
+
+-- =====================================================
 -- NETTOYAGE
 -- =====================================================
 

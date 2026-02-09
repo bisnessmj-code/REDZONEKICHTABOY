@@ -159,11 +159,20 @@ AddEventHandler('playerDropped', function(reason)
 	end
 end)
 
--- AddEventHandler('onResourceStop', function(resource)
--- 	if resource == GetCurrentResourceName() then
--- 		SaveOtherInventories()
--- 	end
--- end)
+AddEventHandler('onResourceStop', function(resource)
+	if resource == GetCurrentResourceName() then
+		-- Sauvegarder tous les stash ouverts par des joueurs
+		if OpenStashByPlayer then
+			for src, stashId in pairs(OpenStashByPlayer) do
+				if Stashes and Stashes[stashId] and Stashes[stashId].items then
+					print('[QS-INVENTORY/SAVE] onResourceStop - Sauvegarde stash: ' .. stashId)
+					SaveStashItems(stashId, Stashes[stashId].items)
+				end
+			end
+		end
+		SaveOtherInventories()
+	end
+end)
 
 -- RegisterCommand('save-inventories', function(source, args)
 -- 	if source ~= 0 then

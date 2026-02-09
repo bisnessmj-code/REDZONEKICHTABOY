@@ -286,6 +286,10 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 					end
 				end
 				SendWebhook(Webhooks.stash, 'Deposit Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') deposit item in stash!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. fromAmount .. '\n**Stash id:** ' .. stashId)
+				-- REDZONE: Log webhook pour les coffres redzone (coffre_*)
+				if string.find(stashId, '^coffre_') and GetResourceState('redzone') == 'started' then
+					TriggerEvent('redzone:stash:logTransfer', src, itemInfo['name'], fromAmount, 'deposit', stashId)
+				end
 			elseif SplitStr(toInventory, '_')[1] == 'garbage' then
 				local garbageId = SplitStr(toInventory, '_')[2]
 				local toItemData = GarbageItems[garbageId].items[toSlot]
@@ -605,6 +609,9 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 					end
 				end
 				SendWebhook(Webhooks.stash, 'Remove Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') remove item from stash!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. fromAmount .. '\n**Stash id:** ' .. stashId)
+				if string.find(stashId, '^coffre_') and GetResourceState('redzone') == 'started' then
+					TriggerEvent('redzone:stash:logTransfer', src, itemInfo['name'], fromAmount, 'withdraw', stashId)
+				end
 
 				if toItemData then
 					itemInfo = ItemList[toItemData.name:lower()]

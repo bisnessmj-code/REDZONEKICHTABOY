@@ -794,6 +794,46 @@ local function ForceResurrect()
     local coords = GetEntityCoords(myPed)
     local heading = GetEntityHeading(myPed)
 
+    -- Sauvegarder le véhicule et le siège AVANT toute action
+    local wasInVehicle = IsPedInAnyVehicle(myPed, false)
+    local savedVehicle = nil
+    local savedSeat = -1
+
+    if wasInVehicle then
+        savedVehicle = GetVehiclePedIsIn(myPed, false)
+    else
+        -- Fallback: vérifier le dernier véhicule (si déjà éjecté par le moteur)
+        local lastVeh = GetVehiclePedIsIn(myPed, true)
+        if lastVeh and lastVeh ~= 0 and DoesEntityExist(lastVeh) then
+            local vehCoords = GetEntityCoords(lastVeh)
+            local dist = #(coords - vehCoords)
+            -- Si on est très proche du véhicule, on vient probablement d'en être éjecté
+            if dist < 8.0 then
+                savedVehicle = lastVeh
+                wasInVehicle = true
+            end
+        end
+    end
+
+    if savedVehicle and DoesEntityExist(savedVehicle) then
+        -- Trouver le siège qu'on occupait
+        for seat = -1, GetVehicleMaxNumberOfPassengers(savedVehicle) - 1 do
+            if GetPedInVehicleSeat(savedVehicle, seat) == myPed then
+                savedSeat = seat
+                break
+            end
+        end
+        -- Si on n'est plus dans aucun siège (éjecté), trouver un siège libre
+        if savedSeat == -1 then
+            for seat = 0, GetVehicleMaxNumberOfPassengers(savedVehicle) - 1 do
+                if IsVehicleSeatFree(savedVehicle, seat) then
+                    savedSeat = seat
+                    break
+                end
+            end
+        end
+    end
+
     -- D'abord, reset l'état de mort dans le module death.lua
     local resetSuccess = pcall(function()
         exports['redzone']:ForceResetDeathState()
@@ -806,7 +846,11 @@ local function ForceResurrect()
     -- Restaurer la santé
     SetEntityHealth(myPed, savedHealth > 100 and savedHealth or 200)
     SetPedArmour(myPed, savedArmor)
-    ClearPedTasksImmediately(myPed)
+
+    -- Ne PAS appeler ClearPedTasksImmediately si en véhicule (sinon éjection!)
+    if not wasInVehicle then
+        ClearPedTasksImmediately(myPed)
+    end
 
     -- Si mort, résurrection
     if IsEntityDead(myPed) or GetEntityHealth(myPed) <= 100 then
@@ -815,6 +859,12 @@ local function ForceResurrect()
         myPed = PlayerPedId()
         SetEntityHealth(myPed, savedHealth > 100 and savedHealth or 200)
         SetPedArmour(myPed, savedArmor)
+
+        -- Remettre le joueur dans le véhicule après résurrection
+        if wasInVehicle and savedVehicle and DoesEntityExist(savedVehicle) then
+            TaskWarpPedIntoVehicle(myPed, savedVehicle, savedSeat)
+            Redzone.Shared.Debug('[SQUAD] Joueur remis dans le véhicule après résurrection (siège: ', savedSeat, ')')
+        end
     end
 
     -- Réactiver les contrôles explicitement
@@ -988,6 +1038,14 @@ AddEventHandler('gameEventTriggered', function(name, args)
         if victim == myPed and attacker and attacker ~= 0 then
             -- Trouver l'ID serveur de l'attaquant
             local attackerServerId = GetServerIdFromPed(attacker)
+
+            -- Si l'attaquant est un véhicule (collision), trouver le conducteur
+            if not attackerServerId and DoesEntityExist(attacker) and IsEntityAVehicle(attacker) then
+                local driver = GetPedInVehicleSeat(attacker, -1)
+                if driver and DoesEntityExist(driver) and IsPedAPlayer(driver) then
+                    attackerServerId = GetServerIdFromPed(driver)
+                end
+            end
 
             if attackerServerId and IsPlayerInMySquad(attackerServerId) then
                 local myServerId = GetPlayerServerId(PlayerId())

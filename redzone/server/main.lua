@@ -424,6 +424,9 @@ local function KickPlayerFromRedzone(targetId, kickedBy)
     -- Retirer le joueur de la liste côté serveur
     RemovePlayerFromRedzone(targetId)
 
+    -- Synchroniser le compteur après le kick
+    SyncPlayerCountToAllClients()
+
     -- Log
     local kickedByName = kickedBy == 0 and 'Console' or Redzone.Server.Utils.GetPlayerName(kickedBy)
     local targetName = Redzone.Server.Utils.GetPlayerName(targetId)
@@ -771,6 +774,53 @@ AddEventHandler('redzone:requestPlayerCount', function()
     local source = source
     local count = GetRedzonePlayerCount()
     TriggerClientEvent('redzone:syncPlayerCount', source, count)
+end)
+
+-- =====================================================
+-- DÉTECTION CHANGEMENT DE BUCKET (anti-TP hors instance)
+-- =====================================================
+
+---Thread qui vérifie périodiquement que les joueurs dans le redzone sont toujours dans le bon bucket.
+---Si un joueur (ex: staff TP) quitte le bucket REDZONE_BUCKET, il est automatiquement retiré.
+CreateThread(function()
+    while true do
+        Wait(5000) -- Vérifier toutes les 5 secondes
+
+        local playersToRemove = {}
+
+        for playerId, _ in pairs(playersInRedzone) do
+            -- Vérifier que le joueur est toujours connecté et dans le bon bucket
+            if Redzone.Server.Utils.IsPlayerConnected(playerId) then
+                local currentBucket = GetPlayerRoutingBucket(playerId)
+                if currentBucket ~= REDZONE_BUCKET then
+                    table.insert(playersToRemove, playerId)
+                    Redzone.Shared.Debug('[SERVER/BUCKET] Joueur ', playerId, ' détecté hors du bucket redzone (bucket actuel: ', currentBucket, ')')
+                end
+            else
+                -- Joueur déconnecté mais encore dans la liste (nettoyage de sécurité)
+                table.insert(playersToRemove, playerId)
+            end
+        end
+
+        -- Retirer les joueurs détectés hors bucket
+        if #playersToRemove > 0 then
+            for _, playerId in ipairs(playersToRemove) do
+                -- Supprimer le véhicule du joueur
+                DeletePlayerVehicle(playerId)
+
+                -- Forcer la sortie côté client (TP au point de sortie)
+                if Redzone.Server.Utils.IsPlayerConnected(playerId) then
+                    TriggerClientEvent('redzone:forceKick', playerId, KICK_EXIT_POINT)
+                end
+
+                -- Retirer de la liste serveur
+                RemovePlayerFromRedzone(playerId)
+            end
+
+            -- Synchroniser le compteur une seule fois après tous les retraits
+            SyncPlayerCountToAllClients()
+        end
+    end
 end)
 
 -- =====================================================

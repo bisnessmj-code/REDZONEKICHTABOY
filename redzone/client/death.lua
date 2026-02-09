@@ -158,7 +158,10 @@ function Redzone.Client.Death.OnPlayerDeath(forceKillerServerId)
         Redzone.Shared.Debug('[DEATH] Mort par coéquipier ignorée - Tueur: ', killerServerId)
         -- Restaurer immédiatement la santé
         SetEntityHealth(playerPed, 200)
-        ClearPedTasksImmediately(playerPed)
+        -- Ne PAS appeler ClearPedTasksImmediately si en véhicule (sinon éjection)
+        if not IsPedInAnyVehicle(playerPed, false) then
+            ClearPedTasksImmediately(playerPed)
+        end
         SetPedCanRagdoll(playerPed, false)
         Wait(100)
         SetPedCanRagdoll(playerPed, true)
@@ -203,7 +206,8 @@ function Redzone.Client.Death.OnPlayerDeath(forceKillerServerId)
     -- Marquer comme mort via state bag (synchronisé réseau pour les autres joueurs)
     LocalPlayer.state:set('isDead', true, true)
 
-    -- Note: inv_busy est géré côté serveur (dans redzone:death:playerDied)
+    -- Bloquer l'inventaire IMMÉDIATEMENT côté client (pas d'attente réseau)
+    LocalPlayer.state:set('inv_busy', true, true)
 
     -- Fermer l'inventaire une 2ème fois au cas où la résurrection l'aurait rouvert
     TriggerEvent('inventory:client:forceCloseInventory')
@@ -282,7 +286,8 @@ function Redzone.Client.Death.Revive()
     -- Retirer le state bag de mort
     LocalPlayer.state:set('isDead', false, true)
 
-    -- Note: inv_busy est débloqueé côté serveur (dans redzone:death:playerRevived)
+    -- Débloquer l'inventaire côté client
+    LocalPlayer.state:set('inv_busy', false, true)
 
     local playerPed = PlayerPedId()
     local coords = GetEntityCoords(playerPed)
@@ -384,18 +389,26 @@ function Redzone.Client.Death.ForceResetState()
     -- Retirer le state bag de mort
     LocalPlayer.state:set('isDead', false, true)
 
-    -- Note: inv_busy est débloqueé côté serveur (dans redzone:death:playerRevived)
+    -- Débloquer l'inventaire côté client
+    LocalPlayer.state:set('inv_busy', false, true)
 
     local playerPed = PlayerPedId()
 
-    -- Se détacher si attaché
-    DetachEntity(playerPed, true, true)
+    -- Vérifier si le joueur est dans un véhicule (ne pas éjecter!)
+    local inVehicle = IsPedInAnyVehicle(playerPed, false)
+
+    -- Se détacher si attaché (sauf si dans un véhicule)
+    if not inVehicle then
+        DetachEntity(playerPed, true, true)
+    end
 
     -- Retirer l'invincibilité si elle était active
     SetEntityInvincible(playerPed, false)
 
-    -- Arrêter le ragdoll
-    ClearPedTasksImmediately(playerPed)
+    -- Arrêter le ragdoll - Ne PAS appeler ClearPedTasksImmediately si en véhicule (sinon éjection!)
+    if not inVehicle then
+        ClearPedTasksImmediately(playerPed)
+    end
     SetPedCanRagdoll(playerPed, false)
 
     -- Réactiver TOUS les contrôles immédiatement
@@ -460,7 +473,8 @@ function Redzone.Client.Death.RespawnAtSafeZone()
     -- Retirer le state bag de mort
     LocalPlayer.state:set('isDead', false, true)
 
-    -- Note: inv_busy est débloqueé côté serveur (dans redzone:death:playerRevived)
+    -- Débloquer l'inventaire côté client
+    LocalPlayer.state:set('inv_busy', false, true)
 
     local playerPed = PlayerPedId()
 
@@ -580,7 +594,10 @@ function Redzone.Client.Death.StartDeathThread()
                         playerPed = PlayerPedId()
                         SetEntityHealth(playerPed, 200)
                         SetEntityInvincible(playerPed, true)
-                        ClearPedTasksImmediately(playerPed)
+                        -- Ne PAS appeler ClearPedTasksImmediately si en véhicule (sinon éjection)
+                        if not IsPedInAnyVehicle(playerPed, false) then
+                            ClearPedTasksImmediately(playerPed)
+                        end
                         Redzone.Shared.Debug('[DEATH] Mort en zone safe annulée - Résurrection immédiate')
                     else
                         -- Vérifier d'abord si c'est un coéquipier qui nous a tué
@@ -596,7 +613,10 @@ function Redzone.Client.Death.StartDeathThread()
                                     shouldIgnoreDeath = true
                                     Redzone.Shared.Debug('[DEATH] Mort par coéquipier détectée dans thread - Ignorée')
                                     SetEntityHealth(playerPed, 200)
-                                    ClearPedTasksImmediately(playerPed)
+                                    -- Ne PAS appeler ClearPedTasksImmediately si en véhicule (sinon éjection)
+                                    if not IsPedInAnyVehicle(playerPed, false) then
+                                        ClearPedTasksImmediately(playerPed)
+                                    end
                                 end
                             end
                         end
@@ -631,10 +651,12 @@ function Redzone.Client.Death.StartDeathThread()
                         end
                     end
 
-                    -- Garder au sol mais permettre de regarder autour
+                    -- Garder au sol mais permettre de regarder autour et parler
                     DisableAllControlActions(0)
                     EnableControlAction(0, 1, true)  -- LookLeftRight
                     EnableControlAction(0, 2, true)  -- LookUpDown
+                    EnableControlAction(0, 249, true) -- PushToTalk (voix)
+                    EnableControlAction(0, 253, true) -- PushToTalk alternatif
                 end
             else
                 -- Hors redzone, reset
@@ -1009,7 +1031,7 @@ AddEventHandler('redzone:death:beingCarried', function(carrierId)
         true             -- fixedRot
     )
 
-    -- Thread pour désactiver les contrôles pendant le transport
+    -- Thread pour désactiver les contrôles pendant le transport (sauf voix)
     CreateThread(function()
         local timeout = 0
         local maxTimeout = 300 -- 30 secondes max
@@ -1017,6 +1039,8 @@ AddEventHandler('redzone:death:beingCarried', function(carrierId)
             Wait(100)
             timeout = timeout + 1
             DisableAllControlActions(0)
+            EnableControlAction(0, 249, true) -- PushToTalk (voix)
+            EnableControlAction(0, 253, true) -- PushToTalk alternatif
         end
 
         Redzone.Shared.Debug('[DEATH] Thread beingCarried terminé')
@@ -1110,7 +1134,8 @@ AddEventHandler('onResourceStop', function(resourceName)
         Redzone.Client.Death.CancelRevive()
     end
 
-    -- Note: inv_busy est débloqueé côté serveur (dans redzone:death:playerRevived)
+    -- Débloquer l'inventaire côté client
+    LocalPlayer.state:set('inv_busy', false, true)
 
     -- Reset tous les états
     isDead = false

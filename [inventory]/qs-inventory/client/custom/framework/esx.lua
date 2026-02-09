@@ -277,8 +277,17 @@ function CanUseInventory()
     if wasabiHas and exports.wasabi_ambulance:isPlayerDead() then
         return false
     end
-    if LocalPlayer.state.isDead and LocalPlayer.state.isDead == 1 then
+    -- Check isDead state bag (support both boolean true and integer 1)
+    if LocalPlayer.state.isDead then
         return false
+    end
+    -- Check redzone death export
+    local redzoneStarted = GetResourceState('redzone') == 'started'
+    if redzoneStarted then
+        local ok, dead = pcall(function() return exports['redzone']:IsPlayerDead() end)
+        if ok and dead then
+            return false
+        end
     end
     if GetEntityHealth(ped) >= 1 then
         return true

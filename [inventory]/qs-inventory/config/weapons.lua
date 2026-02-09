@@ -20,7 +20,7 @@
 -- [INFO] General behavior toggles for tints, magazines and durability exclusions.
 --──────────────────────────────────────────────────────────────────────────────
 Config.RemoveTintAfterRemoving = false -- [EDIT] Remove weapon tints when discarded/removed.
-Config.ForceToOnlyOneMagazine  = true  -- [EDIT] Only one magazine in use at a time.
+Config.ForceToOnlyOneMagazine  = false  -- [EDIT] Only one magazine in use at a time.
 
 Config.DurabilityBlockedWeapons = {     -- [EDIT] Weapons excluded from durability loss.
     'weapon_stungun',

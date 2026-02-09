@@ -303,6 +303,11 @@ function Redzone.Client.Zones.OnEnterRedzone()
     if Redzone.Client.Bank and Redzone.Client.Bank.OnEnterRedzone then
         Redzone.Client.Bank.OnEnterRedzone()
     end
+
+    -- Créer les PEDs de rachat d'armes
+    if Redzone.Client.SellWeapon and Redzone.Client.SellWeapon.OnEnterRedzone then
+        Redzone.Client.SellWeapon.OnEnterRedzone()
+    end
 end
 
 ---Appelé quand le joueur quitte le redzone
@@ -346,6 +351,11 @@ function Redzone.Client.Zones.OnLeaveRedzone()
     -- Supprimer les PEDs banque
     if Redzone.Client.Bank and Redzone.Client.Bank.OnLeaveRedzone then
         Redzone.Client.Bank.OnLeaveRedzone()
+    end
+
+    -- Supprimer les PEDs de rachat d'armes
+    if Redzone.Client.SellWeapon and Redzone.Client.SellWeapon.OnLeaveRedzone then
+        Redzone.Client.SellWeapon.OnLeaveRedzone()
     end
 
     -- S'assurer que la protection est retirée
