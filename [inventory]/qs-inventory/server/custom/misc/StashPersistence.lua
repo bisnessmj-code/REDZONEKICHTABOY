@@ -6,8 +6,6 @@
 -- Compatible avec le format qs-inventory
 -- =====================================================
 
-print('[QS-INVENTORY/STASH] Chargement du module de persistance...')
-
 -- =====================================================
 -- FONCTIONS UTILITAIRES
 -- =====================================================
@@ -34,12 +32,8 @@ end
 ---@param items table Les items à sauvegarder (format: {[slot] = itemData})
 function SaveStashItems(stashId, items)
     if not stashId then
-        print('[QS-INVENTORY/STASH] ERREUR SaveStashItems: stashId manquant')
         return
     end
-
-    print('[QS-INVENTORY/STASH] ========================================')
-    print('[QS-INVENTORY/STASH] Sauvegarde du stash: ' .. stashId)
 
     -- Convertir les items au format JSON compatible
     -- qs-inventory utilise des slots numériques comme clés
@@ -68,37 +62,18 @@ function SaveStashItems(stashId, items)
                     rare = item.rare or 'common'
                 }
                 itemCount = itemCount + 1
-                -- Debug: afficher chaque item sauvegardé
-                print('[QS-INVENTORY/STASH]   Slot ' .. slotNum .. ': ' .. item.name .. ' x' .. (item.amount or item.count or 1))
-            elseif item and type(item) == 'table' then
-                -- Item malformé - log pour debug
-                print('[QS-INVENTORY/STASH] WARN: Item ignoré au slot ' .. tostring(slot) .. ' - pas de name (type: ' .. type(item.name) .. ')')
-            elseif item ~= nil then
-                -- Valeur non-table dans un slot
-                print('[QS-INVENTORY/STASH] WARN: Valeur non-table au slot ' .. tostring(slot) .. ' (type: ' .. type(item) .. ')')
             end
         end
-    else
-        print('[QS-INVENTORY/STASH] WARN: items est nil ou pas une table!')
     end
 
     local itemsJson = json.encode(itemsToSave)
-
-    print('[QS-INVENTORY/STASH] Total items à sauvegarder: ' .. itemCount)
-    print('[QS-INVENTORY/STASH] ========================================')
 
     -- Utiliser INSERT ... ON DUPLICATE KEY UPDATE pour upsert
     MySQL.Async.execute([[
         INSERT INTO stash_items (stash, items)
         VALUES (?, ?)
         ON DUPLICATE KEY UPDATE items = VALUES(items)
-    ]], {stashId, itemsJson}, function(rowsChanged)
-        if rowsChanged then
-            print('[QS-INVENTORY/STASH] Stash sauvegardé: ' .. stashId .. ' (' .. itemCount .. ' items)')
-        else
-            print('[QS-INVENTORY/STASH] ERREUR lors de la sauvegarde de: ' .. stashId)
-        end
-    end)
+    ]], {stashId, itemsJson})
 end
 
 -- =====================================================
@@ -110,11 +85,8 @@ end
 ---@return table items Les items chargés (format: {[slot] = itemData})
 function GetStashItems(stashId)
     if not stashId then
-        print('[QS-INVENTORY/STASH] ERREUR GetStashItems: stashId manquant')
         return {}
     end
-
-    print('[QS-INVENTORY/STASH] Chargement du stash: ' .. stashId)
 
     -- Requête synchrone pour charger les items
     local result = MySQL.Sync.fetchAll('SELECT items FROM stash_items WHERE stash = ?', {stashId})
@@ -140,18 +112,12 @@ function GetStashItems(stashId)
                     -- S'assurer que le slot est défini dans l'item
                     items[slotNum].slot = slotNum
                     itemCount = itemCount + 1
-                elseif item and type(item) == 'table' and item.slot and not item.name then
-                    -- Cas où l'item a un slot mais pas de name (format array avec slot dans l'item)
-                    print('[QS-INVENTORY/STASH] WARN: Item sans name au slot ' .. tostring(slot) .. ' - ignoré')
                 end
             end
-
-            print('[QS-INVENTORY/STASH] Stash chargé: ' .. stashId .. ' (' .. itemCount .. ' items)')
             return items
         end
     end
 
-    print('[QS-INVENTORY/STASH] Stash vide ou inexistant: ' .. stashId)
     return {}
 end
 
@@ -234,7 +200,6 @@ OpenStashByPlayer = OpenStashByPlayer or {}
 -- Fonction pour enregistrer qu'un joueur a ouvert un stash
 function RegisterOpenStash(src, stashId)
 	OpenStashByPlayer[src] = stashId
-	print('[QS-INVENTORY/STASH] Stash enregistré pour joueur ' .. src .. ': ' .. stashId)
 end
 
 -- Fonction pour obtenir le stash ouvert d'un joueur
@@ -252,4 +217,3 @@ function CloseOpenStash(src)
 	return nil
 end
 
-print('[QS-INVENTORY/STASH] Module de persistance chargé avec succès')

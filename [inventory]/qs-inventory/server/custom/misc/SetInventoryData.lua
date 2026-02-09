@@ -148,7 +148,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') swapped item!**\n**Name:** ' .. toItemData.name .. '\n**Amount:** ' .. toAmount .. ' with name: ' .. fromItemData.name .. '\n**Amount:** ' .. fromAmount)
 						end
 					else
-						print('Dupe Blocked - 1')
+						-- Dupe Blocked
 					end
 				end
 				AddItem(src, fromItemData.name, fromAmount, toSlot, fromItemData.info, nil, fromItemData['created'], nil, true)
@@ -192,7 +192,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') swapped item!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. toAmount .. '\n**With name:** ' .. fromItemData.name .. '\n**Amount:** ' .. fromAmount .. '\n**Plate:** ' .. plate)
 						end
 					else
-						print('Dupe Blocked - 3')
+						-- Dupe Blocked
 					end
 				end
 				local itemInfo = ItemList[fromItemData.name:lower()]
@@ -219,7 +219,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') swapped item!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. toAmount .. '\n**With name:** ' .. fromItemData.name .. '\n**Amount:** ' .. fromAmount .. '\n**Plate:** ' .. plate)
 						end
 					else
-						print('Dupe Blocked - 4')
+						-- Dupe Blocked
 					end
 				end
 				local itemInfo = ItemList[fromItemData.name:lower()]
@@ -250,7 +250,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') swapped item!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. toAmount .. '\n**With name:** ' .. fromItemData.name .. '\n**Amount:** ' .. fromAmount .. '\n**Stash id:** ' .. stashId)
 						end
 					else
-						print('Dupe Blocked - 5')
+						-- Dupe Blocked
 					end
 				end
 				local itemInfo = ItemList[fromItemData.name:lower()]
@@ -263,7 +263,6 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 						-- L'item existe déjà, AddItemToOtherInventory a déjà mis à jour le montant
 						-- On synchronise juste count = amount sans re-additionner
 						Stashes[stashId].items[toSlot].count = Stashes[stashId].items[toSlot].amount
-						print('[QS-INVENTORY/STASH-OK] Item: ' .. fromItemData.name .. ' x' .. Stashes[stashId].items[toSlot].amount .. ' -> slot ' .. toSlot)
 					else
 						-- Nouveau slot ou swap (on a déjà vidé le slot dans le swap)
 						Stashes[stashId].items[toSlot] = {
@@ -282,7 +281,6 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							created = fromItemData['created'] or os.time(),
 							rare = fromItemData.rare or 'common'
 						}
-						print('[QS-INVENTORY/STASH-ADD] Item ajouté au stash: ' .. fromItemData.name .. ' x' .. fromAmount .. ' -> slot ' .. toSlot)
 					end
 				end
 				SendWebhook(Webhooks.stash, 'Deposit Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') deposit item in stash!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. fromAmount .. '\n**Stash id:** ' .. stashId)
@@ -308,7 +306,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') swapped item!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. toAmount .. '\n**With name:** ' .. fromItemData.name .. '\n**Amount:** ' .. fromAmount .. '\n**Garbage id:** ' .. garbageId)
 						end
 					else
-						print('Dupe Blocked - 6')
+						-- Dupe Blocked
 					end
 				end
 				local itemInfo = ItemList[fromItemData.name:lower()]
@@ -335,7 +333,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 								SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') swapped item!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. toAmount .. '\n**With name:** ' .. fromItemData.name .. '\n**Amount:** ' .. fromAmount .. '\n**Traphouse id:** ' .. traphouseId)
 							end
 						else
-							print('Dupe Blocked - 7')
+							-- Dupe Blocked
 						end
 					end
 					local itemInfo = ItemList[fromItemData.name:lower()]
@@ -376,7 +374,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 								SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') swapped item!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. toAmount .. '\n**With name:** ' .. fromItemData.name .. '\n**mount:** ' .. fromAmount .. '\n**Drop id:** ' .. toInventory)
 							end
 						else
-							print('Dupe Blocked - 8')
+							-- Dupe Blocked
 						end
 					end
 					local itemInfo = ItemList[fromItemData.name:lower()]
@@ -458,7 +456,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							TriggerEvent(Config.InventoryPrefix .. ':server:updateCash', playerId, toItemData, toAmount, 'add')
 						end
 					else
-						print('Dupe Blocked - 10')
+						-- Dupe Blocked
 					end
 				end
 				itemInfo = ItemList[fromItemData.name:lower()]
@@ -495,7 +493,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') swapped item!**\n**Name:** ' .. toItemData.name .. '\n**Amount:** ' .. toAmount .. '\n**With item:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. toAmount .. '\n**Plate:** ' .. plate)
 						end
 					else
-						print('Dupe Blocked - 11')
+						-- Dupe Blocked
 					end
 				end
 				AddItem(src, fromItemData.name, fromAmount, toSlot, fromItemData.info, nil, fromItemData['created'], nil, true)
@@ -517,7 +515,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							AddItemToOtherInventory('trunk', plate, fromSlot, toSlot, itemInfo['name'], toAmount, toItemData.info, fromItemData['created'], src)
 						end
 					else
-						print('Dupe Blocked - 12')
+						-- Dupe Blocked
 					end
 				end
 				itemInfo = ItemList[fromItemData.name:lower()]
@@ -552,7 +550,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: *' .. src .. ')* swapped item!**\n**Name:** ' .. toItemData.name .. '\n**Amount:** ' .. toAmount .. '\n**With item:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. toAmount .. '\n**Plate:** ' .. plate)
 						end
 					else
-						print('Dupe Blocked - 13')
+						-- Dupe Blocked
 					end
 				end
 				AddItem(src, fromItemData.name, fromAmount, toSlot, fromItemData.info, nil, fromItemData['created'], nil, true)
@@ -574,7 +572,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							AddItemToOtherInventory('glovebox', plate, fromSlot, toSlot, itemInfo['name'], toAmount, toItemData.info, fromItemData['created'], src)
 						end
 					else
-						print('Dupe Blocked - 14')
+						-- Dupe Blocked
 					end
 				end
 				itemInfo = ItemList[fromItemData.name:lower()]
@@ -643,7 +641,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') swapped item!**\n**Name:** ' .. toItemData.name .. '\n**Amount:** ' .. toAmount .. '\n**With item:** ' .. fromItemData.name .. '\n**Amount:** ' .. fromAmount .. '\n**Stash id:** ' .. stashId)
 						end
 					else
-						print('Dupe Blocked - 15')
+						-- Dupe Blocked
 					end
 				end
 				AddItem(src, fromItemData.name, fromAmount, toSlot, fromItemData.info, nil, fromItemData['created'], nil, true)
@@ -707,7 +705,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							AddItemToOtherInventory('stash', stashId, fromSlot, toSlot, itemInfo['name'], toAmount, toItemData.info, fromItemData['created'], src)
 						end
 					else
-						print('Dupe Blocked - 16')
+						-- Dupe Blocked
 					end
 				end
 				itemInfo = ItemList[fromItemData.name:lower()]
@@ -727,13 +725,11 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 						savedFromItem.amount = totalAmount
 						savedFromItem.count = totalAmount
 						Stashes[stashId].items[toSlot] = savedFromItem
-						print('[QS-INVENTORY/STASH-STACK] Stacking: slot ' .. fromSlot .. ' -> slot ' .. toSlot .. ' | Total: ' .. totalAmount)
 
 					-- Cas 2: Swap (items différents au slot destination)
 					elseif savedToItem and savedToItem.name ~= savedFromItem.name then
 						Stashes[stashId].items[fromSlot] = savedToItem
 						Stashes[stashId].items[toSlot] = savedFromItem
-						print('[QS-INVENTORY/STASH-SWAP] Swap: slot ' .. fromSlot .. ' <-> slot ' .. toSlot)
 
 					-- Cas 3: Mouvement simple (slot destination était vide)
 					else
@@ -741,13 +737,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 						Stashes[stashId].items[fromSlot] = nil
 						-- Mettre l'item au nouveau slot
 						Stashes[stashId].items[toSlot] = savedFromItem
-						print('[QS-INVENTORY/STASH-MOVE] Mouvement: slot ' .. fromSlot .. ' -> slot ' .. toSlot .. ' | Item: ' .. savedFromItem.name .. ' x' .. savedFromItem.amount)
 					end
-
-					-- Debug: compter les items
-					local itemCount = 0
-					for _ in pairs(Stashes[stashId].items) do itemCount = itemCount + 1 end
-					print('[QS-INVENTORY/STASH] Total items après mouvement: ' .. itemCount)
 				end
 
 				SendWebhook(Webhooks.stash, 'Deposit Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') deposit item in stash!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. fromAmount .. '\n**Stash id:** ' .. stashId)
@@ -776,7 +766,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') swapped item!**\n**Name:** **' .. toItemData.name .. '\n**Amount:** ' .. toAmount .. '\n**With item:** ' .. fromItemData.name .. '\n**Amount:** ' .. fromAmount .. '\n**Garbage id:** ' .. garbageId)
 						end
 					else
-						print('Dupe Blocked - 17')
+						-- Dupe Blocked
 					end
 				end
 				TriggerEvent(Config.InventoryPrefix .. ':server:updateCash', src, fromItemData, fromAmount, 'add')
@@ -793,7 +783,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							AddToGarbage(garbageId, fromSlot, toSlot, itemInfo['name'], toAmount, toItemData.info, fromItemData['created'])
 						end
 					else
-						print('Dupe Blocked - 18')
+						-- Dupe Blocked
 					end
 				end
 				itemInfo = ItemList[fromItemData.name:lower()]
@@ -823,7 +813,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							SendWebhook(Webhooks.swap, 'Swapped Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') swapped item!**\n**Name:** ' .. toItemData.name .. '\n**Amount:** ' .. toAmount .. '\n**With item:** ' .. fromItemData.name .. '\n**Amount:** ' .. fromAmount .. '\n**Stash id:** ' .. traphouseId)
 						end
 					else
-						print('Dupe Blocked - 19')
+						-- Dupe Blocked
 					end
 				end
 				TriggerEvent(Config.InventoryPrefix .. ':server:updateCash', src, fromItemData, fromAmount, 'add')
@@ -840,7 +830,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							exports['qb-traphouse']:AddHouseItem(traphouseId, fromSlot, itemInfo['name'], toAmount, toItemData.info, fromItemData['created'], src)
 						end
 					else
-						print('Dupe Blocked - 20')
+						-- Dupe Blocked
 					end
 				end
 				itemInfo = ItemList[fromItemData.name:lower()]
@@ -1013,7 +1003,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							TriggerClientEvent(Config.InventoryPrefix .. ':ClearWeapons', src)
 						end
 					else
-						print('Dupe Blocked - 21')
+						-- Dupe Blocked
 					end
 				end
 				AddItem(src, fromItemData.name, fromAmount, toSlot, fromItemData.info, nil, fromItemData['created'], nil, true)
@@ -1042,7 +1032,7 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 							TriggerClientEvent(Config.InventoryPrefix .. ':ClearWeapons', src)
 						end
 					else
-						print('Dupe Blocked - 22')
+						-- Dupe Blocked
 					end
 				end
 				itemInfo = ItemList[fromItemData.name:lower()]

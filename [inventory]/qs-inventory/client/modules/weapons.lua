@@ -196,7 +196,6 @@ RegisterNetEvent('weapons:client:AddAmmo', function(ammoType, amount, itemData, 
         itemData = lib.callback.await('weapons:GetWeaponAmmoItem', 0, ammoType, masterAmmo)
 
         if not itemData then
-            print('Nice try forehead :)')
             return
         end
 

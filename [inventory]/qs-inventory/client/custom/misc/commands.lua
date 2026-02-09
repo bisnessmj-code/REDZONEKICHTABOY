@@ -48,7 +48,6 @@ RegisterCommand('inventory', function()
         local success = ProgressBarSync('inventory', 'Inventory opening', 800, true, true, inventory_opening_disable, inventory_opening_anim)
         openingInv = false
         if not success then
-            print('failed')
             return
         end
     end

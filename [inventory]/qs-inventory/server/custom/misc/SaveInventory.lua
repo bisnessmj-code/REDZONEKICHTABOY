@@ -49,7 +49,6 @@ end
 function HandleCloseSecondInventories(src, type, id)
 	local IsVehicleOwned = IsVehicleOwned(id)
 	Debug('HandleSaveSecondInventories', src, type, id, IsVehicleOwned)
-	print('[QS-INVENTORY/SAVE] HandleCloseSecondInventories appelé - type: ' .. tostring(type) .. ' | id: ' .. tostring(id) .. ' | src: ' .. tostring(src))
 	if type == 'trunk' then
 		if not Trunks[id] then
 			Debug('Trunk id not found', id)
@@ -68,15 +67,11 @@ function HandleCloseSecondInventories(src, type, id)
 			Gloveboxes[id].isOpen = false
 		end
 	elseif type == 'stash' then
-		print('[QS-INVENTORY/SAVE] Type stash détecté - id: ' .. tostring(id))
 		if not Stashes[id] then
-			print('[QS-INVENTORY/SAVE] ERREUR: Stashes[' .. tostring(id) .. '] n\'existe pas!')
 			return
 		end
-		print('[QS-INVENTORY/SAVE] Stashes[' .. tostring(id) .. '] trouvé, items: ' .. tostring(Stashes[id].items ~= nil))
 		SaveStashItems(id, Stashes[id].items)
 		Stashes[id].isOpen = false -- IMPORTANT: Libérer le stash pour pouvoir le rouvrir
-		print('[QS-INVENTORY/SAVE] Stash libéré (isOpen = false)')
 	elseif type == 'drop' then
 		if Drops[id] then
 			Drops[id].isOpen = false
@@ -110,35 +105,16 @@ end
 local function SaveAndClosePlayerStash(src)
 	local stashId = GetOpenStash(src)
 	if stashId and Stashes and Stashes[stashId] then
-		print('[QS-INVENTORY/SAVE] ========================================')
-		print('[QS-INVENTORY/SAVE] Fermeture du stash: ' .. stashId .. ' par joueur ' .. src)
-
-		-- Debug: Afficher l'état de Stashes[stashId].items AVANT sauvegarde
-		local itemCount = 0
-		if Stashes[stashId].items then
-			for slot, item in pairs(Stashes[stashId].items) do
-				if item and item.name then
-					itemCount = itemCount + 1
-					print('[QS-INVENTORY/SAVE]   [AVANT] Slot ' .. tostring(slot) .. ': ' .. item.name .. ' x' .. (item.amount or item.count or 1))
-				end
-			end
-		end
-		print('[QS-INVENTORY/SAVE] Total items dans Stashes[stashId].items: ' .. itemCount)
-
 		SaveStashItems(stashId, Stashes[stashId].items)
 		Stashes[stashId].isOpen = false
 		CloseOpenStash(src)
-		print('[QS-INVENTORY/SAVE] Stash sauvegardé et libéré: ' .. stashId)
-		print('[QS-INVENTORY/SAVE] ========================================')
 	elseif stashId then
-		print('[QS-INVENTORY/SAVE] WARN: Stash ' .. stashId .. ' introuvable dans Stashes')
 		CloseOpenStash(src)
 	end
 end
 
 RegisterNetEvent(Config.InventoryPrefix .. ':server:handleInventoryClosed', function(type, id)
 	local src = source
-	print('[QS-INVENTORY/SAVE] EVENT handleInventoryClosed reçu - type: ' .. tostring(type) .. ' | id: ' .. tostring(id))
 
 	-- IMPORTANT: Si ce joueur avait un stash ouvert, le sauvegarder
 	-- (car qs-inventory envoie parfois le mauvais type)
@@ -154,7 +130,6 @@ end)
 AddEventHandler('playerDropped', function(reason)
 	local src = source
 	if GetOpenStash and GetOpenStash(src) then
-		print('[QS-INVENTORY/SAVE] Joueur ' .. src .. ' déconnecté, sauvegarde du stash...')
 		SaveAndClosePlayerStash(src)
 	end
 end)
@@ -165,7 +140,6 @@ AddEventHandler('onResourceStop', function(resource)
 		if OpenStashByPlayer then
 			for src, stashId in pairs(OpenStashByPlayer) do
 				if Stashes and Stashes[stashId] and Stashes[stashId].items then
-					print('[QS-INVENTORY/SAVE] onResourceStop - Sauvegarde stash: ' .. stashId)
 					SaveStashItems(stashId, Stashes[stashId].items)
 				end
 			end

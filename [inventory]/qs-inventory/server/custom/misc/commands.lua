@@ -119,7 +119,7 @@ end)
 
 RegisterCommand('checkitem', function(source)
 	local item = GetItemByName(source, 'tosti')
-	return print('Tosti item amount:', item and item.amount or 0)
+	return
 end)
 
 RegisterCommand('rob', function(source)
@@ -134,10 +134,9 @@ RegisterCommand('invitems', function(source)
 	local inventory = xPlayer.getInventory(playerId)
 
 	if not inventory or #inventory == 0 then
-		return print('Your inventory is empty')
+		return
 	end
 
 	for _, item in pairs(inventory) do
-		print('Item: ' .. item.name .. ' - Amount: ' .. item.count)
 	end
 end)
