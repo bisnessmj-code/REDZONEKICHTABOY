@@ -362,11 +362,17 @@ AddEventHandler('redzone:loot:finish', function(targetServerId)
     }
 
     -- Ouvrir l'inventaire du joueur mort via qs-inventory
-    -- Note: OpenInventory('otherplayer') ouvre l'inventaire sur le CLIENT DU LOOTER
-    -- donc inv_busy sur le mort ne bloque pas cette ouverture
+    -- IMPORTANT: OpenInventory('otherplayer') vérifie Player(id).state.inv_busy sur la VICTIME
+    -- Il faut le désactiver temporairement pour permettre l'ouverture, puis le remettre
+    Player(targetServerId).state:set('inv_busy', false, true)
+    Wait(0) -- Laisser le state bag se propager
+
     local success, err = pcall(function()
         exports['qs-inventory']:OpenInventory('otherplayer', targetServerId, nil, source)
     end)
+
+    -- Remettre inv_busy à true sur la victime (elle est toujours morte)
+    Player(targetServerId).state:set('inv_busy', true, true)
 
     if success then
         TriggerClientEvent('redzone:loot:openInventory', source, targetServerId)
