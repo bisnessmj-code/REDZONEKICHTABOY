@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guerre de Territoire</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Interface principale simplifi�e -->
+    <div id="container" class="hidden">
+        <div class="tablet">
+            <!-- Image de fond -->
+            <div class="background-image"></div>
+            
+            <!-- Contenu par dessus l'image -->
+            <div class="tablet-content">
+                <!-- Titre -->
+                <h1 class="title">GUERRE DE TERRITOIRE</h1>
+                
+                <!-- Mode de jeu -->
+                <div class="mode-badge">16 VS 16</div>
+                
+                <!-- Bouton rejoindre -->
+                <button class="btn-join" id="joinLobbyBtn">
+                    <span class="btn-text">REJOINDRE</span>
+                </button>
+
+                <div class="info-section">
+                    <div class="info-block">
+                        <h3>COMMANDE</h3>
+                        <p><span class="command-key">/leavegdt</span> pour quitter l'evenement</p>
+			<p><span class="command-key">/quitgdt</span> pour quitter l'evenement</p>
+                    </div>
+                    
+                    <div class="info-block">
+                        <h3>INSTRUCTIONS</h3>
+                        <ul>
+                            <li>Allez dans un <strong>cercle rouge ou bleu</strong>.</li>
+                            <li>Appuyez sur <span class="key">E</span> pour choisir votre equipe.</li>
+                            <li>Patientez jusqu'au lancement par le <strong>Staff</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Bouton Classement -->
+                <button class="btn-leaderboard" id="leaderboardBtn">
+                    <i class="fas fa-trophy"></i>
+                    <span>CLASSEMENT</span>
+                </button>
+
+                <!-- Hint ESC -->
+                <div class="hint-esc">
+                    <span>Appuie sur</span>
+                    <span class="key">ESC</span>
+                    <span>pour fermer</span>
+                </div>
+            </div>
+
+            <!-- Panneau Classement (dans la tablette) -->
+            <div id="leaderboard-panel" class="leaderboard-panel hidden">
+                <div class="leaderboard-header">
+                    <button class="leaderboard-back" id="leaderboardBack">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2><i class="fas fa-trophy"></i> CLASSEMENT TOP 20</h2>
+                </div>
+                <div class="leaderboard-list" id="leaderboard-list">
+                    <div class="leaderboard-loading">Chargement...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Annonces - Modern Style -->
+    <div id="announce-container" class="hidden">
+        <div class="announce-corner tl"></div>
+        <div class="announce-corner tr"></div>
+
+        <div class="announce-top-line"></div>
+
+        <div class="announce-content-wrap">
+            <div class="announce-label">ANNONCE GDT</div>
+            <div class="announce-message" id="announce-text"></div>
+            <div class="announce-timer-bar" id="announce-timer-bar"></div>
+        </div>
+
+        <div class="announce-top-line bottom"></div>
+    </div>
+
+    <!-- Victoire Round -->
+    <div id="round-win-container" class="hidden">
+        <div class="end-screen">
+            <div class="round-title">Fin du Round</div>
+            <div class="main-layout">
+                <div class="player-list red-list">
+                    <div class="list-title" style="color: var(--red-neon)">EQUIPE ROUGE</div>
+                    <div id="round-red-players"></div>
+                </div>
+                <div class="center-content">
+                    <h1 class="winner-announcement" id="round-win-team"></h1>
+                    <div class="scoreboard">
+                        <div class="team-score">
+                            <div class="points" style="color: var(--red-neon)" id="score-red">0</div>
+                        </div>
+                        <div class="separator">-</div>
+                        <div class="team-score">
+                            <div class="points" style="color: var(--blue-neon)" id="score-blue">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-list blue-list">
+                    <div class="list-title" style="color: var(--blue-neon)">EQUIPE BLEUE</div>
+                    <div id="round-blue-players"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fin de Partie -->
+    <div id="game-end-container" class="hidden">
+        <div class="end-screen">
+            <div class="round-title">Fin de Partie</div>
+            <div class="main-layout">
+                <div class="player-list red-list">
+                    <div class="list-title" style="color: var(--red-neon)">EQUIPE ROUGE</div>
+                    <div id="end-red-players"></div>
+                </div>
+                <div class="center-content">
+                    <h1 class="winner-announcement" id="game-end-winner"></h1>
+                    <div class="scoreboard">
+                        <div class="team-score">
+                            <div class="points" style="color: var(--red-neon)" id="final-score-red">0</div>
+                        </div>
+                        <div class="separator">-</div>
+                        <div class="team-score">
+                            <div class="points" style="color: var(--blue-neon)" id="final-score-blue">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-list blue-list">
+                    <div class="list-title" style="color: var(--blue-neon)">EQUIPE BLEUE</div>
+                    <div id="end-blue-players"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Killfeed -->
+    <div id="killfeed-container"></div>
+
+    <!-- HUD Spectateur - New Professional Style -->
+    <div id="spectator-hud" class="hidden">
+        <div class="spectator-header">
+            <div class="pulse-icon"></div>
+            <span>SPECTATING MODE</span>
+        </div>
+
+        <div class="player-info-row">
+            <div class="player-avatar">
+                <i class="fas fa-user-secret"></i>
+            </div>
+            <div class="player-details">
+                <div class="player-name" id="spectator-target-name">Joueur</div>
+                <div class="player-meta">
+                    User ID: <span class="id-badge" id="spectator-target-id">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-row">
+            <div><span class="key-hint">←</span><span class="key-hint">→</span> Changer de joueur</div>
+            <div class="controls-separator">|</div>
+            <div>Joueur <span class="spectator-counter" id="spectator-current-index">1</span> / <span id="spectator-total">1</span></div>
+        </div>
+    </div>
+
+
+
+    <script src="script.js"></script>
+</body>
+</html>
