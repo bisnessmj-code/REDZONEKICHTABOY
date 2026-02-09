@@ -1,0 +1,586 @@
+/**
+ * Staff Roles Management - Apple Style Design
+ * Panel Admin Fight League
+ */
+
+/* ══════════════════════════════════════════════════════════════
+   PROMOTE PLAYER CARD
+   ══════════════════════════════════════════════════════════════ */
+
+.promote-player-card {
+    margin-bottom: 20px;
+}
+
+.promote-player-card .card-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.promote-player-card .card-header h3 i {
+    color: #34C759;
+}
+
+.promote-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.promote-form-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.promote-form .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 200px;
+    flex: 1;
+}
+
+.promote-form .filter-group label {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.promote-form .form-control {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #ffffff;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.promote-form .form-control:focus {
+    outline: none;
+    border-color: rgba(52, 199, 89, 0.5);
+    box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.15);
+}
+
+.promote-form select.form-control {
+    cursor: pointer;
+}
+
+.promote-form select.form-control option {
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 8px;
+}
+
+.promote-btn-group {
+    flex: 0 !important;
+    min-width: auto !important;
+}
+
+.promote-btn-group .btn-primary {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.promote-btn-group .btn-primary:hover:not(:disabled) {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(52, 199, 89, 0.4);
+}
+
+.promote-btn-group .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.promote-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba(52, 199, 89, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(52, 199, 89, 0.2);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.promote-info i {
+    color: #34C759;
+    font-size: 16px;
+}
+
+.promote-info.warning {
+    background: rgba(255, 149, 0, 0.1);
+    border-color: rgba(255, 149, 0, 0.2);
+}
+
+.promote-info.warning i {
+    color: #FF9500;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   STAFF ROLES CARD
+   ══════════════════════════════════════════════════════════════ */
+
+/* Card specifique */
+.staff-roles-card {
+    height: calc(100vh - 360px);
+    display: flex;
+    flex-direction: column;
+}
+
+.staff-roles-card .card-header {
+    flex-shrink: 0;
+}
+
+.staff-roles-card .card-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.staff-roles-card .card-header h3 i {
+    color: #FF3B30;
+}
+
+.staff-roles-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0;
+}
+
+/* Filtres */
+.staff-roles-filters {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    flex-wrap: wrap;
+}
+
+.staff-roles-filters .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 180px;
+}
+
+.staff-roles-filters .filter-group label {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.staff-roles-filters .form-control {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #ffffff;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.staff-roles-filters .form-control:focus {
+    outline: none;
+    border-color: rgba(255, 59, 48, 0.5);
+    box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.15);
+}
+
+.staff-roles-filters select.form-control {
+    cursor: pointer;
+}
+
+.staff-roles-filters select.form-control option {
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 8px;
+}
+
+/* Liste des staff */
+.staff-roles-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Scrollbar */
+.staff-roles-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.staff-roles-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.staff-roles-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+}
+
+.staff-roles-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Loading placeholder */
+.loading-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: rgba(255, 255, 255, 0.4);
+    gap: 12px;
+}
+
+.loading-placeholder i {
+    font-size: 32px;
+}
+
+/* Empty state */
+.staff-roles-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: rgba(255, 255, 255, 0.3);
+    text-align: center;
+    gap: 8px;
+}
+
+.staff-roles-empty i {
+    font-size: 48px;
+    opacity: 0.5;
+}
+
+/* Staff Item Card */
+.staff-role-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.2s ease;
+}
+
+.staff-role-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Avatar */
+.staff-role-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.staff-role-avatar.owner {
+    background: linear-gradient(135deg, rgba(255, 59, 48, 0.2) 0%, rgba(255, 59, 48, 0.1) 100%);
+    color: #FF3B30;
+}
+
+.staff-role-avatar.admin {
+    background: linear-gradient(135deg, rgba(175, 82, 222, 0.2) 0%, rgba(175, 82, 222, 0.1) 100%);
+    color: #AF52DE;
+}
+
+.staff-role-avatar.responsable {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.2) 0%, rgba(0, 122, 255, 0.1) 100%);
+    color: #007AFF;
+}
+
+.staff-role-avatar.organisateur {
+    background: linear-gradient(135deg, rgba(52, 199, 89, 0.2) 0%, rgba(52, 199, 89, 0.1) 100%);
+    color: #34C759;
+}
+
+.staff-role-avatar.staff {
+    background: linear-gradient(135deg, rgba(255, 149, 0, 0.2) 0%, rgba(255, 149, 0, 0.1) 100%);
+    color: #FF9500;
+}
+
+/* Info */
+.staff-role-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.staff-role-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.staff-role-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.staff-role-status.online {
+    background: rgba(52, 199, 89, 0.2);
+    color: #34C759;
+}
+
+.staff-role-status.offline {
+    background: rgba(142, 142, 147, 0.2);
+    color: #8E8E93;
+}
+
+.staff-role-status i {
+    font-size: 6px;
+}
+
+.staff-role-identifier {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Current Grade */
+.staff-role-grade {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0 16px;
+}
+
+.staff-role-grade-label {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.staff-role-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.staff-role-badge.owner {
+    background: linear-gradient(135deg, #FF3B30 0%, #FF6B6B 100%);
+    color: white;
+}
+
+.staff-role-badge.admin {
+    background: linear-gradient(135deg, #AF52DE 0%, #BF5AF2 100%);
+    color: white;
+}
+
+.staff-role-badge.responsable {
+    background: linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%);
+    color: white;
+}
+
+.staff-role-badge.organisateur {
+    background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+    color: white;
+}
+
+.staff-role-badge.staff {
+    background: linear-gradient(135deg, #FF9500 0%, #FFCC00 100%);
+    color: #1a1a1a;
+}
+
+/* Actions */
+.staff-role-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.staff-role-actions select {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #ffffff;
+    font-size: 12px;
+    cursor: pointer;
+    min-width: 140px;
+    transition: all 0.2s ease;
+}
+
+.staff-role-actions select:focus {
+    outline: none;
+    border-color: rgba(255, 59, 48, 0.5);
+}
+
+.staff-role-actions select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.staff-role-actions select option {
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 8px;
+}
+
+.staff-role-actions .btn-save {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #FF3B30 0%, #FF6B6B 100%);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.staff-role-actions .btn-save:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
+}
+
+.staff-role-actions .btn-save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.staff-role-actions .btn-demote {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 59, 48, 0.15);
+    color: #FF3B30;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.staff-role-actions .btn-demote:hover {
+    background: rgba(255, 59, 48, 0.25);
+}
+
+.staff-role-actions .btn-demote:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Hierarchy indicator */
+.staff-role-item.cannot-edit {
+    opacity: 0.6;
+}
+
+.staff-role-item.cannot-edit .staff-role-actions {
+    display: none;
+}
+
+.staff-role-item.cannot-edit::after {
+    content: 'Grade supérieur';
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+/* Stats summary */
+.staff-roles-stats {
+    display: flex;
+    gap: 16px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.staff-roles-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.staff-roles-stat strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .staff-roles-filters {
+        flex-direction: column;
+    }
+
+    .staff-roles-filters .filter-group {
+        width: 100%;
+    }
+
+    .staff-role-item {
+        flex-wrap: wrap;
+    }
+
+    .staff-role-grade {
+        width: 100%;
+        padding: 12px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .staff-role-actions {
+        width: 100%;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+}

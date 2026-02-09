@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administration - Fight League</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts - Rajdhani (titres) + Roboto (corps) -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components/sidebar.css">
+    <link rel="stylesheet" href="css/components/header.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/tables.css">
+    <link rel="stylesheet" href="css/components/modals.css">
+    <link rel="stylesheet" href="css/components/notifications.css">
+    <link rel="stylesheet" href="css/components/quickmenu.css">
+    <link rel="stylesheet" href="css/components/announcement-banner.css">
+    <link rel="stylesheet" href="css/components/staff-chat.css">
+    <link rel="stylesheet" href="css/components/activity-timeline.css">
+    <link rel="stylesheet" href="css/components/staff-roles.css">
+</head>
+<body>
+    <div id="panel" class="panel hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="img/logo.png" alt="Fight League" class="logo-img">
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active" data-view="dashboard">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li class="nav-item" data-view="players">
+                        <i class="fas fa-users"></i>
+                        <span>Joueurs</span>
+                    </li>
+                    <li class="nav-item" data-view="staff-roles" data-perm="staffRoles">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Gestion Staff</span>
+                    </li>
+                    <li class="nav-item" data-view="sanctions">
+                        <i class="fas fa-gavel"></i>
+                        <span>Sanctions</span>
+                    </li>
+                    <li class="nav-item" data-view="bans">
+                        <i class="fas fa-ban"></i>
+                        <span>Debannissements</span>
+                    </li>
+                    <li class="nav-item" data-view="report-stats" data-perm="reportStats">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Stats Tickets</span>
+                    </li>
+                    <li class="nav-item" data-view="event-stats" data-perm="eventStats">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Stats Events</span>
+                    </li>
+                    <li class="nav-item" data-view="economy">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span>Économie</span>
+                    </li>
+                    <li class="nav-item" data-view="teleport">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Téléportation</span>
+                    </li>
+                    <li class="nav-item" data-view="vehicles">
+                        <i class="fas fa-car"></i>
+                        <span>Véhicules</span>
+                    </li>
+                    <li class="nav-item" data-view="events">
+                        <i class="fas fa-trophy"></i>
+                        <span>Événements</span>
+                    </li>
+                    <li class="nav-item" data-view="announcements">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Annonces</span>
+                    </li>
+                    <li class="nav-item" data-view="reports">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>Reports</span>
+                        <span class="nav-badge hidden" id="reportsBadge">0</span>
+                    </li>
+                    <li class="nav-item" data-view="logs">
+                        <i class="fas fa-history"></i>
+                        <span>Logs</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name" id="userName">Staff</span>
+                        <span class="user-group" id="userGroup">staff</span>
+                    </div>
+                </div>
+                <button class="btn-close" id="closePanel">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 id="viewTitle">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="globalSearch" placeholder="Rechercher...">
+                    </div>
+                    <button class="btn-icon" id="refreshData">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Views -->
+            <div class="content">
+                <!-- Dashboard View -->
+                <section id="view-dashboard" class="view active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="statPlayersOnline">0</span>
+                                <span class="stat-label">Joueurs en ligne</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="statStaffOnline">0</span>
+                                <span class="stat-label">Staff en ligne</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="statActiveEvents">0</span>
+                                <span class="stat-label">Événements actifs</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon red">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="statSanctionsToday">0</span>
+                                <span class="stat-label">Sanctions aujourd'hui</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Staff Chat Section - Apple Style -->
+                    <div class="staff-chat-container">
+                        <div class="staff-chat-card">
+                            <div class="staff-chat-header">
+                                <div class="staff-chat-title">
+                                    <i class="fas fa-comments"></i>
+                                    <span>Chat Staff</span>
+                                    <span class="staff-chat-online" id="staffChatOnline">0 en ligne</span>
+                                </div>
+                                <div class="staff-chat-actions">
+                                    <button class="staff-chat-btn" id="staffChatRefresh" title="Rafraîchir">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                    <button class="staff-chat-btn admin-only hidden" id="staffChatClearAll" title="Supprimer tous les messages">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="staff-chat-messages" id="staffChatMessages">
+                                <div class="staff-chat-empty">
+                                    <i class="fas fa-comment-dots"></i>
+                                    <p>Aucun message pour le moment</p>
+                                    <span>Soyez le premier à écrire !</span>
+                                </div>
+                            </div>
+                            <div class="staff-chat-input-area">
+                                <div class="staff-chat-input-wrapper">
+                                    <input type="text" id="staffChatInput" placeholder="Écrire un message..." maxlength="500" autocomplete="off">
+                                    <button class="staff-chat-send" id="staffChatSend">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card activity-card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-stream"></i> Activité récente</h3>
+                                <button class="btn-icon" id="refreshActivity" title="Rafraîchir">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="activity-timeline" id="recentActivity">
+                                    <div class="activity-loading">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <span>Chargement...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Actions rapides</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="quick-actions">
+                                    <button class="quick-action-btn" data-action="announce">
+                                        <i class="fas fa-bullhorn"></i>
+                                        <span>Annonce</span>
+                                    </button>
+                                    <button class="quick-action-btn" data-action="tpmarker">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>TP Marqueur</span>
+                                    </button>
+                                    <button class="quick-action-btn" data-action="spawncar">
+                                        <i class="fas fa-car"></i>
+                                        <span>Spawn Véhicule</span>
+                                    </button>
+                                    <button class="quick-action-btn" data-action="deletecar">
+                                        <i class="fas fa-trash"></i>
+                                        <span>Suppr. Véhicule</span>
+                                    </button>
+                                    <button class="quick-action-btn" data-action="reports">
+                                        <i class="fas fa-ticket-alt"></i>
+                                        <span>Reports</span>
+                                    </button>
+                                    <button class="quick-action-btn" data-action="events">
+                                        <i class="fas fa-trophy"></i>
+                                        <span>Événements</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </section>
+
+                <!-- Players View -->
+                <section id="view-players" class="view">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Joueurs connectés</h3>
+                            <div class="card-actions">
+                                <input type="text" id="playerSearch" placeholder="Rechercher par nom ou ID...">
+                                <select id="playerGroupFilter">
+                                    <option value="">Tous les groupes</option>
+                                    <option value="owner">Owner</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="responsable">Responsable</option>
+                                    <option value="organisateur">Organisateur</option>
+                                    <option value="staff">Staff</option>
+                                    <option value="user">Joueur</option>
+                                </select>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="staffOnlyFilter">
+                                    <span>Staff uniquement</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="includeOffline">
+                                    <span>Inclure hors ligne</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table" id="playersTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nom</th>
+                                        <th>Groupe</th>
+                                        <th>Job</th>
+                                        <th>Ping</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Rempli dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sanctions View -->
+                <section id="view-sanctions" class="view">
+                    <!-- Card pour ban par identifier -->
+                    <div class="card" style="margin-bottom: 20px;">
+                        <div class="card-header">
+                            <h3><i class="fas fa-ban" style="color: #FF3B30;"></i> Bannir par License</h3>
+                        </div>
+                        <div class="card-body">
+                            <p style="color: rgba(255,255,255,0.6); margin-bottom: 15px; font-size: 13px;">
+                                Bannir un joueur hors-ligne en utilisant son identifier (license, steam, discord, etc.)
+                            </p>
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+                                <div class="form-group" style="flex: 2; min-width: 250px; margin-bottom: 0;">
+                                    <label style="font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Identifier</label>
+                                    <input type="text" id="banByIdIdentifier" placeholder="char0:xxx... ou license:xxx... ou steam:xxx..." style="width: 100%;">
+                                </div>
+                                <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
+                                    <label style="font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Duree</label>
+                                    <select id="banByIdDuration" style="width: 100%;">
+                                        <option value="1">1 heure</option>
+                                        <option value="6">6 heures</option>
+                                        <option value="12">12 heures</option>
+                                        <option value="24">24 heures</option>
+                                        <option value="48">2 jours</option>
+                                        <option value="72">3 jours</option>
+                                        <option value="168">7 jours</option>
+                                        <option value="336">14 jours</option>
+                                        <option value="720">30 jours</option>
+                                        <option value="-1">Permanent</option>
+                                        <option value="custom">Personnalise...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="banByIdCustomDuration" style="display: none; flex: 1; min-width: 120px; margin-bottom: 0;">
+                                    <label style="font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Heures</label>
+                                    <input type="number" id="banByIdCustomHours" min="0" max="8760" placeholder="Heures" style="width: 100%;" value="1">
+                                </div>
+                                <div class="form-group" style="flex: 2; min-width: 200px; margin-bottom: 0;">
+                                    <label style="font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Raison</label>
+                                    <input type="text" id="banByIdReason" placeholder="Raison du ban..." style="width: 100%;">
+                                </div>
+                                <button class="btn btn-danger" id="banByIdBtn" style="height: 38px;">
+                                    <i class="fas fa-gavel"></i> Bannir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Historique des sanctions</h3>
+                            <div class="card-actions">
+                                <input
+                                    type="text"
+                                    id="sanctionSearch"
+                                    placeholder="Rechercher par nom, license ou Discord ID..."
+                                    style="width: 300px; margin-right: 10px;">
+                                <button id="clearSanctionSearch" class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <select id="sanctionTypeFilter" style="margin-left: 10px;">
+                                    <option value="">Tous les types</option>
+                                    <option value="warn">Avertissements</option>
+                                    <option value="kick">Expulsions</option>
+                                    <option value="ban_temp">Bans temporaires</option>
+                                    <option value="ban_perm">Bans permanents</option>
+                                </select>
+                                <select id="sanctionStatusFilter" style="margin-left: 10px;">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="active">Actifs</option>
+                                    <option value="expired">Expirés</option>
+                                    <option value="revoked">Révoqués</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table" id="sanctionsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Joueur</th>
+                                        <th>Raison</th>
+                                        <th>Staff</th>
+                                        <th>Date</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Rempli dynamiquement -->
+                                </tbody>
+                            </table>
+                            <div id="sanctionsPagination"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Bans View -->
+                <section id="view-bans" class="view">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Gestion des bannissements</h3>
+                            <div class="card-actions">
+                                <input
+                                    type="text"
+                                    id="banSearchInput"
+                                    placeholder="Rechercher par ID de deban, nom, license, raison..."
+                                    style="width: 350px;">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table" id="bansTable">
+                                <thead>
+                                    <tr>
+                                        <th>Joueur</th>
+                                        <th>Raison</th>
+                                        <th>Banni par</th>
+                                        <th>Date du ban</th>
+                                        <th>Expiration</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Rempli dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Economy View -->
+                <section id="view-economy" class="view">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Comptes des joueurs en ligne</h3>
+                            <div class="card-actions">
+                                <input
+                                    type="text"
+                                    id="economySearch"
+                                    placeholder="Rechercher par ID, nom ou license..."
+                                    style="width: 300px;">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table" id="economyTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nom</th>
+                                        <th>License</th>
+                                        <th>Banque</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Rempli dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Teleport View -->
+                <section id="view-teleport" class="view">
+                    <div class="teleport-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Téléportation rapide</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Position rapide (coller X, Y, Z)</label>
+                                    <div class="quick-coords-input">
+                                        <input type="text" id="tpQuickCoords" placeholder="Ex: 5788.193360, -928.509888, 502.473144">
+                                        <button class="btn btn-sm btn-secondary" id="parseQuickCoords" title="Appliquer aux champs">
+                                            <i class="fas fa-arrow-down"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Coordonnées</label>
+                                    <div class="coords-input">
+                                        <input type="number" id="tpX" placeholder="X">
+                                        <input type="number" id="tpY" placeholder="Y">
+                                        <input type="number" id="tpZ" placeholder="Z">
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" id="tpToCoords">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Teleporter
+                                </button>
+                                <button class="btn btn-secondary" id="tpToMarker">
+                                    <i class="fas fa-crosshairs"></i>
+                                    Marqueur carte
+                                </button>
+                                <button class="btn btn-info" id="tpReturn">
+                                    <i class="fas fa-undo"></i>
+                                    Retour
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Emplacements sauvegardés</h3>
+                            </div>
+                            <div class="card-body">
+                                <ul class="locations-list" id="savedLocations">
+                                    <!-- Rempli dynamiquement -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Coordonnées actuelles</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="current-coords-display">
+                                    <div class="coords-row">
+                                        <span class="coord-label">X:</span>
+                                        <span class="coord-value" id="currentX">-</span>
+                                    </div>
+                                    <div class="coords-row">
+                                        <span class="coord-label">Y:</span>
+                                        <span class="coord-value" id="currentY">-</span>
+                                    </div>
+                                    <div class="coords-row">
+                                        <span class="coord-label">Z:</span>
+                                        <span class="coord-value" id="currentZ">-</span>
+                                    </div>
+                                    <div class="coords-row">
+                                        <span class="coord-label">H:</span>
+                                        <span class="coord-value" id="currentH">-</span>
+                                    </div>
+                                </div>
+                                <div class="coords-preview" id="coordsPreview">
+                                    vector4(0.0, 0.0, 0.0, 0.0)
+                                </div>
+                                <div class="coords-buttons">
+                                    <button class="btn btn-primary" id="getCoords">
+                                        <i class="fas fa-location-arrow"></i>
+                                        Obtenir position
+                                    </button>
+                                    <button class="btn btn-success" id="copyCoords">
+                                        <i class="fas fa-copy"></i>
+                                        Copier vec4
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Vehicles View -->
+                <section id="view-vehicles" class="view">
+                    <div class="vehicles-layout">
+                        <!-- Carousel de véhicules -->
+                        <div class="card vehicle-carousel-card">
+                            <div class="card-header">
+                                <h3>Véhicules rapides</h3>
+                                <div class="carousel-nav">
+                                    <button class="carousel-btn" id="carouselPrev"><i class="fas fa-chevron-left"></i></button>
+                                    <span class="carousel-category" id="carouselCategory">Sports</span>
+                                    <button class="carousel-btn" id="carouselNext"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="vehicle-carousel" id="vehicleCarousel">
+                                    <!-- Véhicules générés dynamiquement -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Options et spawn manuel -->
+                        <div class="vehicle-options-container">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Options du véhicule</h3>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Couleur -->
+                                    <div class="form-group">
+                                        <label>Couleur <button type="button" class="color-mode-toggle" id="colorModeToggle" title="Mode avancé"><i class="fas fa-palette"></i></button></label>
+
+                                        <!-- Mode Simple: Palette prédéfinie -->
+                                        <div class="color-palette" id="vehicleColorPalette">
+                                            <div class="color-swatch selected" data-color="0" style="background: #0d1116;" title="Noir"></div>
+                                            <div class="color-swatch" data-color="1" style="background: #1c1d21;" title="Graphite"></div>
+                                            <div class="color-swatch" data-color="134" style="background: #c2c4c6;" title="Argent"></div>
+                                            <div class="color-swatch" data-color="111" style="background: #ffffff;" title="Blanc"></div>
+                                            <div class="color-swatch" data-color="27" style="background: #c00000;" title="Rouge"></div>
+                                            <div class="color-swatch" data-color="64" style="background: #0b0c10;" title="Bleu nuit"></div>
+                                            <div class="color-swatch" data-color="88" style="background: #001b57;" title="Bleu"></div>
+                                            <div class="color-swatch" data-color="53" style="background: #ffcc00;" title="Jaune"></div>
+                                            <div class="color-swatch" data-color="138" style="background: #f78005;" title="Orange"></div>
+                                            <div class="color-swatch" data-color="55" style="background: #004b00;" title="Vert"></div>
+                                            <div class="color-swatch" data-color="145" style="background: #5c0085;" title="Violet"></div>
+                                            <div class="color-swatch" data-color="120" style="background: #d4a017;" title="Or"></div>
+                                        </div>
+
+                                        <!-- Mode Avancé: Color Picker -->
+                                        <div class="advanced-color-picker hidden" id="advancedColorPicker">
+                                            <div class="color-picker-container">
+                                                <!-- Spectre de couleur -->
+                                                <div class="color-picker-spectrum">
+                                                    <canvas id="colorSpectrum" width="200" height="150"></canvas>
+                                                    <div class="spectrum-cursor" id="spectrumCursor"></div>
+                                                </div>
+
+                                                <!-- Slider de teinte -->
+                                                <div class="color-picker-hue">
+                                                    <canvas id="hueSlider" width="20" height="150"></canvas>
+                                                    <div class="hue-cursor" id="hueCursor"></div>
+                                                </div>
+
+                                                <!-- Aperçu et valeurs -->
+                                                <div class="color-picker-values">
+                                                    <div class="color-preview-box" id="colorPreviewBox"></div>
+                                                    <div class="color-inputs">
+                                                        <div class="color-input-row">
+                                                            <label>HEX</label>
+                                                            <input type="text" id="colorHex" value="#762FFF" maxlength="7">
+                                                        </div>
+                                                        <div class="color-input-row rgb-row">
+                                                            <div class="rgb-input">
+                                                                <label>R</label>
+                                                                <input type="number" id="colorR" min="0" max="255" value="118">
+                                                            </div>
+                                                            <div class="rgb-input">
+                                                                <label>G</label>
+                                                                <input type="number" id="colorG" min="0" max="255" value="47">
+                                                            </div>
+                                                            <div class="rgb-input">
+                                                                <label>B</label>
+                                                                <input type="number" id="colorB" min="0" max="255" value="255">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tuning Grid -->
+                                    <div class="tuning-grid">
+                                        <div class="tuning-item">
+                                            <label><i class="fas fa-cog"></i> Moteur</label>
+                                            <select id="vehicleEngine">
+                                                <option value="-1">Stock</option>
+                                                <option value="0">Niveau 1</option>
+                                                <option value="1">Niveau 2</option>
+                                                <option value="2">Niveau 3</option>
+                                                <option value="3" selected>Niveau 4 (Max)</option>
+                                            </select>
+                                        </div>
+                                        <div class="tuning-item">
+                                            <label><i class="fas fa-tachometer-alt"></i> Transmission</label>
+                                            <select id="vehicleTransmission">
+                                                <option value="-1">Stock</option>
+                                                <option value="0">Niveau 1</option>
+                                                <option value="1">Niveau 2</option>
+                                                <option value="2" selected>Niveau 3 (Max)</option>
+                                            </select>
+                                        </div>
+                                        <div class="tuning-item">
+                                            <label><i class="fas fa-compact-disc"></i> Freins</label>
+                                            <select id="vehicleBrakes">
+                                                <option value="-1">Stock</option>
+                                                <option value="0">Niveau 1</option>
+                                                <option value="1">Niveau 2</option>
+                                                <option value="2" selected>Niveau 3 (Max)</option>
+                                            </select>
+                                        </div>
+                                        <div class="tuning-item">
+                                            <label><i class="fas fa-car-side"></i> Suspension</label>
+                                            <select id="vehicleSuspension">
+                                                <option value="-1">Stock</option>
+                                                <option value="0">Abaissée</option>
+                                                <option value="1">Street</option>
+                                                <option value="2">Sport</option>
+                                                <option value="3" selected>Competition</option>
+                                            </select>
+                                        </div>
+                                        <div class="tuning-item">
+                                            <label><i class="fas fa-shield-alt"></i> Blindage</label>
+                                            <select id="vehicleArmor">
+                                                <option value="-1">Aucun</option>
+                                                <option value="0">20%</option>
+                                                <option value="1">40%</option>
+                                                <option value="2">60%</option>
+                                                <option value="3">80%</option>
+                                                <option value="4" selected>100%</option>
+                                            </select>
+                                        </div>
+                                        <div class="tuning-item">
+                                            <label><i class="fas fa-wind"></i> Turbo</label>
+                                            <select id="vehicleTurbo">
+                                                <option value="0">Désactivé</option>
+                                                <option value="1" selected>Activé</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Checkboxes extras -->
+                                    <div class="extras-row">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="vehicleNeon" checked>
+                                            <span>Néons</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="vehicleXenon" checked>
+                                            <span>Phares Xenon</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="vehicleFullUpgrade" checked>
+                                            <span>Full Upgrade</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>Spawn manuel</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label>Nom du modèle</label>
+                                        <input type="text" id="vehicleModel" placeholder="Ex: adder, t20, zentorno...">
+                                    </div>
+                                    <div class="vehicle-actions">
+                                        <button class="btn btn-primary" id="spawnVehicle">
+                                            <i class="fas fa-car"></i>
+                                            Spawn
+                                        </button>
+                                        <button class="btn btn-danger" id="deleteVehicle">
+                                            <i class="fas fa-trash"></i>
+                                            Supprimer
+                                        </button>
+                                        <button class="btn btn-secondary" id="repairVehicle">
+                                            <i class="fas fa-wrench"></i>
+                                            Réparer
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Events View -->
+                <section id="view-events" class="view">
+                    <!-- Annonce d'événement GDT/CVC -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-bullhorn"></i> Annonce d'événement</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="event-announce-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Type d'événement</label>
+                                        <select id="eventType">
+                                            <option value="gdt">🎮 GDT (Guerre de Territoire)</option>
+                                            <option value="cvc">⚔️ CVC (Clan vs Clan)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Horaire</label>
+                                        <input type="text" id="eventTime" placeholder="Ex: 19H45" maxlength="10">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Message de l'annonce</label>
+                                    <textarea id="eventMessage" rows="4" placeholder="Décrivez l'événement...&#10;&#10;Exemple:&#10;Préparez-vous pour une bataille épique !&#10;Venez nombreux pour un affrontement mémorable."></textarea>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Réactions minimum</label>
+                                        <input type="number" id="eventMinReactions" value="20" min="1" max="100">
+                                    </div>
+                                    <div class="form-group checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="eventSendDiscord" checked>
+                                            <span>Envoyer sur Discord</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="eventSendIngame" checked>
+                                            <span>Annonce en jeu</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="event-preview" id="eventPreview">
+                                    <div class="preview-header">
+                                        <span class="preview-title">Aperçu Discord</span>
+                                    </div>
+                                    <div class="preview-embed" id="eventPreviewEmbed">
+                                        <div class="embed-bar gdt"></div>
+                                        <div class="embed-content">
+                                            <div class="embed-title">🎮 ANNONCE GDT</div>
+                                            <div class="embed-description">
+                                                <span class="embed-time"></span>
+                                                <span class="embed-message">Votre message apparaîtra ici...</span>
+                                                <div class="embed-footer">
+                                                    ━━━━━━━━━━━━━━━━━━━━━━<br>
+                                                    ✅ <strong>Réactions minimum:</strong> <span class="embed-reactions">20</span><br>
+                                                    📢 Réagissez pour confirmer votre participation!
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-lg" id="sendEventAnnounce">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Envoyer l'annonce
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- Event Stats View -->
+                <section id="view-event-stats" class="view">
+                    <div class="event-stats-layout">
+                        <!-- Stats globales -->
+                        <div class="event-global-stats">
+                            <div class="global-stat-card">
+                                <div class="stat-icon blue">
+                                    <i class="fas fa-calendar-check"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="eventStatsTotal">0</span>
+                                    <span class="stat-label">Total Annonces</span>
+                                </div>
+                            </div>
+                            <div class="global-stat-card">
+                                <div class="stat-icon green">
+                                    <i class="fas fa-gamepad"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="eventStatsGDT">0</span>
+                                    <span class="stat-label">GDT</span>
+                                </div>
+                            </div>
+                            <div class="global-stat-card">
+                                <div class="stat-icon red">
+                                    <i class="fas fa-sword"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="eventStatsCVC">0</span>
+                                    <span class="stat-label">CVC</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Podium Top 3 -->
+                        <div class="stats-podium event-podium">
+                            <div class="podium-item second" id="eventPodiumSecond">
+                                <div class="podium-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="podium-name">-</div>
+                                <div class="podium-count">0</div>
+                                <div class="podium-base">
+                                    <span class="podium-rank">2</span>
+                                </div>
+                            </div>
+                            <div class="podium-item first" id="eventPodiumFirst">
+                                <div class="podium-crown">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                                <div class="podium-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="podium-name">-</div>
+                                <div class="podium-count">0</div>
+                                <div class="podium-base">
+                                    <span class="podium-rank">1</span>
+                                </div>
+                            </div>
+                            <div class="podium-item third" id="eventPodiumThird">
+                                <div class="podium-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="podium-name">-</div>
+                                <div class="podium-count">0</div>
+                                <div class="podium-base">
+                                    <span class="podium-rank">3</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filtres et tableau -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-chart-bar"></i> Classement des organisateurs</h3>
+                                <div class="card-actions">
+                                    <select id="eventStatsTimeFilter">
+                                        <option value="all">Tout le temps</option>
+                                        <option value="month">Ce mois</option>
+                                        <option value="week">Cette semaine</option>
+                                        <option value="today">Aujourd'hui</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-secondary" id="refreshEventStats">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" id="resetEventStats" data-perm="eventStatsReset" title="Réinitialiser le classement" style="display: none;">
+                                        <i class="fas fa-trash-alt"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-container">
+                                    <table class="data-table" id="eventStatsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Organisateur</th>
+                                                <th>Total</th>
+                                                <th>GDT</th>
+                                                <th>CVC</th>
+                                                <th>Dernière annonce</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted">Chargement...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Announcements View -->
+                <section id="view-announcements" class="view">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Envoyer une annonce</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Message</label>
+                                <textarea id="announceMessage" rows="3" placeholder="Votre message..."></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Type</label>
+                                    <select id="announceType">
+                                        <option value="chat">Chat</option>
+                                        <option value="notification">Notification</option>
+                                        <option value="popup">Popup</option>
+                                        <option value="all">Tous</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Priorité</label>
+                                    <select id="announcePriority">
+                                        <option value="normal">Normal</option>
+                                        <option value="high">Important</option>
+                                        <option value="urgent">Urgent</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" id="sendAnnounce">
+                                <i class="fas fa-paper-plane"></i>
+                                Envoyer
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reports View -->
+                <section id="view-reports" class="view">
+                    <div class="reports-layout">
+                        <!-- Stats rapides -->
+                        <div class="reports-stats">
+                            <div class="report-stat">
+                                <i class="fas fa-inbox"></i>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="reportsPending">0</span>
+                                    <span class="stat-label">En attente</span>
+                                </div>
+                            </div>
+                            <div class="report-stat">
+                                <i class="fas fa-clock"></i>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="reportsInProgress">0</span>
+                                    <span class="stat-label">En cours</span>
+                                </div>
+                            </div>
+                            <div class="report-stat">
+                                <i class="fas fa-check-circle"></i>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="reportsResolved">0</span>
+                                    <span class="stat-label">Résolus aujourd'hui</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Liste des reports -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Tickets de support</h3>
+                                <div class="card-actions">
+                                    <select id="reportStatusFilter">
+                                        <option value="">Tous les statuts</option>
+                                        <option value="pending" selected>En attente</option>
+                                        <option value="in_progress">En cours</option>
+                                        <option value="resolved">Résolus</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-secondary" id="refreshReports">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" id="deleteAllReports" data-perm="reportDelete" style="display: none;">
+                                        <i class="fas fa-trash-alt"></i> Tout supprimer
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="reports-list" id="reportsList">
+                                    <!-- Rempli dynamiquement -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Report Stats View -->
+                <section id="view-report-stats" class="view">
+                    <div class="report-stats-layout">
+                        <!-- Podium Top 3 -->
+                        <div class="stats-podium">
+                            <div class="podium-item second" id="podiumSecond">
+                                <div class="podium-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="podium-rank">2</div>
+                                <div class="podium-name">-</div>
+                                <div class="podium-count">0 tickets</div>
+                                <div class="podium-block"></div>
+                            </div>
+                            <div class="podium-item first" id="podiumFirst">
+                                <div class="podium-crown"><i class="fas fa-crown"></i></div>
+                                <div class="podium-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="podium-rank">1</div>
+                                <div class="podium-name">-</div>
+                                <div class="podium-count">0 tickets</div>
+                                <div class="podium-block"></div>
+                            </div>
+                            <div class="podium-item third" id="podiumThird">
+                                <div class="podium-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="podium-rank">3</div>
+                                <div class="podium-name">-</div>
+                                <div class="podium-count">0 tickets</div>
+                                <div class="podium-block"></div>
+                            </div>
+                        </div>
+
+                        <!-- Stats globales -->
+                        <div class="stats-summary">
+                            <div class="stat-box">
+                                <i class="fas fa-ticket-alt"></i>
+                                <div class="stat-box-info">
+                                    <span class="stat-box-value" id="totalTicketsResolved">0</span>
+                                    <span class="stat-box-label">Tickets résolus (total)</span>
+                                </div>
+                            </div>
+                            <div class="stat-box">
+                                <i class="fas fa-calendar-week"></i>
+                                <div class="stat-box-info">
+                                    <span class="stat-box-value" id="ticketsThisWeek">0</span>
+                                    <span class="stat-box-label">Cette semaine</span>
+                                </div>
+                            </div>
+                            <div class="stat-box">
+                                <i class="fas fa-calendar-day"></i>
+                                <div class="stat-box-info">
+                                    <span class="stat-box-value" id="ticketsToday">0</span>
+                                    <span class="stat-box-label">Aujourd'hui</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Classement complet -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-trophy"></i> Classement des staffs</h3>
+                                <div class="card-actions">
+                                    <select id="statsTimeFilter">
+                                        <option value="all">Tout le temps</option>
+                                        <option value="month">Ce mois</option>
+                                        <option value="week">Cette semaine</option>
+                                        <option value="today">Aujourd'hui</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-secondary" id="refreshStats">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <table class="data-table" id="statsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Rang</th>
+                                            <th>Staff</th>
+                                            <th>Groupe</th>
+                                            <th>Tickets résolus</th>
+                                            <th>Dernier ticket</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="statsTableBody">
+                                        <!-- Rempli dynamiquement -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Staff Roles View -->
+                <section id="view-staff-roles" class="view">
+                    <!-- Card pour promouvoir un joueur -->
+                    <div class="card promote-player-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-user-plus"></i> Promouvoir un joueur</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="promote-form">
+                                <div class="promote-form-row">
+                                    <div class="filter-group">
+                                        <label>Joueur connecté</label>
+                                        <select id="promotePlayerSelect" class="form-control">
+                                            <option value="">-- Sélectionner un joueur --</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label>Nouveau grade</label>
+                                        <select id="promoteGradeSelect" class="form-control">
+                                            <option value="">-- Sélectionner un grade --</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-group promote-btn-group">
+                                        <label>&nbsp;</label>
+                                        <button class="btn btn-primary" id="promotePlayerBtn" disabled>
+                                            <i class="fas fa-arrow-up"></i> Promouvoir
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="promote-info" id="promoteInfo">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Sélectionnez un joueur connecté et un grade pour le promouvoir au staff.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card staff-roles-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-user-shield"></i> Gestion des rôles Staff</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-secondary btn-sm" id="refreshStaffRoles">
+                                    <i class="fas fa-sync-alt"></i> Rafraîchir
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Filtres -->
+                            <div class="staff-roles-filters">
+                                <div class="filter-group">
+                                    <label>Rechercher</label>
+                                    <input type="text" id="staffRolesSearch" placeholder="Nom ou identifier..." class="form-control">
+                                </div>
+                                <div class="filter-group">
+                                    <label>Filtrer par grade</label>
+                                    <select id="staffRolesFilter" class="form-control">
+                                        <option value="all">Tous les grades</option>
+                                        <option value="staff">Staff</option>
+                                        <option value="organisateur">Organisateur</option>
+                                        <option value="responsable">Responsable</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="owner">Owner</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label>Statut</label>
+                                    <select id="staffRolesStatus" class="form-control">
+                                        <option value="all">Tous</option>
+                                        <option value="online">En ligne</option>
+                                        <option value="offline">Hors ligne</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Liste des staff -->
+                            <div class="staff-roles-list" id="staffRolesList">
+                                <div class="loading-placeholder">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Chargement...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Logs View -->
+                <section id="view-logs" class="view">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Historique des logs</h3>
+                            <div class="card-actions">
+                                <div style="position: relative; margin-right: 10px; display: flex; align-items: center;">
+                                    <i class="fas fa-search" style="position: absolute; left: 10px; color: var(--text-muted); pointer-events: none;"></i>
+                                    <input type="text" id="logSearchInput" placeholder="Rechercher par nom ou ID..." style="width: 220px; padding-left: 32px;">
+                                </div>
+                                <select id="logCategoryFilter">
+                                    <option value="">Toutes categories</option>
+                                    <option value="death">Morts / Kills</option>
+                                    <option value="auth">Authentification</option>
+                                    <option value="player">Joueurs</option>
+                                    <option value="sanction">Sanctions</option>
+                                    <option value="economy">Economie</option>
+                                    <option value="teleport">Teleportation</option>
+                                    <option value="vehicle">Vehicules</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table" id="logsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Catégorie</th>
+                                        <th>Action</th>
+                                        <th>Staff</th>
+                                        <th>Cible</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Rempli dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Notifications Container -->
+        <div id="notifications" class="notifications-container"></div>
+
+        <!-- Modal Container -->
+        <div id="modal" class="modal hidden">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Modal</h3>
+                    <button class="modal-close" id="closeModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Contenu dynamique -->
+                </div>
+                <div class="modal-footer" id="modalFooter">
+                    <!-- Actions dynamiques -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Menu (Noclip) -->
+    <div id="quickMenu" class="quick-menu hidden">
+        <div class="quick-menu-container">
+            <!-- Header avec infos joueur -->
+            <div class="quick-menu-header">
+                <div class="quick-menu-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="quick-menu-player-info">
+                    <span class="quick-menu-name" id="quickMenuName">Joueur</span>
+                    <span class="quick-menu-id" id="quickMenuId">ID: 0</span>
+                </div>
+                <button class="quick-menu-close" id="quickMenuClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Barres de stats -->
+            <div class="quick-menu-stats">
+                <div class="quick-menu-stat">
+                    <div class="quick-menu-stat-label">
+                        <i class="fas fa-heart"></i>
+                        <span>Vie</span>
+                    </div>
+                    <div class="quick-menu-stat-bar">
+                        <div class="quick-menu-stat-fill health" id="quickMenuHealth"></div>
+                    </div>
+                    <span class="quick-menu-stat-value" id="quickMenuHealthText">100</span>
+                </div>
+                <div class="quick-menu-stat">
+                    <div class="quick-menu-stat-label">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Armure</span>
+                    </div>
+                    <div class="quick-menu-stat-bar">
+                        <div class="quick-menu-stat-fill armor" id="quickMenuArmor"></div>
+                    </div>
+                    <span class="quick-menu-stat-value" id="quickMenuArmorText">0</span>
+                </div>
+            </div>
+
+            <!-- Coordonnees -->
+            <div class="quick-menu-coords" id="quickMenuCoords">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>X: 0.0 | Y: 0.0 | Z: 0.0</span>
+            </div>
+
+            <!-- Indicateur de mode -->
+            <div class="quick-menu-focus-indicator" id="quickMenuFocusIndicator" style="text-align: center; font-size: 11px; padding: 4px; margin: 5px 0; background: rgba(0,0,0,0.3); border-radius: 4px; color: #10b981;">
+                Mode: Libre (ALT pour interagir)
+            </div>
+
+            <!-- Actions en grille -->
+            <div class="quick-menu-actions">
+                <button class="quick-menu-btn primary" data-action="teleport" data-perm="teleport">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>Aller vers lui</span>
+                </button>
+                <button class="quick-menu-btn primary" data-action="bring" data-perm="teleport">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Amener ici</span>
+                </button>
+                <button class="quick-menu-btn secondary" data-action="return" data-perm="teleport">
+                    <i class="fas fa-undo"></i>
+                    <span>Return</span>
+                </button>
+                <button class="quick-menu-btn secondary" data-action="spectate" data-perm="spectate">
+                    <i class="fas fa-eye"></i>
+                    <span>Spectate</span>
+                </button>
+                <button class="quick-menu-btn success" data-action="heal" data-perm="heal">
+                    <i class="fas fa-heart"></i>
+                    <span>Heal</span>
+                </button>
+                <button class="quick-menu-btn success" data-action="armor" data-perm="heal">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Armure</span>
+                </button>
+                <button class="quick-menu-btn secondary" data-action="message" data-perm="message">
+                    <i class="fas fa-comment"></i>
+                    <span>Message</span>
+                </button>
+                <button class="quick-menu-btn secondary" data-action="vehicle" data-perm="vehicle">
+                    <i class="fas fa-car"></i>
+                    <span>Vehicule</span>
+                </button>
+                <button class="quick-menu-btn warning" data-action="freeze" data-perm="freeze">
+                    <i class="fas fa-snowflake"></i>
+                    <span>Freeze</span>
+                </button>
+                <button class="quick-menu-btn danger" data-action="kick" data-perm="kick">
+                    <i class="fas fa-user-slash"></i>
+                    <span>Kick</span>
+                </button>
+                <button class="quick-menu-btn danger" data-action="ban" data-perm="ban">
+                    <i class="fas fa-ban"></i>
+                    <span>Ban</span>
+                </button>
+            </div>
+
+            <!-- Input pour kick (cache par defaut) -->
+            <div class="quick-menu-kick-input hidden" id="quickMenuKickInput">
+                <input type="text" id="quickMenuKickReason" placeholder="Raison du kick...">
+                <div class="quick-menu-kick-buttons">
+                    <button class="quick-menu-btn danger" id="quickMenuConfirmKick">
+                        <i class="fas fa-check"></i>
+                        Confirmer
+                    </button>
+                    <button class="quick-menu-btn secondary" id="quickMenuCancelKick">
+                        <i class="fas fa-times"></i>
+                        Annuler
+                    </button>
+                </div>
+            </div>
+
+            <!-- Input pour message (cache par defaut) -->
+            <div class="quick-menu-input-section hidden" id="quickMenuMessageInput">
+                <input type="text" id="quickMenuMessageText" placeholder="Message a envoyer...">
+                <div class="quick-menu-input-buttons">
+                    <button class="quick-menu-btn primary" id="quickMenuConfirmMessage">
+                        <i class="fas fa-paper-plane"></i>
+                        Envoyer
+                    </button>
+                    <button class="quick-menu-btn secondary" id="quickMenuCancelMessage">
+                        <i class="fas fa-times"></i>
+                        Annuler
+                    </button>
+                </div>
+            </div>
+
+            <!-- Input pour ban (cache par defaut) -->
+            <div class="quick-menu-input-section hidden" id="quickMenuBanInput">
+                <input type="text" id="quickMenuBanReason" placeholder="Raison du ban...">
+                <select id="quickMenuBanDuration">
+                    <option value="1h">1 heure</option>
+                    <option value="6h">6 heures</option>
+                    <option value="12h">12 heures</option>
+                    <option value="1d">1 jour</option>
+                    <option value="3d">3 jours</option>
+                    <option value="7d">7 jours</option>
+                    <option value="14d">14 jours</option>
+                    <option value="30d">30 jours</option>
+                    <option value="permanent">Permanent</option>
+                </select>
+                <div class="quick-menu-input-buttons">
+                    <button class="quick-menu-btn danger" id="quickMenuConfirmBan">
+                        <i class="fas fa-ban"></i>
+                        Bannir
+                    </button>
+                    <button class="quick-menu-btn secondary" id="quickMenuCancelBan">
+                        <i class="fas fa-times"></i>
+                        Annuler
+                    </button>
+                </div>
+            </div>
+
+            <!-- Selecteur de vehicule (cache par defaut) -->
+            <div class="quick-menu-vehicle-section hidden" id="quickMenuVehicleInput">
+                <input type="text" id="quickMenuVehicleModel" placeholder="Nom du vehicule (ex: adder)...">
+                <div class="quick-menu-color-picker">
+                    <span class="color-label">Couleur primaire:</span>
+                    <div class="quick-menu-colors" id="quickMenuPrimaryColors">
+                        <div class="color-swatch" data-color="0" style="background: #0d1116;"></div>
+                        <div class="color-swatch" data-color="1" style="background: #1c1d21;"></div>
+                        <div class="color-swatch" data-color="2" style="background: #32383d;"></div>
+                        <div class="color-swatch" data-color="3" style="background: #454b4f;"></div>
+                        <div class="color-swatch" data-color="4" style="background: #999da0;"></div>
+                        <div class="color-swatch selected" data-color="5" style="background: #c2c4c6;"></div>
+                        <div class="color-swatch" data-color="27" style="background: #c00e1a;"></div>
+                        <div class="color-swatch" data-color="28" style="background: #da1918;"></div>
+                        <div class="color-swatch" data-color="29" style="background: #b6111b;"></div>
+                        <div class="color-swatch" data-color="35" style="background: #d66b02;"></div>
+                        <div class="color-swatch" data-color="36" style="background: #e88917;"></div>
+                        <div class="color-swatch" data-color="42" style="background: #ffcf20;"></div>
+                        <div class="color-swatch" data-color="49" style="background: #417a30;"></div>
+                        <div class="color-swatch" data-color="55" style="background: #193826;"></div>
+                        <div class="color-swatch" data-color="61" style="background: #2354a1;"></div>
+                        <div class="color-swatch" data-color="62" style="background: #6ea3c7;"></div>
+                        <div class="color-swatch" data-color="63" style="background: #112552;"></div>
+                        <div class="color-swatch" data-color="64" style="background: #1b203e;"></div>
+                        <div class="color-swatch" data-color="71" style="background: #6b1f7b;"></div>
+                        <div class="color-swatch" data-color="72" style="background: #8f2f55;"></div>
+                        <div class="color-swatch" data-color="88" style="background: #5a4f3e;"></div>
+                        <div class="color-swatch" data-color="111" style="background: #ffffff;"></div>
+                    </div>
+                </div>
+                <div class="quick-menu-input-buttons">
+                    <button class="quick-menu-btn success" id="quickMenuConfirmVehicle">
+                        <i class="fas fa-car"></i>
+                        Spawn
+                    </button>
+                    <button class="quick-menu-btn secondary" id="quickMenuCancelVehicle">
+                        <i class="fas fa-times"></i>
+                        Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcement Banner (Bannière d'annonce) -->
+    <div id="announcementBanner" class="announcement-banner">
+        <div class="announcement-banner-content">
+            <!-- Image de fond - configurable via JS -->
+            <div class="announcement-banner-bg" id="announcementBannerBg"></div>
+            <div class="announcement-banner-overlay"></div>
+
+            <!-- Header avec titre -->
+            <div class="announcement-banner-header">
+                <i class="fas fa-bullhorn"></i>
+                <span class="announcement-banner-title">ANNONCE</span>
+            </div>
+
+            <!-- Corps avec message -->
+            <div class="announcement-banner-body">
+                <p class="announcement-banner-message" id="announcementBannerMessage">Message de l'annonce</p>
+            </div>
+
+            <!-- Barre de progression -->
+            <div class="announcement-banner-progress" id="announcementBannerProgress"></div>
+        </div>
+    </div>
+
+    <!-- Audio pour les annonces -->
+    <audio id="announcementSound" preload="auto">
+        <source src="sounds/announcement.wav" type="audio/wav">
+        <source src="sounds/announcement.mp3" type="audio/mpeg">
+        <source src="sounds/announcement.ogg" type="audio/ogg">
+    </audio>
+
+    <!-- Audio pour les reports -->
+    <audio id="reportSound" preload="auto">
+        <source src="sounds/report.wav" type="audio/wav">
+        <source src="sounds/report.mp3" type="audio/mpeg">
+        <source src="sounds/report.ogg" type="audio/ogg">
+    </audio>
+
+    <!-- Report Notification Container (au-dessus de la minimap) -->
+    <div id="reportNotificationContainer" class="report-notification-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/services/api.js"></script>
+    <script src="js/modules/notifications.js"></script>
+    <script src="js/modules/modal.js"></script>
+    <script src="js/modules/players.js"></script>
+    <script src="js/modules/sanctions.js"></script>
+    <script src="js/modules/teleport.js"></script>
+    <script src="js/modules/vehicles.js"></script>
+    <script src="js/modules/announcements.js"></script>
+    <script src="js/modules/announcement-banner.js"></script>
+    <script src="js/modules/economy.js"></script>
+    <script src="js/modules/logs.js"></script>
+    <script src="js/modules/bans.js"></script>
+    <script src="js/modules/reports.js"></script>
+    <script src="js/modules/report-notification.js"></script>
+    <script src="js/modules/report-stats.js"></script>
+    <script src="js/modules/events.js"></script>
+    <script src="js/modules/event-stats.js"></script>
+    <script src="js/modules/staff-chat.js"></script>
+    <script src="js/modules/activity.js"></script>
+    <script src="js/modules/staff-roles.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

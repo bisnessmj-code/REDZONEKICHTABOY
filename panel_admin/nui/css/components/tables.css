@@ -1,0 +1,287 @@
+/* Tables */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: var(--bg-tertiary);
+}
+
+.data-table th {
+    padding: var(--spacing-md);
+    text-align: left;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: all var(--transition-fast);
+}
+
+.data-table tbody tr:hover {
+    background: var(--bg-tertiary);
+}
+
+.data-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.data-table td {
+    padding: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    vertical-align: middle;
+}
+
+/* Table Actions */
+.table-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.table-actions .btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+}
+
+/* Status Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    border-radius: var(--border-radius-sm);
+}
+
+.badge-success {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.badge-warning {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.badge-danger {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.badge-info {
+    background: var(--info-bg);
+    color: var(--info);
+}
+
+.badge-neutral {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+/* Grade Badges */
+.badge-owner {
+    background: rgba(231, 76, 60, 0.1);
+    color: var(--grade-owner);
+}
+
+.badge-admin {
+    background: rgba(155, 89, 182, 0.1);
+    color: var(--grade-admin);
+}
+
+.badge-responsable {
+    background: rgba(52, 152, 219, 0.1);
+    color: var(--grade-responsable);
+}
+
+.badge-organisateur {
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--grade-organisateur);
+}
+
+.badge-staff {
+    background: rgba(243, 156, 18, 0.1);
+    color: var(--grade-staff);
+}
+
+/* Player Row */
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.player-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--bg-tertiary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+}
+
+.player-names {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.player-name {
+    font-weight: 500;
+}
+
+.player-char-name {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.player-id {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+/* Ping Indicator */
+.ping {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.ping-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.ping-good {
+    background: var(--success);
+}
+
+.ping-medium {
+    background: var(--warning);
+}
+
+.ping-bad {
+    background: var(--danger);
+}
+
+/* Empty State */
+.table-empty {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+}
+
+.table-empty i {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+/* Pagination */
+.table-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.pagination-info {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+/* Sanctions Table - Player Cell */
+.sanction-player-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sanction-player-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.sanction-player-identifier {
+    font-size: 11px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 3px 6px;
+    border-radius: 4px;
+    word-break: break-all;
+    user-select: all;
+}
+
+.sanction-player-discord {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    color: #5865F2;
+    background: rgba(88, 101, 242, 0.1);
+    padding: 3px 6px;
+    border-radius: 4px;
+    user-select: all;
+}
+
+.sanction-player-discord i {
+    font-size: 12px;
+}
+
+/* Bans Table - Player Cell */
+.ban-player-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ban-player-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.ban-player-identifier {
+    font-size: 11px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 3px 6px;
+    border-radius: 4px;
+    word-break: break-all;
+    user-select: all;
+}
+
+.ban-player-discord {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    color: #5865F2;
+    background: rgba(88, 101, 242, 0.1);
+    padding: 3px 6px;
+    border-radius: 4px;
+    user-select: all;
+}
+
+.ban-player-discord i {
+    font-size: 12px;
+}

@@ -1,0 +1,258 @@
+/* ══════════════════════════════════════════════════════════════
+   ANNOUNCEMENT BANNER - Bannière d'annonce animée
+   ══════════════════════════════════════════════════════════════ */
+
+/* Container de la bannière */
+.announcement-banner {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100%);
+    z-index: 9999;
+    min-width: 650px;
+    max-width: 850px;
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+}
+
+/* Animation d'entrée - descend du haut */
+.announcement-banner.show {
+    animation: announceBannerSlideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    pointer-events: auto;
+}
+
+/* Animation de sortie - remonte vers le haut */
+.announcement-banner.hide {
+    animation: announceBannerSlideOut 0.5s ease-in forwards;
+}
+
+@keyframes announceBannerSlideIn {
+    0% {
+        transform: translateX(-50%) translateY(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(-50%) translateY(20px);
+        opacity: 1;
+    }
+}
+
+@keyframes announceBannerSlideOut {
+    0% {
+        transform: translateX(-50%) translateY(20px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(-100%);
+        opacity: 0;
+    }
+}
+
+/* Contenu de la bannière */
+.announcement-banner-content {
+    position: relative;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+    border: 2px solid #cc0000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(204, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Image de fond - maintenant cachee car on l'utilise dans le header */
+.announcement-banner-bg {
+    display: none;
+}
+
+/* Overlay - cache car plus utilise */
+.announcement-banner-overlay {
+    display: none;
+}
+
+/* Header avec le titre ET l'image de fond */
+.announcement-banner-header {
+    position: relative;
+    z-index: 2;
+    padding: 25px 30px;
+    min-height: 80px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    overflow: hidden;
+}
+
+/* Overlay sur le header pour lisibilité du texte */
+.announcement-banner-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0.3) 50%,
+        rgba(0, 0, 0, 0.5) 100%
+    );
+    z-index: -1;
+}
+
+.announcement-banner-header i {
+    font-size: 28px;
+    color: #ffffff;
+    animation: announcePulse 1s ease-in-out infinite;
+    text-shadow: 0 2px 10px rgba(255, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes announcePulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.15);
+        opacity: 0.9;
+    }
+}
+
+.announcement-banner-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+}
+
+/* Corps avec le message */
+.announcement-banner-body {
+    position: relative;
+    z-index: 2;
+    padding: 25px 35px 30px;
+    background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+}
+
+.announcement-banner-message {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.7;
+    color: #ffffff;
+    text-align: center;
+    word-wrap: break-word;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Barre de progression */
+.announcement-banner-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff3333 0%, #cc0000 100%);
+    border-radius: 0 0 10px 10px;
+    width: 100%;
+    transform-origin: left;
+    animation: announceProgress 5s linear forwards;
+}
+
+@keyframes announceProgress {
+    0% {
+        transform: scaleX(1);
+    }
+    100% {
+        transform: scaleX(0);
+    }
+}
+
+/* Effet de glow sur les bords */
+.announcement-banner-content::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #cc0000, #ff0000, #cc0000, #990000);
+    border-radius: 14px;
+    z-index: -1;
+    animation: borderGlow 2s linear infinite;
+    opacity: 0.7;
+}
+
+@keyframes borderGlow {
+    0%, 100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0.9;
+    }
+}
+
+/* Variantes de priorité */
+
+/* Priorité haute - Orange */
+.announcement-banner.priority-high .announcement-banner-content {
+    border-color: #ff9500;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.8),
+        0 0 30px rgba(255, 149, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.announcement-banner.priority-high .announcement-banner-header {
+    background: linear-gradient(90deg, #ff9500 0%, #cc7700 50%, #ff9500 100%);
+}
+
+.announcement-banner.priority-high .announcement-banner-progress {
+    background: linear-gradient(90deg, #ffaa33 0%, #ff9500 100%);
+}
+
+.announcement-banner.priority-high .announcement-banner-content::before {
+    background: linear-gradient(45deg, #ff9500, #ffaa00, #ff9500, #cc7700);
+}
+
+/* Priorité urgente - Rouge vif avec animation plus intense */
+.announcement-banner.priority-urgent .announcement-banner-content {
+    border-color: #ff0000;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.8),
+        0 0 50px rgba(255, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: urgentPulse 0.5s ease-in-out infinite;
+}
+
+@keyframes urgentPulse {
+    0%, 100% {
+        box-shadow:
+            0 10px 40px rgba(0, 0, 0, 0.8),
+            0 0 50px rgba(255, 0, 0, 0.5);
+    }
+    50% {
+        box-shadow:
+            0 10px 40px rgba(0, 0, 0, 0.8),
+            0 0 70px rgba(255, 0, 0, 0.7);
+    }
+}
+
+.announcement-banner.priority-urgent .announcement-banner-header {
+    background: linear-gradient(90deg, #ff0000 0%, #cc0000 50%, #ff0000 100%);
+}
+
+.announcement-banner.priority-urgent .announcement-banner-header i {
+    animation: announcePulse 0.5s ease-in-out infinite;
+}
