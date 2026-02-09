@@ -340,7 +340,9 @@ RegisterNetEvent('weapons:server:UpdateWeaponQuality', function(data, RepeatAmou
             end
         end
     end
-    SetItemMetadata(src, data.slot, WeaponSlot.info)
+    if WeaponSlot then
+        SetItemMetadata(src, data.slot, WeaponSlot.info)
+    end
 end)
 
 RegisterNetEvent('weapons:server:EquipAttachment', function(ItemData, CurrentWeaponData, AttachmentData, sendData)
