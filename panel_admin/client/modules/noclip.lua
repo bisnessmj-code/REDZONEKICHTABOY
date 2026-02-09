@@ -452,8 +452,8 @@ CreateThread(function()
             DisableControlAction(0, 241, true) -- Scroll up
             DisableControlAction(0, 242, true) -- Scroll down
 
-            -- Dessiner le crosshair
-            DrawCrosshair()
+            -- Crosshair desactive
+            -- DrawCrosshair()
 
             -- Dessiner l'indicateur de vitesse (si actif)
             DrawSpeedIndicator()
