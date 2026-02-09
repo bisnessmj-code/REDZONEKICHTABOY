@@ -412,6 +412,9 @@ local function KickPlayerFromRedzone(targetId, kickedBy)
         return false, 'Le joueur n\'est pas dans le redzone'
     end
 
+    -- Retirer le joueur de sa squad avant le kick
+    exports[GetCurrentResourceName()]:RemovePlayerFromSquad(targetId, 'left_redzone')
+
     -- Notifier le joueur qu'il est kick
     Redzone.Server.Utils.NotifyWarning(targetId, 'Vous avez été expulsé du REDZONE par un staff.')
 

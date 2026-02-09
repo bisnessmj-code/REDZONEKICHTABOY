@@ -470,6 +470,15 @@ exports('GetPlayerSquad', function(playerId)
     return GetPlayerSquad(playerId)
 end)
 
+exports('RemovePlayerFromSquad', function(playerId, reason)
+    if playerSquads[playerId] then
+        RemovePlayerFromSquad(playerId, reason or 'left_redzone')
+    end
+    if pendingInvites[playerId] then
+        pendingInvites[playerId] = nil
+    end
+end)
+
 exports('IsPlayerInSquad', function(playerId)
     return playerSquads[playerId] ~= nil
 end)
