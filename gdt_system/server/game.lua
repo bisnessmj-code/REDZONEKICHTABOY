@@ -546,7 +546,9 @@ function EndGame(winner)
     GameManager.alivePlayers = { red = {}, blue = {} }
     GameManager.lastWinner = nil
     GameManager.roundLocked = false
-    
+
+    -- ✅ P3 #12 : Nettoyer les données de reconnexion
+    GDT.DisconnectedPlayers = {}
 
 end
 
@@ -606,9 +608,10 @@ function CancelGame()
     GameManager.alivePlayers = { red = {}, blue = {} }
     GameManager.lastWinner = nil
     GameManager.roundLocked = false
-    
 
-    
+    -- ✅ P3 #12 : Nettoyer les données de reconnexion
+    GDT.DisconnectedPlayers = {}
+
     return true, "Partie annulée"
 end
 

@@ -367,40 +367,51 @@ Les kills s'accumulent sur toute la partie, pas par round. Les classements montr
 
 **Correction:** Reinitialiser le kill tracker au debut de chaque round.
 
-#### 11. Thread spectateur tourne en permanence
+#### 11. ~~Thread spectateur tourne en permanence~~ CORRIGE
 **Fichier:** `client/spectator.lua`
 
-```lua
-while true do
-    Wait(2000)
-    if SpectatorMode.active then ...
-```
+**Probleme:** Deux threads `while true` tournaient en permanence meme quand le spectateur etait desactive, gaspillant du CPU.
 
-Ce thread tourne meme quand le spectateur est desactive.
-
-**Correction:** Demarrer/arreter le thread dynamiquement avec l'activation du mode spectateur.
+**Correction appliquee:** Remplacement par une fonction `StartSpectatorThreads()` appelee dans `StartSpectatorMode()`. Les threads utilisent `while SpectatorMode.active` et s'arretent naturellement quand le spectateur est desactive.
 
 ---
 
 ### P3 - Ameliorations futures
 
-#### 12. Pas de gestion de reconnexion
-Si un joueur deco/reco en plein match, il revient comme un nouveau joueur dans le bucket 0. Son slot en jeu est perdu, ce qui peut finir en 16v17.
+#### 12. ~~Pas de gestion de reconnexion~~ CORRIGE
+**Fichiers:** `server/main.lua`, `server/events.lua`, `client/spectator.lua`
 
-#### 13. Collision vehicule = teamkill non detecte
-Le systeme de friendly fire ne gere pas les collisions vehicule. Un joueur peut ecraser un coequipier sans detection.
+**Probleme:** Si un joueur deco/reco en plein match, il revenait comme un nouveau joueur dans le bucket 0. Son slot en jeu etait perdu.
 
-#### 14. Deux sources de verite pour l'etat du joueur
-- Client : `InGame`, `InGDT`, `CurrentTeam` (variables locales)
-- Serveur : `playerData.state` dans `GDT.Players`
+**Correction appliquee:** Table `GDT.DisconnectedPlayers` sauvegarde les donnees (team, tenue) par identifier lors de la deconnexion. A la reconnexion (`esx:playerLoaded`), le joueur est remis dans son bucket, son equipe, et demarre en spectateur pour le round en cours. Timeout de 5 minutes. Nettoyage automatique en fin de partie.
 
-Aucune synchronisation periodique. Apres un lag reseau, les deux peuvent diverger.
+#### 13. ~~Collision vehicule = teamkill non detecte~~ CORRIGE
+**Fichier:** `client/friendly_fire.lua`
 
-#### 15. Pas de timeout AFK
-Les joueurs peuvent rejoindre et rester AFK indefiniment dans le lobby ou les equipes sans etre ejectes.
+**Probleme:** Le systeme anti-friendly fire ne gerait pas les collisions vehicule. Le config `disableVehicleDamage = true` existait mais n'etait pas implemente.
 
-#### 16. `GameManager` jamais reset au restart de la resource
-Si la resource crash et redemarre en plein match, `GameManager` garde l'ancien etat corrompu.
+**Correction appliquee:** Nouveau thread dans `StartFriendlyFireThreads()` qui utilise `SetEntityNoCollisionEntity()` entre le vehicule du joueur et les peds coequipiers (et inversement). Tourne a chaque frame quand un vehicule est implique, sinon en idle a 500ms.
+
+#### 14. ~~Deux sources de verite pour l'etat du joueur~~ CORRIGE
+**Fichiers:** `server/events.lua`, `client/events.lua`
+
+**Probleme:** Client (`InGDT`, `CurrentTeam`) et serveur (`playerData.state`) pouvaient diverger apres un lag reseau.
+
+**Correction appliquee:** Thread serveur toutes les 10s envoie `gdt:client:syncState` avec l'etat reel (team, state, gameActive). Le client compare et corrige ses variables locales si divergence.
+
+#### 15. ~~Pas de timeout AFK~~ CORRIGE
+**Fichiers:** `server/main.lua`, `server/events.lua`, `config.lua`
+
+**Probleme:** Les joueurs pouvaient rester AFK indefiniment dans le lobby ou les equipes.
+
+**Correction appliquee:** Champ `lastActivity` dans `GDT.Players`, mis a jour sur chaque action (selectTeam, etc.). Thread serveur toutes les 30s verifie et ejecte les AFK (5 min lobby, 10 min equipe). Configurable via `Config.AFKTimeout`. Desactive pendant les parties actives.
+
+#### 16. ~~`GameManager` jamais reset au restart de la resource~~ CORRIGE
+**Fichiers:** `server/main.lua`, `client/events.lua`
+
+**Probleme:** Apres un crash+restart de la resource, les joueurs restaient coinces dans le bucket 1000 avec un etat client corrompu.
+
+**Correction appliquee:** `onResourceStart` itere tous les joueurs connectes. Ceux dans le bucket GDT (1000) sont remis en bucket 0 et recoivent `gdt:client:forceCleanup` pour reset de toutes les variables locales (InGDT, team, spectateur, UI, zones).
 
 ---
 
@@ -418,12 +429,12 @@ Si la resource crash et redemarre en plein match, `GameManager` garde l'ancien e
 | **P2** | 8 | Jitter boucles draw | ~~CORRIGE~~ |
 | **P2** | 9 | Friendly fire loop chaque frame | ~~CORRIGE~~ |
 | **P2** | 10 | Kill tracker pas reset entre rounds | Classement faux |
-| **P2** | 11 | Thread spectateur permanent | CPU inutile |
-| **P3** | 12 | Reconnexion non geree | 16v17 possible |
-| **P3** | 13 | Collision vehicule teamkill | Grief |
-| **P3** | 14 | Double source de verite etat | Desync |
-| **P3** | 15 | Pas de timeout AFK | Lobby bloque |
-| **P3** | 16 | GameManager pas reset au restart | Etat corrompu |
+| **P2** | 11 | Thread spectateur permanent | ~~CORRIGE~~ |
+| **P3** | 12 | Reconnexion non geree | ~~CORRIGE~~ |
+| **P3** | 13 | Collision vehicule teamkill | ~~CORRIGE~~ |
+| **P3** | 14 | Double source de verite etat | ~~CORRIGE~~ |
+| **P3** | 15 | Pas de timeout AFK | ~~CORRIGE~~ |
+| **P3** | 16 | GameManager pas reset au restart | ~~CORRIGE~~ |
 
 ---
 

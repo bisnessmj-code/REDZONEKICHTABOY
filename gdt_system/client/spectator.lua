@@ -17,7 +17,7 @@ local SpectatorMode = {
 
 function StartSpectatorMode(team)
     if SpectatorMode.active then return end
-    
+
     SpectatorMode.active = true
     SpectatorMode.myTeam = team
     SpectatorMode.availableTargets = {}
@@ -29,9 +29,12 @@ function StartSpectatorMode(team)
 
     -- Demander la liste des coéquipiers vivants
     TriggerServerEvent('gdt:server:requestAliveTeammates', team)
-    
+
     -- Notification
     ESX.ShowNotification('Mode Spectateur activé\nUtilise ← → pour changer de joueur')
+
+    -- ✅ P2 #11 : Démarrer les threads dynamiquement (au lieu de while true permanent)
+    StartSpectatorThreads()
 end
 
 -- ==========================================
@@ -180,56 +183,54 @@ RegisterNetEvent('gdt:client:stopSpectator', function()
 end)
 
 -- ==========================================
--- THREAD : GESTION DES CONTRÔLES
+-- ✅ P3 #12 : FORCER LE MODE SPECTATEUR (reconnexion)
 -- ==========================================
 
-Citizen.CreateThread(function()
-    while true do
-        local sleep = 500
-        
-        if SpectatorMode.active then
-            sleep = 0
-            
+RegisterNetEvent('gdt:client:forceSpectator', function(team)
+    StartSpectatorMode(team)
+end)
+
+-- ==========================================
+-- ✅ P2 #11 : THREADS DYNAMIQUES (démarrent/s'arrêtent avec le mode spectateur)
+-- ==========================================
+
+function StartSpectatorThreads()
+    -- Thread 1 : Gestion des contrôles (tourne uniquement quand spectateur actif)
+    Citizen.CreateThread(function()
+        while SpectatorMode.active do
             -- Désactiver certains contrôles en mode spectateur
             DisableControlAction(0, 24, true)  -- Attack
             DisableControlAction(0, 25, true)  -- Aim
             DisableControlAction(0, 47, true)  -- Weapon wheel
             DisableControlAction(0, 263, true) -- Melee Attack Input
             DisableControlAction(0, 264, true) -- Melee Attack Alternate
-            
+
             -- Flèche droite (→) pour joueur suivant
             if IsControlJustPressed(0, 175) then -- RIGHT
                 SpectateNext()
             end
-            
+
             -- Flèche gauche (←) pour joueur précédent
             if IsControlJustPressed(0, 174) then -- LEFT
                 SpectatePrevious()
             end
+
+            Wait(0)
         end
-        
-        Wait(sleep)
-    end
-end)
+    end)
 
--- ==========================================
--- THREAD : SURVEILLANCE DES CIBLES
--- ==========================================
-
-Citizen.CreateThread(function()
-    while true do
-        Wait(2000) -- Check toutes les 2 secondes
-        
-        if SpectatorMode.active and SpectatorMode.targetPlayerId then
-            -- Vérifier si la cible actuelle est toujours vivante
-            if not IsTargetStillAlive(SpectatorMode.targetPlayerId) then
-                
-                -- Demander une mise à jour de la liste
-                TriggerServerEvent('gdt:server:requestAliveTeammates', SpectatorMode.myTeam)
+    -- Thread 2 : Surveillance des cibles (tourne uniquement quand spectateur actif)
+    Citizen.CreateThread(function()
+        while SpectatorMode.active do
+            Wait(2000)
+            if SpectatorMode.active and SpectatorMode.targetPlayerId then
+                if not IsTargetStillAlive(SpectatorMode.targetPlayerId) then
+                    TriggerServerEvent('gdt:server:requestAliveTeammates', SpectatorMode.myTeam)
+                end
             end
         end
-    end
-end)
+    end)
+end
 
 -- ==========================================
 -- EXPORTS

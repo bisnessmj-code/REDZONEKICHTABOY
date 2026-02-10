@@ -161,3 +161,48 @@ end)
 RegisterNetEvent('gdt:client:pong', function()
     Utils.Debug('Pong reçu du serveur')
 end)
+
+-- ==========================================
+-- ✅ P3 #14 : SYNC ÉTAT SERVEUR → CLIENT
+-- ==========================================
+-- Corrige les variables locales si elles divergent du serveur (source de vérité)
+-- ==========================================
+
+RegisterNetEvent('gdt:client:syncState', function(serverState)
+    if not serverState then return end
+
+    -- Corriger InGDT
+    local clientInGDT = IsInGDT()
+    if serverState.inGDT ~= clientInGDT then
+        SetInGDT(serverState.inGDT)
+        Utils.Debug('Sync: InGDT corrigé ' .. tostring(clientInGDT) .. ' -> ' .. tostring(serverState.inGDT))
+    end
+
+    -- Corriger CurrentTeam
+    local clientTeam = GetCurrentTeam()
+    if serverState.team and serverState.team ~= clientTeam then
+        SetCurrentTeam(serverState.team)
+        Utils.Debug('Sync: Team corrigé ' .. tostring(clientTeam) .. ' -> ' .. tostring(serverState.team))
+    end
+end)
+
+-- ==========================================
+-- ✅ P3 #16 : NETTOYAGE FORCÉ AU RESTART RESOURCE
+-- ==========================================
+
+RegisterNetEvent('gdt:client:forceCleanup', function()
+    -- Arrêter le spectateur
+    if exports['gdt_system']:IsInSpectatorMode() then
+        StopSpectatorMode()
+    end
+
+    -- Fermer l'UI
+    CloseUI()
+
+    -- Masquer les zones
+    HideTeamZones()
+
+    -- Reset variables locales
+    SetInGDT(false)
+    SetCurrentTeam(Constants.Teams.NONE)
+end)

@@ -6,6 +6,101 @@
 -- ==========================================
 
 -- ==========================================
+-- ✅ P3 #12 : GESTION RECONNEXION EN MATCH
+-- ==========================================
+
+RegisterNetEvent('esx:playerLoaded', function(playerId, xPlayer)
+    if not xPlayer then return end
+
+    local identifier = xPlayer.identifier
+    if not identifier then return end
+
+    local savedData = GDT.DisconnectedPlayers[identifier]
+    if not savedData then return end
+
+    -- Vérifier que la partie est toujours en cours
+    if not GameManager or not GameManager.gameActive then
+        GDT.DisconnectedPlayers[identifier] = nil
+        return
+    end
+
+    -- Vérifier timeout (5 minutes max)
+    if (os.time() - savedData.disconnectedAt) > 300 then
+        GDT.DisconnectedPlayers[identifier] = nil
+        print('[GDT] Reconnexion expirée pour '..tostring(identifier))
+        return
+    end
+
+    local source = playerId
+    local team = savedData.team
+    local originalOutfit = savedData.originalOutfit
+
+    -- Nettoyer les données de déconnexion
+    GDT.DisconnectedPlayers[identifier] = nil
+
+    print('[GDT] Reconnexion détectée pour '..tostring(source)..' (equipe: '..tostring(team)..')')
+
+    -- Attendre que le client soit prêt
+    Wait(3000)
+
+    -- Remettre dans le bucket GDT
+    local bucket = Config.BucketSettings.startBucket
+    SetPlayerRoutingBucket(source, bucket)
+
+    -- Réajouter à la table GDT
+    AddPlayerToGDT(source, team, bucket, originalOutfit)
+    local playerData = GDT.Players[source]
+
+    -- Déterminer l'état selon le round en cours
+    local mapId = GameManager.currentMapId or Config.DefaultMapId
+    local mapData = Config.Maps[mapId]
+
+    if GameManager.state == Constants.GameState.IN_PROGRESS then
+        -- Round en cours : le joueur revient mort (spectateur)
+        playerData.state = Constants.PlayerState.DEAD_IN_GAME
+
+        -- Appliquer la tenue d'équipe
+        TriggerClientEvent('gdt:client:applyTeamOutfit', source, team)
+        Wait(500)
+
+        -- Téléporter au spawn de son équipe
+        local spawnPos = GetTeamSpawn(mapData, team)
+        if spawnPos then
+            TriggerClientEvent('gdt:client:teleportToSpawn', source, spawnPos)
+        end
+
+        Wait(1000)
+
+        -- Notifier et lancer spectateur
+        TriggerClientEvent('esx:showNotification', source, 'Reconnexion ! Tu es en spectateur pour ce round.')
+        TriggerClientEvent('gdt:client:setCombatZone', source, mapData.combatZone)
+
+        -- Mettre en spectateur (il rejoint vivant au prochain round)
+        Wait(500)
+        TriggerClientEvent('gdt:client:forceSpectator', source, team)
+    elseif GameManager.state == Constants.GameState.ROUND_END or GameManager.state == Constants.GameState.STARTING then
+        -- Entre les rounds : le joueur sera inclus au prochain round
+        playerData.state = Constants.PlayerState.IN_GAME
+
+        TriggerClientEvent('gdt:client:applyTeamOutfit', source, team)
+        Wait(500)
+
+        local spawnPos = GetTeamSpawn(mapData, team)
+        if spawnPos then
+            TriggerClientEvent('gdt:client:teleportToSpawn', source, spawnPos)
+        end
+
+        TriggerClientEvent('esx:showNotification', source, 'Reconnexion ! Tu seras dans le prochain round.')
+    end
+
+    -- Mettre à jour le cache anti-FF
+    UpdateAllTeammatesCache(team)
+
+    TriggerClientEvent('esx:showNotification', source, 'Tu as été reconnecté à la GDT !')
+    LogAction(source, 'RECONNECT', 'Joueur reconnecté en equipe '..tostring(team))
+end)
+
+-- ==========================================
 -- ÉVÉNEMENT : REJOINDRE LE LOBBY
 -- ==========================================
 
@@ -111,6 +206,9 @@ RegisterNetEvent('gdt:server:selectTeam', function(team)
             return TriggerClientEvent('esx:showNotification', source, 'Tu es trop loin de la zone')
         end
     end
+
+    -- ✅ P3 #15 : Mettre à jour l'activité
+    playerData.lastActivity = os.time()
 
     -- ✅ NOUVEAU : Log de l'ancien et du nouvel équipe
     local oldTeam = playerData.team
@@ -327,6 +425,33 @@ RegisterNetEvent('gdt:server:exitSpectator', function()
     local playerData = GDT.Players[source]
     if not playerData then return end
     playerData.spectating = false
+end)
+
+-- ==========================================
+-- ✅ P3 #14 : SYNC PÉRIODIQUE ÉTAT SERVEUR → CLIENT
+-- ==========================================
+-- Le serveur est la source de vérité. Toutes les 10s,
+-- on envoie l'état réel à chaque joueur en GDT pour corriger les desync.
+-- ==========================================
+
+Citizen.CreateThread(function()
+    while true do
+        Wait(10000) -- Toutes les 10 secondes
+
+        for source, data in pairs(GDT.Players) do
+            local inGDT = true
+            local team = data.team
+            local state = data.state
+            local gameActive = GameManager and GameManager.gameActive or false
+
+            TriggerClientEvent('gdt:client:syncState', source, {
+                inGDT = inGDT,
+                team = team,
+                state = state,
+                gameActive = gameActive
+            })
+        end
+    end
 end)
 
 -- ==========================================

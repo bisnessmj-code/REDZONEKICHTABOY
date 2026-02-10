@@ -107,24 +107,25 @@ function ShowFriendlyFireWarning()
 end
 
 function StartFriendlyFireThreads()
+    -- Thread principal : tir + melee
     Citizen.CreateThread(function()
         while FriendlyFireProtection.active do
             UpdateTeammatesCache()
-            
+
             if IsPlayerFreeAiming(PlayerId()) then
                 local success, targetEntity = GetEntityPlayerIsFreeAimingAt(PlayerId())
-                
+
                 if success and targetEntity and targetEntity ~= 0 then
                     if IsEntityAPed(targetEntity) and IsPedAPlayer(targetEntity) then
                         local targetServerId = GetServerIdFromPed(targetEntity)
-                        
+
                         if targetServerId and IsTeammate(targetServerId) then
                             DisablePlayerFiring(PlayerId(), true)
-                            
+
                             if IsControlPressed(0, 24) or IsDisabledControlPressed(0, 24) then
                                 ShowFriendlyFireWarning()
                             end
-                            
+
                             SetEntityCanBeDamaged(targetEntity, false)
                             Citizen.SetTimeout(100, function()
                                 if DoesEntityExist(targetEntity) then
@@ -135,7 +136,7 @@ function StartFriendlyFireThreads()
                     end
                 end
             end
-            
+
             if FFConfig.disableMeleeDamage and IsPedInMeleeCombat(PlayerPedId()) then
                 local meleeTarget = GetMeleeTargetForPed(PlayerPedId())
                 if meleeTarget and meleeTarget ~= 0 and IsPedAPlayer(meleeTarget) then
@@ -146,10 +147,66 @@ function StartFriendlyFireThreads()
                     end
                 end
             end
-            
+
             Wait(50)
         end
     end)
+
+    -- ✅ P3 #13 : Thread véhicule - protection collision coéquipiers
+    if FFConfig.disableVehicleDamage then
+        Citizen.CreateThread(function()
+            while FriendlyFireProtection.active do
+                local myPed = PlayerPedId()
+                local inVehicle = IsPedInAnyVehicle(myPed, false)
+                local hasNearbyTeammateVehicle = false
+
+                -- Vérifier si un coéquipier est dans un véhicule à proximité
+                if not inVehicle then
+                    for teammateId, _ in pairs(FriendlyFireProtection.teammatesCache) do
+                        local playerIndex = GetPlayerFromServerId(teammateId)
+                        if playerIndex ~= -1 then
+                            local teammatePed = GetPlayerPed(playerIndex)
+                            if teammatePed and teammatePed ~= 0 and DoesEntityExist(teammatePed) then
+                                if IsPedInAnyVehicle(teammatePed, false) then
+                                    hasNearbyTeammateVehicle = true
+                                    break
+                                end
+                            end
+                        end
+                    end
+                end
+
+                if inVehicle or hasNearbyTeammateVehicle then
+                    local myVehicle = inVehicle and GetVehiclePedIsIn(myPed, false) or nil
+
+                    for teammateId, _ in pairs(FriendlyFireProtection.teammatesCache) do
+                        local playerIndex = GetPlayerFromServerId(teammateId)
+                        if playerIndex ~= -1 then
+                            local teammatePed = GetPlayerPed(playerIndex)
+                            if teammatePed and teammatePed ~= 0 and DoesEntityExist(teammatePed) then
+                                -- Si je suis en véhicule : désactiver collision avec les peds coéquipiers
+                                if myVehicle and myVehicle ~= 0 then
+                                    SetEntityNoCollisionEntity(myVehicle, teammatePed, true)
+                                end
+
+                                -- Si un coéquipier est en véhicule : désactiver collision avec moi
+                                if IsPedInAnyVehicle(teammatePed, false) then
+                                    local teammateVehicle = GetVehiclePedIsIn(teammatePed, false)
+                                    if teammateVehicle and teammateVehicle ~= 0 then
+                                        SetEntityNoCollisionEntity(teammateVehicle, myPed, true)
+                                    end
+                                end
+                            end
+                        end
+                    end
+
+                    Wait(0) -- Chaque frame pour les collisions véhicule
+                else
+                    Wait(500) -- Idle : pas de véhicule impliqué
+                end
+            end
+        end)
+    end
 end
 
 -- ==========================================

@@ -915,6 +915,17 @@ Config.Spectator = {
 }
 
 -- ==========================================
+-- ✅ P3 #15 : TIMEOUT AFK
+-- ==========================================
+
+Config.AFKTimeout = {
+    enabled = true,
+    lobbyTimeout = 300,     -- 5 minutes en lobby sans choisir d'équipe
+    teamTimeout = 600,      -- 10 minutes en équipe sans que la partie démarre
+    checkInterval = 30      -- Vérification toutes les 30 secondes
+}
+
+-- ==========================================
 -- ANTI-FRIENDLY FIRE
 -- ==========================================
 

@@ -8,9 +8,10 @@ ESX = exports["es_extended"]:getSharedObject()
 
 -- Tables de stockage en mémoire
 GDT = {
-    Players = {},          -- { [source] = { team, bucket, originalOutfit, state } }
-    Buckets = {},          -- { [bucketId] = { players = {}, createdAt } }
-    Cooldowns = {}         -- { [source] = lastActionTime }
+    Players = {},              -- { [source] = { team, bucket, originalOutfit, state } }
+    Buckets = {},              -- { [bucketId] = { players = {}, createdAt } }
+    Cooldowns = {},            -- { [source] = lastActionTime }
+    DisconnectedPlayers = {}   -- ✅ P3 #12 : { [identifier] = { team, originalOutfit, disconnectedAt } }
 }
 
 -- ==========================================
@@ -19,14 +20,30 @@ GDT = {
 
 AddEventHandler('onResourceStart', function(resourceName)
     if GetCurrentResourceName() ~= resourceName then return end
-    
+
     -- Comptage des zones
     local zoneCount = 0
     for _ in pairs(Config.TeamZones) do
         zoneCount = zoneCount + 1
     end
 
-    
+    -- ✅ P3 #16 : Nettoyage des joueurs qui étaient en GDT avant le restart
+    -- GameManager est déjà ré-initialisé (WAITING) par le rechargement Lua,
+    -- mais les joueurs peuvent être coincés dans le bucket 1000.
+    local gdtBucket = Config.BucketSettings.startBucket
+    for _, playerId in ipairs(GetPlayers()) do
+        local src = tonumber(playerId)
+        if src then
+            local currentBucket = GetPlayerRoutingBucket(src)
+            if currentBucket == gdtBucket then
+                print('[GDT] Restart: joueur '..tostring(src)..' était en bucket GDT, nettoyage...')
+                SetPlayerRoutingBucket(src, 0)
+                TriggerClientEvent('gdt:client:forceCleanup', src)
+                TriggerClientEvent('esx:showNotification', src, 'La GDT a été redémarrée. Tu as été remis en jeu.')
+            end
+        end
+    end
+
     -- Initialisation du bucket global unique
     InitializeGlobalBucket()
 end)
@@ -51,8 +68,28 @@ end)
 
 AddEventHandler('playerDropped', function(reason)
     local source = source
-    
+
     if GDT.Players[source] then
+        -- ✅ P3 #12 : Sauvegarder les données si partie en cours
+        local playerData = GDT.Players[source]
+        if GameManager and GameManager.gameActive and
+           (playerData.state == Constants.PlayerState.IN_GAME or
+            playerData.state == Constants.PlayerState.DEAD_IN_GAME or
+            playerData.state == Constants.PlayerState.SPECTATING) then
+
+            local xPlayer = ESX.GetPlayerFromId(source)
+            if xPlayer then
+                local identifier = xPlayer.identifier
+                GDT.DisconnectedPlayers[identifier] = {
+                    team = playerData.team,
+                    originalOutfit = playerData.originalOutfit,
+                    disconnectedAt = os.time(),
+                    playerName = GetPlayerName(source) or 'Inconnu'
+                }
+                print('[GDT] Joueur '..tostring(source)..' sauvegardé pour reconnexion (equipe: '..tostring(playerData.team)..')')
+            end
+        end
+
         RemovePlayerFromGDT(source, true, false)
     end
 end)
@@ -107,6 +144,7 @@ function AddPlayerToGDT(source, team, bucket, originalOutfit)
         originalOutfit = originalOutfit,
         state = Constants.PlayerState.IN_LOBBY,
         joinedAt = os.time(),
+        lastActivity = os.time(), -- ✅ P3 #15 : Tracker AFK
         spectating = false
     }
     
@@ -303,3 +341,45 @@ function CountPlayersInTeam(team)
     end
     return count
 end
+
+-- ==========================================
+-- ✅ P3 #15 : THREAD AFK TIMEOUT
+-- ==========================================
+
+Citizen.CreateThread(function()
+    while true do
+        Wait((Config.AFKTimeout and Config.AFKTimeout.checkInterval or 30) * 1000)
+
+        if not Config.AFKTimeout or not Config.AFKTimeout.enabled then
+            goto continue
+        end
+
+        -- Ne pas kicker pendant une partie
+        if GameManager and GameManager.gameActive then
+            goto continue
+        end
+
+        local now = os.time()
+        local toKick = {}
+
+        for source, data in pairs(GDT.Players) do
+            local lastActivity = data.lastActivity or data.joinedAt or now
+            local elapsed = now - lastActivity
+
+            if data.state == Constants.PlayerState.IN_LOBBY and elapsed > Config.AFKTimeout.lobbyTimeout then
+                table.insert(toKick, { source = source, reason = 'AFK en lobby ('..elapsed..'s)' })
+            elseif (data.state == Constants.PlayerState.IN_TEAM_RED or data.state == Constants.PlayerState.IN_TEAM_BLUE)
+                   and elapsed > Config.AFKTimeout.teamTimeout then
+                table.insert(toKick, { source = source, reason = 'AFK en equipe ('..elapsed..'s)' })
+            end
+        end
+
+        for _, kick in ipairs(toKick) do
+            print('[GDT] AFK Kick: joueur '..tostring(kick.source)..' - '..kick.reason)
+            TriggerClientEvent('esx:showNotification', kick.source, 'Tu as été retiré de la GDT (inactivité)')
+            RemovePlayerFromGDT(kick.source, false, false)
+        end
+
+        ::continue::
+    end
+end)
