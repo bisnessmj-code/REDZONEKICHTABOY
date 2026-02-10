@@ -638,7 +638,7 @@ RegisterCommand('gtquit', function(source)
 end, false)
 
 -- ==========================================
--- COMMANDE : /gteqlist (Nombre de joueurs par équipe)
+-- COMMANDE : /gteqlist (Toggle liste équipes persistante)
 -- ==========================================
 
 RegisterCommand('gteqlist', function(source)
@@ -647,23 +647,66 @@ RegisterCommand('gteqlist', function(source)
         return TriggerClientEvent('esx:showNotification', source, Config.Notifications.noPermission)
     end
 
-    -- Compter les joueurs par équipe
-    local redCount = 0
-    local blueCount = 0
-    local lobbyCount = 0
+    -- Envoyer le toggle au client (le client gère l'état on/off)
+    TriggerClientEvent('gdt:client:toggleTeamList', source)
+end, false)
+
+-- ==========================================
+-- ÉVÉNEMENT : Demande de données pour la liste d'équipes
+-- ==========================================
+
+RegisterNetEvent('gdt:server:requestTeamList', function()
+    local source = source
+
+    -- Collecter les données de chaque équipe
+    local redPlayers = {}
+    local bluePlayers = {}
+    local lobbyPlayers = {}
 
     for playerId, data in pairs(GDT.Players) do
+        local name = GetPlayerName(playerId) or 'Inconnu'
+        local stateLabel = ''
+
+        if data.state == Constants.PlayerState.IN_GAME then
+            stateLabel = 'EN JEU'
+        elseif data.state == Constants.PlayerState.DEAD_IN_GAME then
+            stateLabel = 'MORT'
+        elseif data.state == Constants.PlayerState.SPECTATING then
+            stateLabel = 'SPEC'
+        elseif data.state == Constants.PlayerState.IN_LOBBY then
+            stateLabel = 'LOBBY'
+        elseif data.state == Constants.PlayerState.IN_TEAM_RED or data.state == Constants.PlayerState.IN_TEAM_BLUE then
+            stateLabel = 'PRET'
+        end
+
+        local entry = { id = playerId, name = name, state = stateLabel }
+
         if data.team == Constants.Teams.RED then
-            redCount = redCount + 1
+            table.insert(redPlayers, entry)
         elseif data.team == Constants.Teams.BLUE then
-            blueCount = blueCount + 1
+            table.insert(bluePlayers, entry)
         else
-            lobbyCount = lobbyCount + 1
+            table.insert(lobbyPlayers, entry)
         end
     end
 
-    -- Envoyer l'affichage au client (notification au-dessus de la minimap)
-    TriggerClientEvent('gdt:client:showTeamCount', source, redCount, blueCount, lobbyCount)
+    -- Infos partie
+    local gameInfo = nil
+    if GameManager and GameManager.gameActive then
+        local mapName = GameManager.currentMapId and Config.Maps[GameManager.currentMapId] and Config.Maps[GameManager.currentMapId].name or 'N/A'
+        gameInfo = {
+            round = GameManager.currentRound,
+            maxRounds = Config.GameSettings.maxRounds,
+            scoreRed = GameManager.scores.red,
+            scoreBlue = GameManager.scores.blue,
+            mapName = mapName
+        }
+    end
 
-    LogAction(source, 'ADMIN_EQUIPELIST', 'Rouge: '..redCount..' | Bleu: '..blueCount..' | Lobby: '..lobbyCount)
-end, false)
+    TriggerClientEvent('gdt:client:updateTeamList', source, {
+        red = redPlayers,
+        blue = bluePlayers,
+        lobby = lobbyPlayers,
+        gameInfo = gameInfo
+    })
+end)

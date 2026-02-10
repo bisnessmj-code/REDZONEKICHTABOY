@@ -150,6 +150,35 @@
     <!-- Killfeed -->
     <div id="killfeed-container"></div>
 
+    <!-- Team List Panel (bas gauche - toggle /gteqlist) -->
+    <div id="teamlist-panel" class="hidden">
+        <div class="teamlist-header">
+            <span class="teamlist-title">EQUIPES GDT</span>
+            <span class="teamlist-game-info" id="teamlist-game-info"></span>
+        </div>
+        <div class="teamlist-body">
+            <div class="teamlist-column teamlist-red">
+                <div class="teamlist-col-header">
+                    <span class="teamlist-dot red-dot"></span>
+                    <span>ROUGE</span>
+                    <span class="teamlist-count" id="teamlist-red-count">0</span>
+                </div>
+                <div class="teamlist-players" id="teamlist-red-players"></div>
+            </div>
+            <div class="teamlist-column teamlist-blue">
+                <div class="teamlist-col-header">
+                    <span class="teamlist-dot blue-dot"></span>
+                    <span>BLEU</span>
+                    <span class="teamlist-count" id="teamlist-blue-count">0</span>
+                </div>
+                <div class="teamlist-players" id="teamlist-blue-players"></div>
+            </div>
+        </div>
+        <div class="teamlist-lobby" id="teamlist-lobby-section">
+            <span class="teamlist-lobby-label">LOBBY: <span id="teamlist-lobby-count">0</span></span>
+        </div>
+    </div>
+
     <!-- HUD Spectateur - New Professional Style -->
     <div id="spectator-hud" class="hidden">
         <div class="spectator-header">

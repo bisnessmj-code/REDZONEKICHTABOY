@@ -149,3 +149,45 @@ end
 function GetCurrentTeam()
     return CurrentTeam
 end
+
+-- ==========================================
+-- TEAM LIST PERSISTANTE (toggle /gteqlist)
+-- ==========================================
+
+local TeamListActive = false
+
+RegisterNetEvent('gdt:client:toggleTeamList', function()
+    TeamListActive = not TeamListActive
+
+    if TeamListActive then
+        -- Demander les données immédiatement
+        TriggerServerEvent('gdt:server:requestTeamList')
+        ESX.ShowNotification('Liste des équipes activée')
+
+        -- Thread de refresh toutes les 5s
+        Citizen.CreateThread(function()
+            while TeamListActive do
+                Wait(5000)
+                if TeamListActive then
+                    TriggerServerEvent('gdt:server:requestTeamList')
+                end
+            end
+        end)
+    else
+        -- Masquer le panel NUI
+        SendNUIMessage({ action = 'hideTeamList' })
+        ESX.ShowNotification('Liste des équipes désactivée')
+    end
+end)
+
+RegisterNetEvent('gdt:client:updateTeamList', function(data)
+    if not TeamListActive then return end
+
+    SendNUIMessage({
+        action = 'showTeamList',
+        red = data.red,
+        blue = data.blue,
+        lobby = data.lobby,
+        gameInfo = data.gameInfo
+    })
+end)

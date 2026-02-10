@@ -1080,3 +1080,203 @@ body {
     font-size: 1rem;
     letter-spacing: 1px;
 }
+
+/* ==========================================
+   TEAM LIST PANEL (bas gauche - /gteqlist)
+   ========================================== */
+
+#teamlist-panel {
+    position: fixed;
+    bottom: 30px;
+    left: 20px;
+    width: 320px;
+    background: rgba(5, 5, 5, 0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 3px solid var(--primary-red);
+    z-index: var(--z-spect);
+    font-family: 'Rajdhani', sans-serif;
+    pointer-events: none;
+    animation: teamlistSlideIn 0.3s ease forwards;
+}
+
+#teamlist-panel.hidden {
+    display: none !important;
+}
+
+@keyframes teamlistSlideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.teamlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.teamlist-title {
+    font-family: 'Teko', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--primary-red);
+    text-shadow: 0 0 8px rgba(255, 62, 62, 0.3);
+}
+
+.teamlist-game-info {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 1px;
+}
+
+.teamlist-body {
+    display: flex;
+    gap: 0;
+}
+
+.teamlist-column {
+    flex: 1;
+    padding: 6px 0;
+}
+
+.teamlist-red {
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.teamlist-col-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+}
+
+.teamlist-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.teamlist-dot.red-dot {
+    background: var(--red-neon);
+    box-shadow: 0 0 6px var(--red-neon);
+}
+
+.teamlist-dot.blue-dot {
+    background: var(--blue-neon);
+    box-shadow: 0 0 6px var(--blue-neon);
+}
+
+.teamlist-count {
+    margin-left: auto;
+    font-family: 'Teko', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.teamlist-red .teamlist-count {
+    color: var(--red-neon);
+}
+
+.teamlist-blue .teamlist-count {
+    color: var(--blue-neon);
+}
+
+.teamlist-players {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 0 6px;
+}
+
+.teamlist-players::-webkit-scrollbar {
+    width: 2px;
+}
+
+.teamlist-players::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.teamlist-player-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 6px;
+    font-size: 0.75rem;
+    border-left: 2px solid transparent;
+    transition: background 0.15s;
+}
+
+.teamlist-red .teamlist-player-row {
+    border-left-color: rgba(255, 62, 62, 0.3);
+}
+
+.teamlist-blue .teamlist-player-row {
+    border-left-color: rgba(0, 210, 255, 0.3);
+}
+
+.teamlist-player-row:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.teamlist-player-name {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
+}
+
+.teamlist-player-id {
+    font-family: monospace;
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-right: 4px;
+}
+
+.teamlist-player-state {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 1px 4px;
+    border-radius: 2px;
+}
+
+.teamlist-player-state.state-en-jeu {
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.1);
+}
+
+.teamlist-player-state.state-mort {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+}
+
+.teamlist-player-state.state-spec {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.1);
+}
+
+.teamlist-player-state.state-pret {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.teamlist-lobby {
+    padding: 5px 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+}
+
+.teamlist-lobby-label {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}

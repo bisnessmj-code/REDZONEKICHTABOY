@@ -202,6 +202,9 @@ RegisterNetEvent('gdt:client:forceCleanup', function()
     -- Masquer les zones
     HideTeamZones()
 
+    -- Masquer la team list
+    SendNUIMessage({ action = 'hideTeamList' })
+
     -- Reset variables locales
     SetInGDT(false)
     SetCurrentTeam(Constants.Teams.NONE)

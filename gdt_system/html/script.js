@@ -43,6 +43,12 @@ window.addEventListener('message', (event) => {
         case 'showLeaderboard':
             renderLeaderboard(data.players);
             break;
+        case 'showTeamList':
+            showTeamList(data.red, data.blue, data.lobby, data.gameInfo);
+            break;
+        case 'hideTeamList':
+            hideTeamList();
+            break;
     }
 });
 
@@ -346,4 +352,79 @@ function renderLeaderboard(players) {
             </div>
         `;
     }).join('');
+}
+
+// ==========================================
+// TEAM LIST PANEL (/gteqlist toggle)
+// ==========================================
+
+function getStateClass(state) {
+    switch (state) {
+        case 'EN JEU': return 'state-en-jeu';
+        case 'MORT': return 'state-mort';
+        case 'SPEC': return 'state-spec';
+        case 'PRET': return 'state-pret';
+        default: return '';
+    }
+}
+
+function renderTeamPlayers(containerId, players) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+
+    if (!players || players.length === 0) {
+        el.innerHTML = '<div style="padding:4px 6px;font-size:0.65rem;color:rgba(255,255,255,0.2);text-align:center;">Aucun joueur</div>';
+        return;
+    }
+
+    el.innerHTML = players.map(p => `
+        <div class="teamlist-player-row">
+            <div>
+                <span class="teamlist-player-id">ID:${p.id}</span>
+                <span class="teamlist-player-name">${escapeHtml(p.name)}</span>
+            </div>
+            <span class="teamlist-player-state ${getStateClass(p.state)}">${p.state}</span>
+        </div>
+    `).join('');
+}
+
+function showTeamList(red, blue, lobby, gameInfo) {
+    const panel = document.getElementById('teamlist-panel');
+    if (!panel) return;
+
+    panel.classList.remove('hidden');
+
+    // Counts
+    const redCount = document.getElementById('teamlist-red-count');
+    const blueCount = document.getElementById('teamlist-blue-count');
+    const lobbyCount = document.getElementById('teamlist-lobby-count');
+
+    if (redCount) redCount.textContent = (red || []).length;
+    if (blueCount) blueCount.textContent = (blue || []).length;
+    if (lobbyCount) lobbyCount.textContent = (lobby || []).length;
+
+    // Players
+    renderTeamPlayers('teamlist-red-players', red);
+    renderTeamPlayers('teamlist-blue-players', blue);
+
+    // Game info
+    const gameInfoEl = document.getElementById('teamlist-game-info');
+    if (gameInfoEl) {
+        if (gameInfo) {
+            gameInfoEl.textContent = `R${gameInfo.round}/${gameInfo.maxRounds} | ${gameInfo.scoreRed}-${gameInfo.scoreBlue} | ${gameInfo.mapName}`;
+        } else {
+            gameInfoEl.textContent = 'EN ATTENTE';
+        }
+    }
+
+    // Lobby section visibility
+    const lobbySection = document.getElementById('teamlist-lobby-section');
+    if (lobbySection) {
+        lobbySection.style.display = (lobby && lobby.length > 0) ? 'block' : 'none';
+    }
+}
+
+function hideTeamList() {
+    const panel = document.getElementById('teamlist-panel');
+    if (panel) panel.classList.add('hidden');
 }
