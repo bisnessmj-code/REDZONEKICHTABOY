@@ -24,8 +24,9 @@ function StartSpectatorMode(team)
     SpectatorMode.currentIndex = 1
     SpectatorMode.targetPlayerId = nil
 
+    -- ✅ P1 #6 : Notifier le serveur de l'entrée en spectateur
+    TriggerServerEvent('gdt:server:enterSpectator')
 
-    
     -- Demander la liste des coéquipiers vivants
     TriggerServerEvent('gdt:server:requestAliveTeammates', team)
     
@@ -38,6 +39,9 @@ end
 -- ==========================================
 
 function StopSpectatorMode()
+    -- ✅ P1 #6 : Toujours notifier le serveur même si déjà inactif client-side
+    TriggerServerEvent('gdt:server:exitSpectator')
+
     if not SpectatorMode.active then return end
     
     -- Arrêter de spectater

@@ -32,7 +32,8 @@ function ShowTeamZones()
             local distanceBlue = #(playerCoords - blueZone.coords)
             
             -- Si proche d'une zone
-            if distanceRed < Constants.Limits.MARKER_DRAW_DISTANCE or distanceBlue < Constants.Limits.MARKER_DRAW_DISTANCE then
+            local minDistance = math.min(distanceRed, distanceBlue)
+            if minDistance < Constants.Limits.MARKER_DRAW_DISTANCE then
                 sleep = 0
                 
                 -- Marker rouge
@@ -86,8 +87,10 @@ function ShowTeamZones()
                 else
                     InBlueZone = false
                 end
+            elseif minDistance < Constants.Limits.MARKER_DRAW_DISTANCE * 2 then
+                sleep = 200 -- Palier intermediaire pour transition douce
             end
-            
+
             Wait(sleep)
         end
     end)

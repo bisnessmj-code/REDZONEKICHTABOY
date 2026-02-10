@@ -42,23 +42,23 @@ function Permissions.IsAdmin(source)
     
     -- ==========================================
     -- MÉTHODE 3 : Vérification BDD Directe (BACKUP)
+    -- ✅ FIX P0 #3 : MySQL.Sync au lieu de MySQL.Async
     -- ==========================================
     local identifier = xPlayer.getIdentifier()
-    
+
     if identifier then
-        MySQL.Async.fetchScalar('SELECT `group` FROM users WHERE identifier = @identifier', {
+        local dbGroup = MySQL.Sync.fetchScalar('SELECT `group` FROM users WHERE identifier = @identifier', {
             ['@identifier'] = identifier
-        }, function(dbGroup)
-            if dbGroup then
-                
-                for _, allowedGroup in ipairs(Config.AdminPermissions.allowedGroups) do
-                    if dbGroup == allowedGroup then
-                    end
+        })
+        if dbGroup then
+            for _, allowedGroup in ipairs(Config.AdminPermissions.allowedGroups) do
+                if dbGroup == allowedGroup then
+                    return true
                 end
             end
-        end)
+        end
     end
-    
+
     return false
 end
 

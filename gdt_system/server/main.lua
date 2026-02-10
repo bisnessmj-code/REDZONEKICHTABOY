@@ -106,7 +106,8 @@ function AddPlayerToGDT(source, team, bucket, originalOutfit)
         bucket = bucket,
         originalOutfit = originalOutfit,
         state = Constants.PlayerState.IN_LOBBY,
-        joinedAt = os.time()
+        joinedAt = os.time(),
+        spectating = false
     }
     
     -- Ajout au bucket global

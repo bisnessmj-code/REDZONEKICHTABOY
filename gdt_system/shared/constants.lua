@@ -11,7 +11,8 @@ Constants.PlayerState = {
     IN_TEAM_RED = 2,
     IN_TEAM_BLUE = 3,
     IN_GAME = 4,
-    DEAD_IN_GAME = 5
+    DEAD_IN_GAME = 5,
+    SPECTATING = 6
 }
 
 -- États du jeu

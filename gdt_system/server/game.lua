@@ -232,6 +232,8 @@ function StartRound()
         if spawnPos then
             TriggerClientEvent('gdt:client:teleportToSpawn', player.source, spawnPos)
         else
+            print('[GDT] ERREUR: Spawn introuvable pour joueur '..tostring(player.source)..' (equipe: '..tostring(player.team)..')')
+            TriggerClientEvent('esx:showNotification', player.source, 'Erreur: spawn introuvable, contacte un admin')
         end
     end
     
@@ -382,22 +384,21 @@ end
 function CheckRoundEnd()
     -- ✅ PROTECTION : éviter double-exécution
     if GameManager.roundLocked then
-       
         return
     end
-    
+
+    -- ✅ FIX P0 #1 : Lock IMMEDIAT pour éviter race condition
+    GameManager.roundLocked = true
+
     local redAlive = #GameManager.alivePlayers.red
     local blueAlive = #GameManager.alivePlayers.blue
-    
 
     local winner = nil
-    
+
     if redAlive == 0 and blueAlive == 0 then
         if GameManager.lastWinner then
-           
             winner = GameManager.lastWinner
         else
-      
             winner = 'draw'
         end
     elseif redAlive == 0 and blueAlive > 0 then
@@ -407,14 +408,11 @@ function CheckRoundEnd()
         winner = Constants.Teams.RED
         GameManager.lastWinner = Constants.Teams.RED
     else
+        -- Pas de gagnant, débloquer le round
+        GameManager.roundLocked = false
         return
     end
-    
-    -- ✅ LOCK le round pour éviter double-appel
-    GameManager.roundLocked = true
-    
-   
-    
+
     EndRound(winner)
 end
 

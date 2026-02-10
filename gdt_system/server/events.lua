@@ -95,11 +95,31 @@ RegisterNetEvent('gdt:server:selectTeam', function(team)
         local message = string.format(Config.Notifications.teamFull, teamCount, Config.MaxPlayersPerTeam)
         return TriggerClientEvent('esx:showNotification', source, message)
     end
-    
+
+    -- ✅ P1 #4 : Bloquer si partie en cours
+    if GameManager and GameManager.gameActive then
+        return TriggerClientEvent('esx:showNotification', source, 'Impossible de changer d\'équipe en pleine partie')
+    end
+
+    -- ✅ P1 #4 : Validation de position serveur (tolérance 10m pour lag réseau)
+    local ped = GetPlayerPed(source)
+    if ped and ped ~= 0 then
+        local playerCoords = GetEntityCoords(ped)
+        local zoneCoords = Config.TeamZones[team].coords
+        local distance = #(playerCoords - zoneCoords)
+        if distance > 10.0 then
+            return TriggerClientEvent('esx:showNotification', source, 'Tu es trop loin de la zone')
+        end
+    end
+
     -- ✅ NOUVEAU : Log de l'ancien et du nouvel équipe
     local oldTeam = playerData.team
-    
-    
+
+    -- ✅ P1 #5 : Bloquer si déjà dans cette équipe
+    if playerData.team == team then
+        return TriggerClientEvent('esx:showNotification', source, 'Tu es déjà dans cette équipe')
+    end
+
     -- Changement d'équipe
     if not ChangePlayerTeam(source, team) then return end
     
@@ -288,6 +308,26 @@ function UpdateAllTeammatesCache(team)
     
     
 end
+
+-- ==========================================
+-- ✅ P1 #6 : ÉVÉNEMENTS SPECTATEUR SERVER-SIDE
+-- ==========================================
+
+RegisterNetEvent('gdt:server:enterSpectator', function()
+    local source = source
+    local playerData = GDT.Players[source]
+    if not playerData then return end
+    if not GameManager or not GameManager.gameActive then return end
+    playerData.spectating = true
+    playerData.state = Constants.PlayerState.SPECTATING
+end)
+
+RegisterNetEvent('gdt:server:exitSpectator', function()
+    local source = source
+    local playerData = GDT.Players[source]
+    if not playerData then return end
+    playerData.spectating = false
+end)
 
 -- ==========================================
 -- EXPORTS GLOBAUX

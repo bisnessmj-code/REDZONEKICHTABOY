@@ -177,17 +177,19 @@ Citizen.CreateThread(function()
                     255, 165, 0, 100, -- Orange
                     false, true, 2, nil, nil, false
                 )
-                
+
                 -- Si très proche
                 if distance < Constants.Limits.MAX_DISTANCE_CHECK then
                     -- Afficher le texte d'aide
                     ESX.ShowHelpNotification('Appuie sur ~INPUT_CONTEXT~ pour ouvrir le menu GDT')
-                    
+
                     -- Vérifier l'input
                     if IsControlJustPressed(0, 38) then -- E
                         OpenUI()
                     end
                 end
+            elseif distance < Constants.Limits.MARKER_DRAW_DISTANCE * 2 then
+                sleep = 200 -- Palier intermediaire pour transition douce
             end
         end
         

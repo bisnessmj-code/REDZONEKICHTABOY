@@ -147,7 +147,7 @@ function StartFriendlyFireThreads()
                 end
             end
             
-            Wait(0)
+            Wait(50)
         end
     end)
 end

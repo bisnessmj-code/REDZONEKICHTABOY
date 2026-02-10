@@ -24,7 +24,7 @@ Config.ExitLocation = vector4(-5805.099121, -917.709900, 505.068115, 90.708656)
 
 Config.TeamZones = {
     red = {
-        coords = vector3(-1421.182373, -2821.081299, 431.114258),
+        coords = vector3(-1456.628540, -2805.243896, 431.114258),
         color = {r = 0, g = 0, b = 0, a = 200},
         radius = 2.0,
         label = "équipe Rouge"
