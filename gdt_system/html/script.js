@@ -333,25 +333,50 @@ function renderLeaderboard(players) {
     if (!list) return;
 
     if (!players || players.length === 0) {
-        list.innerHTML = '<div class="leaderboard-empty">Aucun joueur classe pour le moment</div>';
+        // Reset podium
+        updatePodiumSlot('lb-slot-1', '---', 0);
+        updatePodiumSlot('lb-slot-2', '---', 0);
+        updatePodiumSlot('lb-slot-3', '---', 0);
+        list.innerHTML = '<div class="lb-empty">Aucun joueur classe pour le moment</div>';
         return;
     }
 
-    list.innerHTML = players.map((p, i) => {
-        const rank = i + 1;
-        let medalClass = '';
-        if (rank === 1) medalClass = 'gold';
-        else if (rank === 2) medalClass = 'silver';
-        else if (rank === 3) medalClass = 'bronze';
+    // Podium Top 3
+    updatePodiumSlot('lb-slot-1', players[0] ? players[0].name : '---', players[0] ? players[0].kills : 0);
+    updatePodiumSlot('lb-slot-2', players[1] ? players[1].name : '---', players[1] ? players[1].kills : 0);
+    updatePodiumSlot('lb-slot-3', players[2] ? players[2].name : '---', players[2] ? players[2].kills : 0);
 
+    // Liste #4+
+    const rest = players.slice(3);
+
+    if (rest.length === 0) {
+        list.innerHTML = '<div class="lb-empty">Pas assez de joueurs pour la liste</div>';
+        return;
+    }
+
+    list.innerHTML = rest.map((p, i) => {
+        const rank = i + 4;
+        const delay = Math.min(i * 0.04, 0.8);
         return `
-            <div class="leaderboard-row ${medalClass}">
-                <div class="leaderboard-rank">${rank <= 3 ? '<i class="fas fa-crown"></i>' : '#' + rank}</div>
-                <div class="leaderboard-name">${escapeHtml(p.name)}</div>
-                <div class="leaderboard-kills">${p.kills} <span>KILLS</span></div>
+            <div class="lb-row" style="animation-delay:${delay}s">
+                <div class="lb-row-rank">#${rank}</div>
+                <div class="lb-row-avatar"><i class="fas fa-user"></i></div>
+                <div class="lb-row-name">${escapeHtml(p.name)}</div>
+                <div class="lb-row-kills">${p.kills}<span class="lb-row-kills-label">KILLS</span></div>
             </div>
         `;
     }).join('');
+}
+
+function updatePodiumSlot(slotId, name, kills) {
+    const slot = document.getElementById(slotId);
+    if (!slot) return;
+
+    const nameEl = slot.querySelector('.lb-podium-name');
+    const killsEl = slot.querySelector('.lb-podium-kills');
+
+    if (nameEl) nameEl.textContent = name ? escapeHtml(name) : '---';
+    if (killsEl) killsEl.textContent = kills || 0;
 }
 
 // ==========================================

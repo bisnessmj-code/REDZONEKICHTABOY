@@ -19,9 +19,6 @@
                 <!-- Titre -->
                 <h1 class="title">GUERRE DE TERRITOIRE</h1>
                 
-                <!-- Mode de jeu -->
-                <div class="mode-badge">16 VS 16</div>
-                
                 <!-- Bouton rejoindre -->
                 <button class="btn-join" id="joinLobbyBtn">
                     <span class="btn-text">REJOINDRE</span>
@@ -60,14 +57,55 @@
 
             <!-- Panneau Classement (dans la tablette) -->
             <div id="leaderboard-panel" class="leaderboard-panel hidden">
-                <div class="leaderboard-header">
-                    <button class="leaderboard-back" id="leaderboardBack">
-                        <i class="fas fa-arrow-left"></i>
+                <div class="lb-top-bar">
+                    <button class="lb-back-btn" id="leaderboardBack">
+                        <i class="fas fa-chevron-left"></i>
                     </button>
-                    <h2><i class="fas fa-trophy"></i> CLASSEMENT TOP 20</h2>
+                    <div class="lb-title-wrap">
+                        <span class="lb-label">CLASSEMENT</span>
+                        <span class="lb-subtitle">TOP KILLERS - GLOBAL</span>
+                    </div>
                 </div>
-                <div class="leaderboard-list" id="leaderboard-list">
-                    <div class="leaderboard-loading">Chargement...</div>
+
+                <!-- Podium Top 3 -->
+                <div class="lb-podium" id="lb-podium">
+                    <div class="lb-podium-slot lb-second" id="lb-slot-2">
+                        <div class="lb-podium-avatar"><i class="fas fa-user"></i></div>
+                        <div class="lb-podium-name">---</div>
+                        <div class="lb-podium-kills">0</div>
+                        <div class="lb-podium-bar">
+                            <span class="lb-podium-rank">2</span>
+                        </div>
+                    </div>
+                    <div class="lb-podium-slot lb-first" id="lb-slot-1">
+                        <div class="lb-crown"><i class="fas fa-crown"></i></div>
+                        <div class="lb-podium-avatar lb-avatar-gold"><i class="fas fa-user"></i></div>
+                        <div class="lb-podium-name">---</div>
+                        <div class="lb-podium-kills">0</div>
+                        <div class="lb-podium-bar lb-bar-gold">
+                            <span class="lb-podium-rank">1</span>
+                        </div>
+                    </div>
+                    <div class="lb-podium-slot lb-third" id="lb-slot-3">
+                        <div class="lb-podium-avatar"><i class="fas fa-user"></i></div>
+                        <div class="lb-podium-name">---</div>
+                        <div class="lb-podium-kills">0</div>
+                        <div class="lb-podium-bar">
+                            <span class="lb-podium-rank">3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ligne de séparation -->
+                <div class="lb-divider">
+                    <div class="lb-divider-line"></div>
+                    <span class="lb-divider-text">CLASSEMENT COMPLET</span>
+                    <div class="lb-divider-line"></div>
+                </div>
+
+                <!-- Liste #4+ -->
+                <div class="lb-list" id="leaderboard-list">
+                    <div class="lb-loading">Chargement...</div>
                 </div>
             </div>
         </div>
