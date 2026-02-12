@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>CatMouse Racing</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/race-hud.css">
+    <link rel="stylesheet" href="css/round-transition.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- INTERFACE PRINCIPALE (MENU) -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div id="main-ui" class="main-ui hidden">
+        <div class="ui-background"></div>
+        
+        <div class="ui-container">
+            <header class="ui-header">
+                <h1 class="ui-title" id="ui-title">JEU DE COURSE</h1>
+                <p class="ui-subtitle" id="ui-subtitle">CHASSEUR VS FUYARD</p>
+            </header>
+            
+            <main class="ui-content">
+
+               <!-- Invitation -->
+                <section class="invite-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-user-plus"></i>
+                        INVITER UN JOUEUR
+                    </h2>
+                    <div class="invite-form">
+                        <input 
+                            type="number" 
+                            id="player-id-input" 
+                            class="input-field" 
+                            placeholder="ID du joueur..."
+                            min="1"
+                            autocomplete="off"
+                        >
+                        <button id="send-invite-btn" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            ENVOYER
+                        </button>
+                    </div>
+                </section>
+                
+                <!-- Matchmaking -->
+                <section class="queue-section" id="queue-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-search"></i>
+                        MATCHMAKING
+                    </h2>
+                    <div class="queue-controls">
+                        <button id="join-queue-btn" class="btn btn-primary">
+                            <i class="fas fa-play"></i>
+                            REJOINDRE LA FILE
+                        </button>
+                        <div id="queue-status" class="queue-status hidden">
+                            <div class="queue-spinner"></div>
+                            <span class="queue-text">Recherche en cours...</span>
+                            <button id="leave-queue-btn" class="btn btn-secondary btn-small">
+                                <i class="fas fa-times"></i>
+                                ANNULER
+                            </button>
+                        </div>
+                    </div>
+                </section>
+                <!-- Règlement -->
+                <section class="rules-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-book"></i>
+                        RÈGLEMENT
+                    </h2>
+                    <div class="rules-list" id="rules-list"></div>
+                </section>
+                
+               
+            </main>
+            
+            <footer class="ui-footer">
+                <button id="close-ui-btn" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    FERMER
+                </button>
+            </footer>
+        </div>
+    </div>
+    
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- HUD DE COURSE -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div id="race-hud" class="race-hud hidden">
+        <!-- Info Round -->
+        <div class="hud-round" id="hud-round">
+            <span class="round-text">ROUND <span id="current-round">1</span>/<span id="max-rounds">3</span></span>
+        </div>
+        
+        <!-- NOUVEAU: Scores -->
+        <div class="hud-scores" id="hud-scores">
+            <div class="score-item">
+                <span class="score-label">VOUS</span>
+                <span class="score-value" id="my-score">0</span>
+            </div>
+            <span class="score-separator">-</span>
+            <div class="score-item">
+                <span class="score-label" id="opponent-label">ADV</span>
+                <span class="score-value" id="opponent-score">0</span>
+            </div>
+        </div>
+        
+        <!-- Rôle -->
+        <div class="hud-role" id="hud-role">
+            <span class="role-label">VOUS ÊTES</span>
+            <span class="role-name" id="role-name">CHASSEUR</span>
+        </div>
+        
+        <!-- Timer (bas droite) -->
+        <div class="hud-timer" id="hud-timer">
+            <div class="timer-icon"></div>
+            <span class="timer-value" id="timer-value">03:00</span>
+        </div>
+
+        <!-- Distance (Fuyard) - Au-dessus du VS -->
+        <div class="hud-distance hidden" id="hud-distance">
+            <span class="distance-label">Proximité</span>
+            <div class="distance-value-wrapper">
+                <span class="distance-value" id="distance-value">0</span>
+                <span class="distance-unit">m</span>
+            </div>
+        </div>
+        
+        <!-- Barre de capture (Chasseur) -->
+        <div class="hud-capture hidden" id="hud-capture">
+            <div class="capture-label">Capture en cours</div>
+            <div class="capture-track">
+                <div class="capture-fill" id="capture-fill"></div>
+            </div>
+            <div class="capture-percentage">
+                <span id="capture-percent">0</span>%
+            </div>
+        </div>
+        
+        <!-- Adversaire -->
+        <div class="hud-opponent" id="hud-opponent">
+            <span class="opponent-label">VS</span>
+            <span class="opponent-name" id="opponent-name">Joueur</span>
+        </div>
+    </div>
+    
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- COUNTDOWN -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div id="countdown-overlay" class="countdown-overlay hidden">
+        <div class="countdown-number" id="countdown-number">3</div>
+    </div>
+    
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- ANIMATION TRANSITION ROUND (VICTOIRE/DÉFAITE) -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div id="round-transition-overlay" class="round-transition-overlay hidden">
+        <!-- Background -->
+        <div class="round-transition-bg"></div>
+        
+        <!-- Lignes d'énergie -->
+        <div class="round-transition-lines">
+            <div class="energy-line"></div>
+            <div class="energy-line"></div>
+            <div class="energy-line"></div>
+            <div class="energy-line"></div>
+        </div>
+        
+        <!-- Particules -->
+        <div class="round-transition-particles" id="round-transition-particles"></div>
+        
+        <!-- Contenu principal -->
+        <div class="round-transition-content">
+            <div class="round-transition-icon" id="round-transition-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="round-transition-title" id="round-transition-title">VICTOIRE</div>
+            <div class="round-transition-subtitle" id="round-transition-subtitle">ROUND GAGNÉ</div>
+            <div class="round-transition-message" id="round-transition-message">
+                Le fuyard a été capturé !
+            </div>
+            <div class="round-transition-progress-container">
+                <div class="round-transition-progress-label">Prochain round...</div>
+                <div class="round-transition-progress-bar">
+                    <div class="round-transition-progress-fill" id="round-transition-progress"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- RÉSULTAT FINAL -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div id="result-overlay" class="result-overlay hidden">
+        <div class="result-content">
+            <div class="result-title" id="result-title">VICTOIRE</div>
+            <div class="result-winner" id="result-winner">Joueur remporte le match !</div>
+            <div class="result-scores" id="result-scores">
+                <div class="result-score-item">
+                    <span class="result-score-name" id="result-score-name-1">Vous</span>
+                    <span class="result-score-value" id="result-score-value-1">0</span>
+                </div>
+                <span class="result-score-separator">-</span>
+                <div class="result-score-item">
+                    <span class="result-score-value" id="result-score-value-2">0</span>
+                    <span class="result-score-name" id="result-score-name-2">Adversaire</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!-- NOTIFICATIONS -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div id="notifications-container" class="notifications-container"></div>
+    
+    <!-- Script -->
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+/* ═══════════════════════════════════════════════════════════
+   🎨 COMPOSANTS RÉUTILISABLES
+   ═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   🔘 BOUTONS
+   ═══════════════════════════════════════════════════════════ */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: var(--primary-red);
+    color: var(--primary-white);
+    border: 2px solid var(--primary-red);
+}
+
+.btn-primary:hover {
+    background: var(--accent-red-light);
+    border-color: var(--accent-red-light);
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--accent-gray);
+    border-color: var(--primary-white);
+}
+
+.btn-small {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.85rem;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   🔔 NOTIFICATIONS
+   ═══════════════════════════════════════════════════════════ */
+
+.notifications-container {
+    position: fixed;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    pointer-events: none;
+}
+
+.notification {
+    min-width: 300px;
+    max-width: 400px;
+    background: var(--dark-card);
+    border-left: 4px solid var(--primary-red);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    pointer-events: all;
+    animation: slideInRight 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(100px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.notification.removing {
+    animation: slideOutRight 0.3s ease forwards;
+}
+
+@keyframes slideOutRight {
+    to { opacity: 0; transform: translateX(100px); }
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.notification-content { flex: 1; }
+
+.notification-message {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.notification-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--primary-red);
+    animation: progressBar 5s linear forwards;
+}
+
+@keyframes progressBar {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* Types */
+.notification.info { border-left-color: var(--primary-white); }
+.notification.info .notification-icon { background: rgba(255, 255, 255, 0.1); color: var(--primary-white); }
+.notification.info .notification-progress { background: var(--primary-white); }
+
+.notification.success { border-left-color: var(--success-green); }
+.notification.success .notification-icon { background: rgba(0, 255, 0, 0.1); color: var(--success-green); }
+.notification.success .notification-progress { background: var(--success-green); }
+
+.notification.warning { border-left-color: var(--warning-orange); }
+.notification.warning .notification-icon { background: rgba(255, 153, 0, 0.1); color: var(--warning-orange); }
+.notification.warning .notification-progress { background: var(--warning-orange); }
+
+.notification.error { border-left-color: var(--primary-red); }
+.notification.error .notification-icon { background: rgba(255, 0, 0, 0.1); color: var(--primary-red); }
+.notification.error .notification-progress { background: var(--primary-red); }
+
+.notification.invite {
+    border-left-color: var(--primary-red);
+    background: linear-gradient(135deg, var(--dark-card) 0%, var(--accent-gray) 100%);
+}
+.notification.invite .notification-icon { background: rgba(255, 0, 0, 0.2); color: var(--primary-red); }
+
+/* ═══════════════════════════════════════════════════════════
+   📦 UTILITAIRES
+   ═══════════════════════════════════════════════════════════ */
+
+.hidden {
+    display: none !important;
+}
+
+.text-center { text-align: center; }
+.text-red { color: var(--primary-red); }
+.text-green { color: var(--success-green); }
+.text-white { color: var(--primary-white); }

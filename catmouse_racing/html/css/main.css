@@ -1,0 +1,252 @@
+/* ═══════════════════════════════════════════════════════════
+   🎨 STYLES PRINCIPAUX - MENU
+   ═══════════════════════════════════════════════════════════ */
+
+/* Interface principale */
+.main-ui {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity var(--transition-normal);
+}
+
+.main-ui.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Background */
+.ui-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../assets/background.png');
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+}
+
+.ui-background::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(10, 10, 10, 0.95) 0%,
+        rgba(10, 10, 10, 0.85) 50%,
+        rgba(10, 10, 10, 0.95) 100%
+    );
+}
+
+/* Container */
+.ui-container {
+    position: relative;
+    z-index: 2;
+    width: 90%;
+    max-width: 1200px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header */
+.ui-header {
+    text-align: center;
+    padding: var(--spacing-lg);
+    border-bottom: 2px solid var(--border-red);
+}
+
+.ui-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--primary-red);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 
+        0 0 20px rgba(255, 0, 0, 0.5),
+        0 0 40px rgba(255, 0, 0, 0.3);
+    margin-bottom: var(--spacing-sm);
+}
+
+.ui-subtitle {
+    font-size: 1.3rem;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Content */
+.ui-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+.ui-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ui-content::-webkit-scrollbar-track {
+    background: var(--darker-card);
+    border-radius: var(--radius-sm);
+}
+
+.ui-content::-webkit-scrollbar-thumb {
+    background: var(--primary-red);
+    border-radius: var(--radius-sm);
+}
+
+/* Sections */
+.rules-section,
+.invite-section,
+.queue-section {
+    background: var(--dark-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-white);
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-transform: uppercase;
+}
+
+.section-title i {
+    color: var(--primary-red);
+}
+
+/* Règlement */
+.rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.rule-item {
+    background: var(--darker-card);
+    border-left: 4px solid var(--primary-red);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+    transition: transform var(--transition-fast);
+}
+
+.rule-item:hover {
+    transform: translateX(5px);
+}
+
+.rule-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-red);
+    margin-bottom: var(--spacing-xs);
+    text-transform: uppercase;
+}
+
+.rule-description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Formulaire invitation */
+.invite-form {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: stretch;
+}
+
+.input-field {
+    flex: 1;
+    background: var(--darker-card);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color var(--transition-fast);
+}
+
+.input-field:focus {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+}
+
+.input-field::placeholder {
+    color: var(--text-muted);
+}
+
+/* Queue / Matchmaking */
+.queue-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.queue-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--darker-card);
+    border-radius: var(--radius-md);
+}
+
+.queue-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--primary-red);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.queue-text {
+    color: var(--text-secondary);
+}
+
+/* Footer */
+.ui-footer {
+    padding: var(--spacing-lg);
+    border-top: 2px solid var(--border-red);
+    display: flex;
+    justify-content: center;
+}

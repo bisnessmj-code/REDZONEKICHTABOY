@@ -1,0 +1,50 @@
+/* ═══════════════════════════════════════════════════════════
+   🎨 VARIABLES CSS - THÈME ROUGE/BLANC/NOIR
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+    /* Couleurs principales */
+    --primary-red: #ff0000;
+    --primary-white: #ffffff;
+    --primary-black: #0a0a0a;
+    
+    /* Accents */
+    --accent-red-light: #ff3333;
+    --accent-red-dark: #cc0000;
+    --accent-gray: #2a2a2a;
+    --accent-gray-light: #3a3a3a;
+    
+    /* Backgrounds */
+    --dark-bg: #0a0a0a;
+    --dark-card: #151515;
+    --darker-card: #0d0d0d;
+    
+    /* Texte */
+    --text-primary: #ffffff;
+    --text-secondary: #999999;
+    --text-muted: #666666;
+    
+    /* Bordures */
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-red: rgba(255, 0, 0, 0.3);
+    
+    /* États */
+    --success-green: #00ff00;
+    --warning-orange: #ff9900;
+    
+    /* Spacing */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+}

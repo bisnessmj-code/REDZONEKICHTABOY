@@ -1,0 +1,344 @@
+/* ═══════════════════════════════════════════════════════════
+   🎬 ANIMATION DE TRANSITION ROUND (VICTOIRE/DÉFAITE)
+   Version épurée - Plus lisible, moins flashy
+   ═══════════════════════════════════════════════════════════ */
+
+.round-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.round-transition-overlay.active {
+    opacity: 1;
+}
+
+.round-transition-overlay.hidden {
+    display: none;
+}
+
+/* Background sobre avec vignette */
+.round-transition-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.round-transition-overlay.victory .round-transition-bg {
+    background: radial-gradient(ellipse at center, 
+        rgba(0, 40, 0, 0.92) 0%, 
+        rgba(0, 15, 0, 0.96) 50%,
+        rgba(0, 0, 0, 0.98) 100%);
+}
+
+.round-transition-overlay.defeat .round-transition-bg {
+    background: radial-gradient(ellipse at center, 
+        rgba(40, 0, 0, 0.92) 0%, 
+        rgba(15, 0, 0, 0.96) 50%,
+        rgba(0, 0, 0, 0.98) 100%);
+}
+
+/* Contenu principal */
+.round-transition-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    transform: scale(0.8);
+    opacity: 0;
+}
+
+.round-transition-overlay.active .round-transition-content {
+    animation: transitionAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+}
+
+@keyframes transitionAppear {
+    0% {
+        transform: scale(0.8) translateY(30px);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Icône principale - plus sobre */
+.round-transition-icon {
+    font-size: 5rem;
+    margin-bottom: 25px;
+}
+
+.round-transition-overlay.victory .round-transition-icon {
+    color: #00dd00;
+    filter: drop-shadow(0 0 8px rgba(0, 200, 0, 0.3));
+}
+
+.round-transition-overlay.defeat .round-transition-icon {
+    color: #dd0000;
+    filter: drop-shadow(0 0 8px rgba(200, 0, 0, 0.3));
+}
+
+/* Titre principal - LISIBLE, sans excès de glow */
+.round-transition-title {
+    font-size: 5.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 12px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.round-transition-overlay.victory .round-transition-title {
+    color: #00ff00;
+    text-shadow: 
+        0 0 10px rgba(0, 255, 0, 0.4),
+        0 2px 0 rgba(0, 80, 0, 0.8);
+}
+
+.round-transition-overlay.defeat .round-transition-title {
+    color: #ff0000;
+    text-shadow: 
+        0 0 10px rgba(255, 0, 0, 0.4),
+        0 2px 0 rgba(80, 0, 0, 0.8);
+}
+
+/* Sous-titre */
+.round-transition-subtitle {
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 35px;
+    opacity: 0;
+    animation: subtitleFadeIn 0.4s ease 0.3s forwards;
+}
+
+@keyframes subtitleFadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Message de résultat - style card */
+.round-transition-message {
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    padding: 18px 40px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: var(--radius-lg);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: 35px;
+    opacity: 0;
+    animation: messageFadeIn 0.4s ease 0.5s forwards;
+}
+
+.round-transition-overlay.victory .round-transition-message {
+    border-color: rgba(0, 255, 0, 0.3);
+}
+
+.round-transition-overlay.defeat .round-transition-message {
+    border-color: rgba(255, 0, 0, 0.3);
+}
+
+@keyframes messageFadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Barre de progression */
+.round-transition-progress-container {
+    width: 350px;
+    opacity: 0;
+    animation: progressFadeIn 0.4s ease 0.7s forwards;
+    
+    /* AJOUTEZ CES LIGNES */
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@keyframes progressFadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.round-transition-progress-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+}
+
+.round-transition-progress-bar {
+    width: 100%; /* S'assure que la barre utilise les 350px */
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.round-transition-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.1s linear;
+}
+
+.round-transition-overlay.victory .round-transition-progress-fill {
+    background: linear-gradient(90deg, #00cc00, #00ff00);
+}
+
+.round-transition-overlay.defeat .round-transition-progress-fill {
+    background: linear-gradient(90deg, #cc0000, #ff0000);
+}
+
+/* Particules - plus discrètes */
+.round-transition-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFloat 4s ease-in-out infinite;
+}
+
+.round-transition-overlay.victory .particle {
+    background: rgba(0, 255, 0, 0.6);
+}
+
+.round-transition-overlay.defeat .particle {
+    background: rgba(255, 0, 0, 0.6);
+}
+
+@keyframes particleFloat {
+    0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.5;
+    }
+    90% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(-100px) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Lignes d'énergie - très subtiles */
+.round-transition-lines {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200%;
+    height: 200%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.15;
+}
+
+.energy-line {
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    top: 50%;
+    left: 0;
+    transform-origin: center;
+}
+
+.round-transition-overlay.victory .energy-line {
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.5), transparent);
+}
+
+.round-transition-overlay.defeat .energy-line {
+    background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.5), transparent);
+}
+
+.energy-line:nth-child(1) { transform: rotate(0deg); animation: lineRotate 15s linear infinite; }
+.energy-line:nth-child(2) { transform: rotate(45deg); animation: lineRotate 18s linear infinite reverse; }
+.energy-line:nth-child(3) { transform: rotate(90deg); animation: lineRotate 12s linear infinite; }
+.energy-line:nth-child(4) { transform: rotate(135deg); animation: lineRotate 20s linear infinite reverse; }
+
+@keyframes lineRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Animation de sortie */
+.round-transition-overlay.closing {
+    animation: overlayFadeOut 0.5s ease forwards;
+}
+
+.round-transition-overlay.closing .round-transition-content {
+    animation: contentFadeOut 0.4s ease forwards;
+}
+
+@keyframes overlayFadeOut {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes contentFadeOut {
+    to {
+        transform: scale(0.9) translateY(-20px);
+        opacity: 0;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .round-transition-icon {
+        font-size: 3.5rem;
+    }
+    
+    .round-transition-title {
+        font-size: 3.5rem;
+        letter-spacing: 6px;
+    }
+    
+    .round-transition-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .round-transition-message {
+        font-size: 1rem;
+        padding: 14px 25px;
+    }
+    
+    .round-transition-progress-container {
+        width: 280px;
+    }
+}
