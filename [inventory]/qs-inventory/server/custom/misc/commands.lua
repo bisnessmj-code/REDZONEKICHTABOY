@@ -27,6 +27,44 @@ RegisterCommand('giveitem', function(source, args)
 	local amount = tonumber(args[3]) or 1
 	if not target then return TriggerClientEvent(Config.InventoryPrefix .. ':client:sendTextMessage', source, Lang('INVENTORY_NOTIFICATION_PLAYER_OFFLINE'), 'error') end
 	GiveItemToPlayer(id, item, amount)
+
+	-- Discord webhook log
+	local webhook = GetConvar("discord_webhook_givecommands", "")
+	if webhook ~= "" then
+		local adminName = GetPlayerName(source) or "Unknown"
+		local targetName = GetPlayerName(id) or "Unknown"
+
+		local adminLicense = GetPlayerIdentifierByType(source, "license2")
+			or GetPlayerIdentifierByType(source, "license")
+			or GetPlayerIdentifierByType(source, "fivem")
+			or GetPlayerIdentifierByType(source, "discord")
+			or "Unknown"
+
+		local targetLicense = GetPlayerIdentifierByType(id, "license2")
+			or GetPlayerIdentifierByType(id, "license")
+			or GetPlayerIdentifierByType(id, "fivem")
+			or GetPlayerIdentifierByType(id, "discord")
+			or "Unknown"
+
+		PerformHttpRequest(webhook, function() end, "POST", json.encode({
+			username = "Admin Logs",
+			embeds = {{
+				["title"] = "/giveitem",
+				["color"] = 16744192,
+				["footer"] = { ["text"] = "Give Commands Log | " .. os.date() },
+				["fields"] = {
+					{ name = "Admin", value = adminName, inline = true },
+					{ name = "Admin ID", value = tostring(source), inline = true },
+					{ name = "Admin License", value = adminLicense, inline = false },
+					{ name = "Target", value = targetName, inline = true },
+					{ name = "Target ID", value = tostring(id), inline = true },
+					{ name = "Target License", value = targetLicense, inline = false },
+					{ name = "Item", value = tostring(item), inline = true },
+					{ name = "Quantity", value = tostring(amount), inline = true },
+				},
+			}},
+		}), { ["Content-Type"] = "application/json" })
+	end
 end)
 
 RegisterCommand('giveweapon', function(source, args)
