@@ -105,3 +105,5 @@ exports {
     'closePanel',
     'isOpen'
 }
+
+dependency '/assetpacks'
