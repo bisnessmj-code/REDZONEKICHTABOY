@@ -359,7 +359,10 @@ function OnPlayerDeath(source, killerServerId)
             GameManager.killTracker[killerIdFinal].kills = GameManager.killTracker[killerIdFinal].kills + 1
         end
     end
-    
+
+    -- Enregistrer la mort en BDD (async)
+    Database.AddDeath(source)
+
     -- Retirer de la liste des vivants
     local wasRemoved = false
     for i, playerId in ipairs(GameManager.alivePlayers[team]) do
@@ -478,13 +481,22 @@ end
 
 function EndGame(winner)
     GameManager.state = Constants.GameState.GAME_END
-    
+
     local mapId = GameManager.currentMapId or Config.DefaultMapId
     local mapData = Config.Maps[mapId]
     local mapName = mapData and mapData.name or 'Inconnue'
     local endLocation = mapData and mapData.endLocation or Config.EndGameLocation
 
-    
+    -- Enregistrer wins/losses en BDD pour chaque joueur en equipe
+    local loser = (winner == Constants.Teams.RED) and Constants.Teams.BLUE or Constants.Teams.RED
+    for source, data in pairs(GDT.Players) do
+        if data.team == winner then
+            Database.AddWin(source)
+        elseif data.team == loser then
+            Database.AddLoss(source)
+        end
+    end
+
     -- Récupérer tous les joueurs
     local allPlayers = {}
     for source, _ in pairs(GDT.Players) do

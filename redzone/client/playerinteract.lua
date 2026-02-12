@@ -85,82 +85,73 @@ end
 -- Thread principal : ALT gauche (control 19)
 CreateThread(function()
     while true do
-        local sleep = 500
+        local sleep = 0
 
-        if IsInRedzone() then
-            sleep = 0
+        local altPressed = IsDisabledControlPressed(0, 19) or IsControlPressed(0, 19)
 
-            local altPressed = IsDisabledControlPressed(0, 19) or IsControlPressed(0, 19)
+        if altPressed then
+            -- Bloquer TOUS les controles de camera/mouvement/tir
+            DisableControlAction(0, 1, true)    -- LookLeftRight
+            DisableControlAction(0, 2, true)    -- LookUpDown
+            DisableControlAction(0, 3, true)    -- LookUpOnly
+            DisableControlAction(0, 4, true)    -- LookDownOnly
+            DisableControlAction(0, 5, true)    -- LookLeftOnly
+            DisableControlAction(0, 6, true)    -- LookLeftOnly
+            DisableControlAction(0, 12, true)   -- WeaponWheelUpDown
+            DisableControlAction(0, 13, true)   -- WeaponWheelLeftRight
+            DisableControlAction(0, 24, true)   -- Attack
+            DisableControlAction(0, 25, true)   -- Aim
+            DisableControlAction(0, 37, true)   -- SelectWeapon
+            DisableControlAction(0, 44, true)   -- Cover
+            DisableControlAction(0, 106, true)  -- VehicleMouseControlOverride
+            DisableControlAction(0, 142, true)  -- MeleeAttackAlternate
+            DisableControlAction(0, 257, true)  -- Attack2
+            DisableControlAction(0, 263, true)  -- MeleeAttack1
+            DisableControlAction(0, 264, true)  -- MeleeAttack2
 
-            if altPressed then
-                -- Bloquer TOUS les controles de camera/mouvement/tir
-                DisableControlAction(0, 1, true)    -- LookLeftRight
-                DisableControlAction(0, 2, true)    -- LookUpDown
-                DisableControlAction(0, 3, true)    -- LookUpOnly
-                DisableControlAction(0, 4, true)    -- LookDownOnly
-                DisableControlAction(0, 5, true)    -- LookLeftOnly
-                DisableControlAction(0, 6, true)    -- LookLeftOnly
-                DisableControlAction(0, 12, true)   -- WeaponWheelUpDown
-                DisableControlAction(0, 13, true)   -- WeaponWheelLeftRight
-                DisableControlAction(0, 24, true)   -- Attack
-                DisableControlAction(0, 25, true)   -- Aim
-                DisableControlAction(0, 37, true)   -- SelectWeapon
-                DisableControlAction(0, 44, true)   -- Cover
-                DisableControlAction(0, 106, true)  -- VehicleMouseControlOverride
-                DisableControlAction(0, 142, true)  -- MeleeAttackAlternate
-                DisableControlAction(0, 257, true)  -- Attack2
-                DisableControlAction(0, 263, true)  -- MeleeAttack1
-                DisableControlAction(0, 264, true)  -- MeleeAttack2
+            -- Activer le curseur NUI
+            if not isCursorActive then
+                isCursorActive = true
+                SetNuiFocusKeepInput(true)
+                SetNuiFocus(true, true)
+            end
 
-                -- Activer le curseur NUI
-                if not isCursorActive then
-                    isCursorActive = true
-                    SetNuiFocusKeepInput(true)
-                    SetNuiFocus(true, true)
-                end
+            -- Detecter un joueur
+            local entity = GetTargetPlayer()
 
-                -- Detecter un joueur
-                local entity = GetTargetPlayer()
+            if entity then
+                local serverId = GetServerIdFromPed(entity)
+                if serverId then
+                    local playerName = GetPlayerNameFromPed(entity)
 
-                if entity then
-                    local serverId = GetServerIdFromPed(entity)
-                    if serverId then
-                        local playerName = GetPlayerNameFromPed(entity)
+                    if targetPed and targetPed ~= entity and DoesEntityExist(targetPed) then
+                        SetEntityDrawOutline(targetPed, false)
+                    end
 
-                        if targetPed and targetPed ~= entity and DoesEntityExist(targetPed) then
-                            SetEntityDrawOutline(targetPed, false)
-                        end
+                    targetServerId = serverId
+                    targetPed = entity
+                    SetEntityDrawOutline(entity, true)
 
-                        targetServerId = serverId
-                        targetPed = entity
-                        SetEntityDrawOutline(entity, true)
-
-                        if not isMenuOpen then
-                            isMenuOpen = true
-                            SendNUIMessage({
-                                action = 'showPlayerInteract',
-                                name = playerName,
-                                serverId = serverId
-                            })
-                        end
-                    else
-                        HideInteractMenu()
+                    if not isMenuOpen then
+                        isMenuOpen = true
+                        SendNUIMessage({
+                            action = 'showPlayerInteract',
+                            name = playerName,
+                            serverId = serverId
+                        })
                     end
                 else
                     HideInteractMenu()
                 end
             else
-                if isCursorActive then
-                    HideInteractMenu()
-                    DisableCursor()
-                end
-                sleep = 5
+                HideInteractMenu()
             end
         else
             if isCursorActive then
                 HideInteractMenu()
                 DisableCursor()
             end
+            sleep = 5
         end
 
         Wait(sleep)

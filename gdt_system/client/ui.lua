@@ -79,6 +79,20 @@ RegisterNUICallback('getLeaderboard', function(data, cb)
 end)
 
 -- ==========================================
+-- CALLBACK NUI : STATS PERSONNELLES
+-- ==========================================
+
+RegisterNUICallback('getPlayerStats', function(data, cb)
+    ESX.TriggerServerCallback('gdt:getPlayerStats', function(stats)
+        SendNUIMessage({
+            action = 'showPlayerStats',
+            stats = stats
+        })
+    end)
+    cb('ok')
+end)
+
+-- ==========================================
 -- TOUCHE ESC POUR FERMER
 -- ==========================================
 

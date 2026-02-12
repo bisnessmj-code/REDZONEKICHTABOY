@@ -65,47 +65,99 @@
                         <span class="lb-label">CLASSEMENT</span>
                         <span class="lb-subtitle">TOP KILLERS - GLOBAL</span>
                     </div>
-                </div>
-
-                <!-- Podium Top 3 -->
-                <div class="lb-podium" id="lb-podium">
-                    <div class="lb-podium-slot lb-second" id="lb-slot-2">
-                        <div class="lb-podium-avatar"><i class="fas fa-user"></i></div>
-                        <div class="lb-podium-name">---</div>
-                        <div class="lb-podium-kills">0</div>
-                        <div class="lb-podium-bar">
-                            <span class="lb-podium-rank">2</span>
-                        </div>
-                    </div>
-                    <div class="lb-podium-slot lb-first" id="lb-slot-1">
-                        <div class="lb-crown"><i class="fas fa-crown"></i></div>
-                        <div class="lb-podium-avatar lb-avatar-gold"><i class="fas fa-user"></i></div>
-                        <div class="lb-podium-name">---</div>
-                        <div class="lb-podium-kills">0</div>
-                        <div class="lb-podium-bar lb-bar-gold">
-                            <span class="lb-podium-rank">1</span>
-                        </div>
-                    </div>
-                    <div class="lb-podium-slot lb-third" id="lb-slot-3">
-                        <div class="lb-podium-avatar"><i class="fas fa-user"></i></div>
-                        <div class="lb-podium-name">---</div>
-                        <div class="lb-podium-kills">0</div>
-                        <div class="lb-podium-bar">
-                            <span class="lb-podium-rank">3</span>
-                        </div>
+                    <div class="lb-tabs">
+                        <button class="lb-tab active" data-tab="classement">CLASSEMENT</button>
+                        <button class="lb-tab" data-tab="stats">STATS PERSO</button>
                     </div>
                 </div>
 
-                <!-- Ligne de séparation -->
-                <div class="lb-divider">
-                    <div class="lb-divider-line"></div>
-                    <span class="lb-divider-text">CLASSEMENT COMPLET</span>
-                    <div class="lb-divider-line"></div>
+                <!-- Contenu Classement -->
+                <div id="classement-content">
+                    <!-- Podium Top 3 -->
+                    <div class="lb-podium" id="lb-podium">
+                        <div class="lb-podium-slot lb-second" id="lb-slot-2">
+                            <div class="lb-podium-avatar"><i class="fas fa-user"></i></div>
+                            <div class="lb-podium-name">---</div>
+                            <div class="lb-podium-kills">0</div>
+                            <div class="lb-podium-bar">
+                                <span class="lb-podium-rank">2</span>
+                            </div>
+                        </div>
+                        <div class="lb-podium-slot lb-first" id="lb-slot-1">
+                            <div class="lb-crown"><i class="fas fa-crown"></i></div>
+                            <div class="lb-podium-avatar lb-avatar-gold"><i class="fas fa-user"></i></div>
+                            <div class="lb-podium-name">---</div>
+                            <div class="lb-podium-kills">0</div>
+                            <div class="lb-podium-bar lb-bar-gold">
+                                <span class="lb-podium-rank">1</span>
+                            </div>
+                        </div>
+                        <div class="lb-podium-slot lb-third" id="lb-slot-3">
+                            <div class="lb-podium-avatar"><i class="fas fa-user"></i></div>
+                            <div class="lb-podium-name">---</div>
+                            <div class="lb-podium-kills">0</div>
+                            <div class="lb-podium-bar">
+                                <span class="lb-podium-rank">3</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ligne de séparation -->
+                    <div class="lb-divider">
+                        <div class="lb-divider-line"></div>
+                        <span class="lb-divider-text">CLASSEMENT COMPLET</span>
+                        <div class="lb-divider-line"></div>
+                    </div>
+
+                    <!-- Liste #4+ -->
+                    <div class="lb-list" id="leaderboard-list">
+                        <div class="lb-loading">Chargement...</div>
+                    </div>
                 </div>
 
-                <!-- Liste #4+ -->
-                <div class="lb-list" id="leaderboard-list">
-                    <div class="lb-loading">Chargement...</div>
+                <!-- Contenu Stats Perso -->
+                <div id="stats-panel" class="stats-panel hidden">
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <div class="stats-card-icon"><i class="fas fa-crosshairs"></i></div>
+                            <div class="stats-card-value" id="stat-kills">0</div>
+                            <div class="stats-card-label">KILLS</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-card-icon"><i class="fas fa-skull"></i></div>
+                            <div class="stats-card-value" id="stat-deaths">0</div>
+                            <div class="stats-card-label">MORTS</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-card-icon"><i class="fas fa-chart-line"></i></div>
+                            <div class="stats-card-value" id="stat-kd">0.00</div>
+                            <div class="stats-card-label">K/D RATIO</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-card-icon"><i class="fas fa-gamepad"></i></div>
+                            <div class="stats-card-value" id="stat-games">0</div>
+                            <div class="stats-card-label">PARTIES JOUEES</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-card-icon stats-icon-win"><i class="fas fa-trophy"></i></div>
+                            <div class="stats-card-value stats-value-win" id="stat-wins">0</div>
+                            <div class="stats-card-label">VICTOIRES</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-card-icon stats-icon-loss"><i class="fas fa-times-circle"></i></div>
+                            <div class="stats-card-value stats-value-loss" id="stat-losses">0</div>
+                            <div class="stats-card-label">DEFAITES</div>
+                        </div>
+                    </div>
+                    <div class="stats-winrate-section">
+                        <div class="stats-winrate-header">
+                            <span class="stats-winrate-label">WINRATE</span>
+                            <span class="stats-winrate-value" id="stat-winrate">0.0%</span>
+                        </div>
+                        <div class="stats-winrate-bar-bg">
+                            <div class="stats-winrate-bar-fill" id="stat-winrate-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

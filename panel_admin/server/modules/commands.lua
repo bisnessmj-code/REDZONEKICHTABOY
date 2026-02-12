@@ -940,6 +940,158 @@ RegisterCommand('ban', function(source, args)
 end, false)
 
 -- ══════════════════════════════════════════════════════════════
+-- COMMANDES DE UNBAN
+-- ══════════════════════════════════════════════════════════════
+
+-- /unban [ID de deban ou license] - Debannir un joueur
+-- Staff/Organisateur: peuvent unban uniquement les joueurs qu'ils ont ban
+-- Responsable/Admin/Owner: peuvent unban n'importe qui
+RegisterCommand('unban', function(source, args)
+    if source == 0 then return end
+
+    -- Verifier que le joueur est staff
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if not xPlayer then
+        Notify(source, '~r~Erreur: impossible de recuperer vos infos')
+        return
+    end
+
+    local staffGroup = xPlayer.getGroup()
+    if not Permissions.Grades[staffGroup] then
+        Notify(source, '~r~Vous n\'avez pas la permission')
+        return
+    end
+
+    -- Creer/recuperer la session pour les logs
+    local session = Auth.GetSession(source)
+    if not session then
+        session = Auth.InitSession(source)
+    end
+
+    if not session then
+        Notify(source, '~r~Erreur de session')
+        return
+    end
+
+    -- Verification de l'argument
+    if #args < 1 then
+        Notify(source, '~y~Usage: /unban [ID de deban ou license]')
+        Notify(source, '~y~Exemple: /unban 38291')
+        Notify(source, '~y~Exemple: /unban license:abc123def456')
+        return
+    end
+
+    local searchArg = args[1]
+
+    -- Determiner si c'est un ID de deban (numerique, 5 chiffres) ou un identifier
+    local isUnbanId = searchArg:match('^%d+$') ~= nil
+    local banData = nil
+
+    if isUnbanId then
+        -- Rechercher par unban_id
+        banData = Database.SingleAsync([[
+            SELECT * FROM panel_bans WHERE unban_id = ? AND (expires_at IS NULL OR expires_at > NOW()) LIMIT 1
+        ]], {searchArg})
+
+        if not banData then
+            -- Chercher aussi les bans expires (au cas ou)
+            banData = Database.SingleAsync([[
+                SELECT * FROM panel_bans WHERE unban_id = ? LIMIT 1
+            ]], {searchArg})
+
+            if banData then
+                Notify(source, '~y~Ce ban a deja expire')
+                return
+            end
+
+            Notify(source, '~r~Aucun ban trouve avec l\'ID: ' .. searchArg)
+            return
+        end
+    else
+        -- Rechercher par identifier/license
+        local hash = searchArg
+        if searchArg:find(':') then
+            hash = searchArg:match(':(.+)') or searchArg
+        end
+
+        banData = Database.SingleAsync([[
+            SELECT * FROM panel_bans
+            WHERE (
+                identifier COLLATE utf8mb4_general_ci = ? COLLATE utf8mb4_general_ci
+                OR identifier COLLATE utf8mb4_general_ci = ? COLLATE utf8mb4_general_ci
+                OR license COLLATE utf8mb4_general_ci = ? COLLATE utf8mb4_general_ci
+                OR license COLLATE utf8mb4_general_ci = ? COLLATE utf8mb4_general_ci
+            )
+            AND (expires_at IS NULL OR expires_at > NOW())
+            LIMIT 1
+        ]], {searchArg, hash, searchArg, hash})
+
+        if not banData then
+            Notify(source, '~r~Aucun ban actif trouve pour: ' .. searchArg)
+            return
+        end
+    end
+
+    -- Verification des permissions: Responsable+ (level >= 60) peut unban tout le monde
+    -- Staff/Organisateur ne peut unban que ses propres bans
+    local staffLevel = Permissions.GetLevel(staffGroup)
+    local canUnbanAnyone = staffLevel >= 60 -- Responsable (60), Admin (80), Owner (100)
+
+    if not canUnbanAnyone then
+        -- Verifier si c'est le staff qui a ban ce joueur
+        if banData.banned_by ~= session.identifier then
+            Notify(source, '~r~Vous ne pouvez debannir que les joueurs que vous avez banni vous-meme')
+            return
+        end
+    end
+
+    -- Supprimer le ban de panel_bans
+    Database.ExecuteAsync([[
+        DELETE FROM panel_bans WHERE id = ?
+    ]], {banData.id})
+
+    -- Mettre a jour le statut dans panel_sanctions
+    Database.ExecuteAsync([[
+        UPDATE panel_sanctions
+        SET status = 'revoked', revoked_by = ?, revoked_at = NOW()
+        WHERE target_identifier COLLATE utf8mb4_general_ci = ? COLLATE utf8mb4_general_ci
+        AND type IN ('ban_temp', 'ban_perm')
+        AND status = 'active'
+    ]], {session.identifier, banData.identifier})
+
+    -- Log
+    local isOwnBan = banData.banned_by == session.identifier
+    Database.AddLog(
+        Enums.LogCategory.SANCTION,
+        Enums.LogAction.BAN_REMOVE,
+        session.identifier,
+        session.name,
+        banData.identifier,
+        banData.player_name or 'Inconnu',
+        {
+            unbanId = banData.unban_id,
+            originalBannedBy = banData.banned_by_name or banData.banned_by,
+            originalReason = banData.reason,
+            ownBan = isOwnBan,
+            command = true
+        }
+    )
+
+    -- Discord webhook
+    if Discord and Discord.LogUnban then
+        Discord.LogUnban(session.name, banData.player_name or 'Inconnu', banData.identifier)
+    end
+
+    -- Notification
+    local bannedByText = isOwnBan and '(votre ban)' or ('(banni par ' .. (banData.banned_by_name or 'Inconnu') .. ')')
+    Notify(source, '~g~' .. (banData.player_name or 'Inconnu') .. ' a ete debanni ' .. bannedByText)
+
+    if Config.Debug then
+        print('^2[UNBAN]^0 ' .. session.name .. ' a debanni ' .. (banData.player_name or 'Inconnu') .. ' (ID: ' .. (banData.unban_id or 'N/A') .. ') ' .. bannedByText)
+    end
+end, false)
+
+-- ══════════════════════════════════════════════════════════════
 -- COMMANDES DE COMMUNICATION
 -- ══════════════════════════════════════════════════════════════
 
@@ -1049,6 +1201,7 @@ TriggerEvent('chat:addSuggestion', '/repairveh', 'Reparer un vehicule', {{name =
 TriggerEvent('chat:addSuggestion', '/repairall', 'Reparer tous les vehicules (Admin)', {})
 TriggerEvent('chat:addSuggestion', '/kick', 'Expulser un joueur', {{name = 'id', help = 'ID du joueur'}, {name = 'raison', help = 'Raison du kick'}})
 TriggerEvent('chat:addSuggestion', '/ban', 'Bannir un joueur', {{name = 'id/license', help = 'ID du joueur ou license'}, {name = 'temps', help = 'Heures (0 = permanent)'}, {name = 'raison', help = 'Raison du ban'}})
+TriggerEvent('chat:addSuggestion', '/unban', 'Debannir un joueur', {{name = 'id/license', help = 'ID de deban (ex: 38291) ou license'}})
 TriggerEvent('chat:addSuggestion', '/annonce', 'Envoyer une annonce urgente', {{name = 'message', help = 'Message de l\'annonce'}})
 TriggerEvent('chat:addSuggestion', '/mstaff', 'Envoyer un message au staff', {{name = 'message', help = 'Votre message'}})
 

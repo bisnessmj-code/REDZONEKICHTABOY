@@ -109,3 +109,13 @@ ESX.RegisterServerCallback('gdt:getLeaderboard', function(source, cb)
         cb(results)
     end)
 end)
+
+-- ==========================================
+-- STATS PERSONNELLES DU JOUEUR
+-- ==========================================
+
+ESX.RegisterServerCallback('gdt:getPlayerStats', function(source, cb)
+    Database.GetPlayerStats(source, function(stats)
+        cb(stats)
+    end)
+end)

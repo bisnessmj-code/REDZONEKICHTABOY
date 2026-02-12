@@ -43,6 +43,9 @@ window.addEventListener('message', (event) => {
         case 'showLeaderboard':
             renderLeaderboard(data.players);
             break;
+        case 'showPlayerStats':
+            renderPlayerStats(data.stats);
+            break;
         case 'showTeamList':
             showTeamList(data.red, data.blue, data.lobby, data.gameInfo);
             break;
@@ -316,6 +319,9 @@ leaderboardBtn.addEventListener('click', () => {
     tabletContent.classList.add('hidden');
     leaderboardPanel.classList.remove('hidden');
 
+    // Reset to classement tab
+    switchTab('classement');
+
     fetch(`https://${GetParentResourceName()}/getLeaderboard`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -327,6 +333,67 @@ leaderboardBack.addEventListener('click', () => {
     leaderboardPanel.classList.add('hidden');
     tabletContent.classList.remove('hidden');
 });
+
+// ==========================================
+// ONGLETS CLASSEMENT / STATS PERSO
+// ==========================================
+
+function switchTab(tabName) {
+    const tabs = document.querySelectorAll('.lb-tab');
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
+
+    const classementContent = document.getElementById('classement-content');
+    const statsPanel = document.getElementById('stats-panel');
+
+    if (tabName === 'classement') {
+        classementContent.classList.remove('hidden');
+        statsPanel.classList.add('hidden');
+    } else {
+        classementContent.classList.add('hidden');
+        statsPanel.classList.remove('hidden');
+        // Fetch player stats
+        fetch(`https://${GetParentResourceName()}/getPlayerStats`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+    }
+}
+
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('lb-tab')) {
+        switchTab(e.target.dataset.tab);
+    }
+});
+
+// ==========================================
+// AFFICHAGE STATS PERSONNELLES
+// ==========================================
+
+function renderPlayerStats(stats) {
+    if (!stats) stats = { kills: 0, deaths: 0, wins: 0, losses: 0 };
+
+    const kills = stats.kills || 0;
+    const deaths = stats.deaths || 0;
+    const wins = stats.wins || 0;
+    const losses = stats.losses || 0;
+    const kd = (kills / Math.max(deaths, 1)).toFixed(2);
+    const games = wins + losses;
+    const winrate = (wins / Math.max(games, 1) * 100).toFixed(1);
+
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+    setVal('stat-kills', kills);
+    setVal('stat-deaths', deaths);
+    setVal('stat-kd', kd);
+    setVal('stat-games', games);
+    setVal('stat-wins', wins);
+    setVal('stat-losses', losses);
+    setVal('stat-winrate', winrate + '%');
+
+    const bar = document.getElementById('stat-winrate-bar');
+    if (bar) bar.style.width = winrate + '%';
+}
 
 function renderLeaderboard(players) {
     const list = document.getElementById('leaderboard-list');
