@@ -129,6 +129,12 @@ function Redzone.Client.Teleport.StartLeaving()
         return
     end
 
+    -- Bloquer si le joueur est mort
+    if exports['redzone']:IsPlayerDead() then
+        Redzone.Client.Utils.NotifyError('Vous ne pouvez pas quitter le REDZONE quand vous êtes mort!')
+        return
+    end
+
     -- Vérification si déjà en cours de sortie
     if playerState == Redzone.Shared.Constants.PlayerStates.LEAVING then
         Redzone.Client.Utils.NotifyWarning('Sortie déjà en cours! Appuyez sur X pour annuler.')
@@ -201,6 +207,11 @@ end
 ---Enregistrement de la commande /quitredzone
 RegisterCommand(Config.Gamemode.QuitCommand, function()
     if Redzone.Client.Teleport.IsInRedzone() then
+        -- Bloquer si le joueur est mort (empêche le glitch de résurrection via F8)
+        if exports['redzone']:IsPlayerDead() then
+            Redzone.Client.Utils.NotifyError('Vous ne pouvez pas quitter le REDZONE quand vous êtes mort!')
+            return
+        end
         if playerState == Redzone.Shared.Constants.PlayerStates.LEAVING then
             -- Annuler si déjà en cours
             Redzone.Client.Teleport.CancelLeaving()
