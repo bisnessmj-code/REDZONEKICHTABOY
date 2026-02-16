@@ -703,6 +703,76 @@ function IsGameActive()
 end
 
 -- ==========================================
+-- FILET DE SÉCURITÉ : VALIDATION PÉRIODIQUE DES JOUEURS VIVANTS
+-- ==========================================
+-- Vérifie toutes les 5 secondes que les joueurs dans alivePlayers
+-- sont toujours connectés et dans GDT.Players.
+-- Retire les joueurs fantômes et force CheckRoundEnd si nécessaire.
+-- ==========================================
+
+Citizen.CreateThread(function()
+    while true do
+        Wait(5000)
+
+        if not GameManager or not GameManager.gameActive then
+            goto continue
+        end
+
+        if GameManager.state ~= Constants.GameState.IN_PROGRESS then
+            goto continue
+        end
+
+        if GameManager.roundLocked then
+            goto continue
+        end
+
+        local ghostsRemoved = false
+
+        for _, team in ipairs({Constants.Teams.RED, Constants.Teams.BLUE}) do
+            local aliveList = GameManager.alivePlayers[team]
+            if aliveList then
+                -- Parcourir en sens inverse pour pouvoir supprimer sans casser les indices
+                for i = #aliveList, 1, -1 do
+                    local playerId = aliveList[i]
+                    local isGhost = false
+
+                    -- Vérifier si le joueur est toujours dans GDT.Players
+                    if not GDT.Players[playerId] then
+                        isGhost = true
+                        print('[GDT] SAFETY: Joueur fantome '..tostring(playerId)..' detecte dans alivePlayers.'..team..' (plus dans GDT.Players)')
+                    -- Vérifier si le joueur est toujours connecté
+                    elseif not GetPlayerName(playerId) then
+                        isGhost = true
+                        print('[GDT] SAFETY: Joueur fantome '..tostring(playerId)..' detecte dans alivePlayers.'..team..' (deconnecte)')
+                    -- Vérifier si le joueur est dans un état mort/spectateur mais toujours dans alivePlayers
+                    elseif GDT.Players[playerId].state == Constants.PlayerState.DEAD_IN_GAME
+                        or GDT.Players[playerId].state == Constants.PlayerState.SPECTATING then
+                        isGhost = true
+                        print('[GDT] SAFETY: Joueur fantome '..tostring(playerId)..' detecte dans alivePlayers.'..team..' (etat: '..tostring(GDT.Players[playerId].state)..')')
+                    end
+
+                    if isGhost then
+                        table.remove(aliveList, i)
+                        ghostsRemoved = true
+                    end
+                end
+            end
+        end
+
+        -- Si des fantômes ont été retirés, vérifier la fin de round
+        if ghostsRemoved then
+            print('[GDT] SAFETY: Fantomes retires, verification fin de round...')
+            local redAlive = #GameManager.alivePlayers.red
+            local blueAlive = #GameManager.alivePlayers.blue
+            print('[GDT] SAFETY: Rouge vivants: '..redAlive..' | Bleu vivants: '..blueAlive)
+            CheckRoundEnd()
+        end
+
+        ::continue::
+    end
+end)
+
+-- ==========================================
 -- EXPORTS GLOBAUX
 -- ==========================================
 

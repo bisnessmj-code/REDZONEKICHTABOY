@@ -131,7 +131,7 @@ RegisterCommand('gtkick', function(source, args)
     local targetName = GetPlayerName(targetId)
     local targetData = GDT.Players[targetId]
     local targetTeam = targetData and targetData.team or 'inconnu'
-    local wasInGame = targetData and (targetData.state == Constants.PlayerState.IN_GAME or targetData.state == Constants.PlayerState.DEAD_IN_GAME)
+    local wasInGame = targetData and (targetData.state == Constants.PlayerState.IN_GAME or targetData.state == Constants.PlayerState.DEAD_IN_GAME or targetData.state == Constants.PlayerState.SPECTATING)
     
     
     -- ==========================================

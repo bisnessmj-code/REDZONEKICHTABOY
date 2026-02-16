@@ -178,18 +178,43 @@ end
 function RemovePlayerFromGDT(source, silent, skipTeleport)
     local playerData = GDT.Players[source]
     if not playerData then return end
-    
+
     local bucket = playerData.bucket
     local originalOutfit = playerData.originalOutfit
-    local wasInGame = playerData.state == Constants.PlayerState.IN_GAME or playerData.state == Constants.PlayerState.DEAD_IN_GAME
+    -- FIX : Inclure SPECTATING dans le check (un spectateur peut encore être dans alivePlayers en edge case)
+    local wasInGame = playerData.state == Constants.PlayerState.IN_GAME
+        or playerData.state == Constants.PlayerState.DEAD_IN_GAME
+        or playerData.state == Constants.PlayerState.SPECTATING
     local playerTeam = playerData.team
-    
+
     -- Valeur par défaut pour skipTeleport
     if skipTeleport == nil then
         skipTeleport = false
     end
 
-  
+    -- ==========================================
+    -- ÉTAPE 1 : RETRAIT DES LISTES DE JEU (IMMÉDIAT, AVANT TOUT WAIT)
+    -- ==========================================
+    -- FIX : Fait AVANT le Wait(500) pour éviter une fenêtre de désync
+    -- où un autre joueur meurt pendant le Wait et CheckRoundEnd voit un faux joueur vivant
+    if wasInGame and GameManager and GameManager.gameActive then
+        -- Retirer de la liste des vivants si présent
+        if playerTeam == Constants.Teams.RED or playerTeam == Constants.Teams.BLUE then
+            for i, playerId in ipairs(GameManager.alivePlayers[playerTeam]) do
+                if playerId == source then
+                    table.remove(GameManager.alivePlayers[playerTeam], i)
+                    break
+                end
+            end
+        end
+
+        -- Vérifier si ça doit déclencher une fin de round
+        CheckRoundEndAfterKick()
+    end
+
+    -- ==========================================
+    -- ÉTAPE 2 : NETTOYAGE CLIENT (après le retrait serveur)
+    -- ==========================================
 
     -- Arrêter le spectateur (PRIORITÉ ABSOLUE)
     TriggerClientEvent('gdt:client:stopSpectator', source)
@@ -197,33 +222,10 @@ function RemovePlayerFromGDT(source, silent, skipTeleport)
     -- Arrêter la zone de combat
     TriggerClientEvent('gdt:client:stopCombatZone', source)
 
-    
     -- Réanimer le joueur si mort
     TriggerClientEvent('gdt:client:revivePlayer', source)
 
-    
-    Wait(500) -- Attendre que tout soit bien arrêté
-    
-    -- ==========================================
-    -- ÉTAPE 2 : RETRAIT DES LISTES DE JEU
-    -- ==========================================
-    if wasInGame and GameManager and GameManager.gameActive then
-
-        
-        -- Retirer de la liste des vivants si présent
-        if playerTeam == Constants.Teams.RED or playerTeam == Constants.Teams.BLUE then
-            for i, playerId in ipairs(GameManager.alivePlayers[playerTeam]) do
-                if playerId == source then
-                    table.remove(GameManager.alivePlayers[playerTeam], i)
-                   
-                    break
-                end
-            end
-        end
-        
-        -- Vérifier si ça doit déclencher une fin de round
-        CheckRoundEndAfterKick()
-    end
+    Wait(500) -- Attendre que les events client soient traités
     
     -- ==========================================
     -- ÉTAPE 3 : NETTOYAGE SERVEUR
@@ -275,32 +277,11 @@ end
 function CheckRoundEndAfterKick()
     if not GameManager or not GameManager.gameActive then return end
     if GameManager.state ~= Constants.GameState.IN_PROGRESS then return end
-    
-    local redAlive = #GameManager.alivePlayers.red
-    local blueAlive = #GameManager.alivePlayers.blue
-    
 
-    
-    -- Si une équipe n'a plus de joueurs, terminer le round
-    if redAlive == 0 and blueAlive > 0 then
-    
-        Citizen.CreateThread(function()
-            Wait(1000) -- Petit délai pour laisser le temps au joueur kické de partir
-            CheckRoundEnd()
-        end)
-    elseif blueAlive == 0 and redAlive > 0 then
-       
-        Citizen.CreateThread(function()
-            Wait(1000)
-            CheckRoundEnd()
-        end)
-    elseif redAlive == 0 and blueAlive == 0 then
-      
-        Citizen.CreateThread(function()
-            Wait(1000)
-            CheckRoundEnd()
-        end)
-    end
+    -- FIX : Appel DIRECT sans délai. Le Wait(1000) créait une fenêtre de race condition
+    -- où roundLocked pouvait devenir true entre-temps, bloquant la détection de fin de round.
+    -- Le retrait de alivePlayers est déjà fait avant cet appel, donc pas besoin d'attendre.
+    CheckRoundEnd()
 end
 
 -- Récupère les données d'un joueur GDT
