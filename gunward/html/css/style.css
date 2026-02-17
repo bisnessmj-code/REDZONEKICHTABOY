@@ -1,0 +1,170 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background: transparent;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.container {
+    background: rgba(10, 10, 10, 0.92);
+    border: 1px solid rgba(200, 30, 30, 0.4);
+    border-radius: 12px;
+    padding: 40px;
+    width: 700px;
+    max-width: 90vw;
+    backdrop-filter: blur(12px);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 10px rgba(200, 30, 30, 0.5));
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: #e03232;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(200, 30, 30, 0.4);
+}
+
+.teams-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+.team-card {
+    background: rgba(25, 25, 25, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.team-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--team-color);
+    opacity: 0.8;
+}
+
+.team-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--team-color);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 15px var(--team-glow);
+}
+
+.team-card:active {
+    transform: translateY(0);
+}
+
+.team-card.full {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.team-name {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--team-color);
+    margin-bottom: 8px;
+}
+
+.team-count {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.team-count span {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.team-bar {
+    margin-top: 12px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.team-bar-fill {
+    height: 100%;
+    background: var(--team-color);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+}
+
+.team-btn {
+    display: block;
+    width: 100%;
+    margin-top: 14px;
+    padding: 8px 0;
+    background: transparent;
+    border: 1px solid var(--team-color);
+    border-radius: 4px;
+    color: var(--team-color);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.team-btn:hover {
+    background: var(--team-color);
+    color: #ffffff;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.hint {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
