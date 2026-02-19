@@ -170,30 +170,18 @@ RegisterNetEvent('gunward:client:spawnVehicle', function(netId)
         return
     end
 
-    local ped = PlayerPedId()
     local team = Gunward.Client.Teams.GetCurrent()
 
-    -- Apply team color
+    -- Appliquer la couleur de l'équipe
     if team and Config.TeamVehicleColors[team] then
         local colors = Config.TeamVehicleColors[team]
         SetVehicleColours(vehicle, colors.primary, colors.secondary)
     end
 
-    -- Apply boost
+    -- Appliquer le boost (vitesse + handling)
     ApplyBoost(vehicle)
 
-    -- Téléporter le joueur aux coordonnées du véhicule pour garantir le streaming
-    local vehCoords = GetEntityCoords(vehicle)
-    ClearPedTasksImmediately(ped)
-    SetEntityCoords(ped, vehCoords.x, vehCoords.y, vehCoords.z + 1.0, false, false, false, false)
-
-    -- Attendre que GTA confirme la position
-    Wait(200)
-
-    -- Placer directement dans le siège conducteur
-    ped = PlayerPedId()
-    SetPedIntoVehicle(ped, vehicle, -1)
-
+    -- Le warp dans le siège est géré côté serveur (SetPedIntoVehicle)
     Gunward.Client.Utils.Notify('Vehicule spawn!', 'success')
 end)
 

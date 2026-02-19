@@ -18,8 +18,6 @@ function Gunward.Server.VehicleShop.DeletePlayerVehicle(source)
     if not data then return end
 
     if data.entity and DoesEntityExist(data.entity) then
-        -- Retirer le flag mission entity avant de supprimer (sinon DeleteEntity est ignoré)
-        SetEntityAsMissionEntity(data.entity, false, false)
         DeleteEntity(data.entity)
     end
 
@@ -68,22 +66,19 @@ RegisterNetEvent('gunward:server:buyVehicle', function(model)
                 return
             end
 
-            -- Spawn the vehicle after successful payment
             SpawnVehicleForPlayer(source, model)
 
-            -- Send updated balance
             Gunward.Server.Database.GetBank(source, function(newBalance)
                 TriggerClientEvent('gunward:client:updateBank', source, newBalance)
             end)
         end)
     else
-        -- Free vehicle, spawn directly
         SpawnVehicleForPlayer(source, model)
     end
 end)
 
 function SpawnVehicleForPlayer(source, model)
-    -- Delete existing vehicle first
+    -- Supprimer l'ancien véhicule
     Gunward.Server.VehicleShop.DeletePlayerVehicle(source)
 
     local spawnPos, heading = GetSpawnPosition(source)
@@ -100,7 +95,7 @@ function SpawnVehicleForPlayer(source, model)
         return
     end
 
-    -- Wait for vehicle to exist
+    -- Attendre que le véhicule existe côté serveur
     local timeout = 0
     while not DoesEntityExist(vehicle) and timeout < 50 do
         Wait(100)
@@ -112,23 +107,26 @@ function SpawnVehicleForPlayer(source, model)
         return
     end
 
-    -- Set routing bucket
     SetEntityRoutingBucket(vehicle, Config.Bucket)
-
-    -- Empêche GTA de supprimer le véhicule (garbage collection ambient)
-    SetEntityAsMissionEntity(vehicle, true, true)
 
     local netId = NetworkGetNetworkIdFromEntity(vehicle)
 
-    -- Store vehicle reference
     playerVehicles[source] = {
         entity = vehicle,
         netId = netId,
         model = model,
     }
 
-    -- Send to client
+    -- Envoyer le netId au client pour le boost et la couleur
     TriggerClientEvent('gunward:client:spawnVehicle', source, netId)
+
+    -- Attendre que le client charge le véhicule, puis placer le joueur dedans côté serveur
+    Wait(800)
+
+    local playerPed = GetPlayerPed(source)
+    if playerPed and playerPed ~= 0 and DoesEntityExist(vehicle) then
+        SetPedIntoVehicle(playerPed, vehicle, -1)
+    end
 
     Gunward.Debug('Vehicle', model, 'spawned for player', source, 'netId:', netId)
 end
