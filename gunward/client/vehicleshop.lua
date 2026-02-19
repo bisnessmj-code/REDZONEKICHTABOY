@@ -182,11 +182,17 @@ RegisterNetEvent('gunward:client:spawnVehicle', function(netId)
     -- Apply boost
     ApplyBoost(vehicle)
 
-    -- Libérer le ped de toute tâche en cours avant le warp
+    -- Téléporter le joueur aux coordonnées du véhicule pour garantir le streaming
+    local vehCoords = GetEntityCoords(vehicle)
     ClearPedTasksImmediately(ped)
+    SetEntityCoords(ped, vehCoords.x, vehCoords.y, vehCoords.z + 1.0, false, false, false, false)
 
-    -- Warp instantané dans le siège conducteur
-    TaskWarpPedIntoVehicle(ped, vehicle, -1)
+    -- Attendre que GTA confirme la position
+    Wait(200)
+
+    -- Placer directement dans le siège conducteur
+    ped = PlayerPedId()
+    SetPedIntoVehicle(ped, vehicle, -1)
 
     Gunward.Client.Utils.Notify('Vehicule spawn!', 'success')
 end)

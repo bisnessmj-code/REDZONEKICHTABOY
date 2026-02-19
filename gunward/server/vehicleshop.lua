@@ -18,6 +18,8 @@ function Gunward.Server.VehicleShop.DeletePlayerVehicle(source)
     if not data then return end
 
     if data.entity and DoesEntityExist(data.entity) then
+        -- Retirer le flag mission entity avant de supprimer (sinon DeleteEntity est ignoré)
+        SetEntityAsMissionEntity(data.entity, false, false)
         DeleteEntity(data.entity)
     end
 
