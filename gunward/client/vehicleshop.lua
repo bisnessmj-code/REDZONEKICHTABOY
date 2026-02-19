@@ -285,30 +285,36 @@ CreateThread(function()
     end
 end)
 
--- ── ANTI-CAR KILL — désactive les collisions véhicule-véhicule entre joueurs ──
+-- ── ANTI-CAR KILL — désactive toutes les collisions joueur↔véhicule ──────────
 CreateThread(function()
     while true do
-        local sleep = 1000
-
         if Gunward.Client.Teams.IsInGunward() then
-            local myPed    = PlayerPedId()
+            local myPed     = PlayerPedId()
             local myVehicle = GetVehiclePedIsIn(myPed, false)
 
-            if myVehicle ~= 0 then
-                sleep = 500
-                for _, playerId in ipairs(GetActivePlayers()) do
-                    local targetPed = GetPlayerPed(playerId)
-                    if targetPed ~= myPed then
-                        local targetVehicle = GetVehiclePedIsIn(targetPed, false)
-                        if targetVehicle ~= 0 and targetVehicle ~= myVehicle then
+            for _, playerId in ipairs(GetActivePlayers()) do
+                local targetPed = GetPlayerPed(playerId)
+                if targetPed ~= myPed then
+                    local targetVehicle = GetVehiclePedIsIn(targetPed, false)
+
+                    if myVehicle ~= 0 then
+                        -- Mon véhicule ↔ leur ped (à pied)
+                        SetEntityNoCollisionEntity(myVehicle, targetPed, false)
+                        -- Mon véhicule ↔ leur véhicule
+                        if targetVehicle ~= 0 then
                             SetEntityNoCollisionEntity(myVehicle, targetVehicle, false)
+                        end
+                    else
+                        -- Mon ped ↔ leur véhicule (je suis à pied)
+                        if targetVehicle ~= 0 then
+                            SetEntityNoCollisionEntity(myPed, targetVehicle, false)
                         end
                     end
                 end
             end
         end
 
-        Wait(sleep)
+        Wait(500)
     end
 end)
 
