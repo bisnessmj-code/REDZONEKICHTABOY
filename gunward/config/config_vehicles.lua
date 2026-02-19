@@ -20,14 +20,26 @@ Config.Vehicles = {
     {model = 't20',       label = 'T20',              price = 4000},
 }
 
--- Boost véhicule (appliqué dès le spawn du véhicule gunward)
+-- Boost véhicule — multiplicateurs identiques à la redzone
+-- Ces valeurs sont appliquées en MULTIPLICATION sur les valeurs originales du véhicule
 Config.VehicleBoost = {
-    powerMultiplier    = 5.0,   -- SetVehicleCheatPowerIncrease (puissance moteur x5)
-    topSpeedBonus      = 0.5,   -- ModifyVehicleTopSpeed (bonus vitesse max)
-    driveForce         = 2.5,   -- fInitialDriveForce
-    brakeForce         = 2.5,   -- fBrakeForce
-    tractionMax        = 2.0,   -- fTractionCurveMax
-    tractionMin        = 2.0,   -- fTractionCurveMin
+    -- Vitesse
+    powerMultiplier = 5.0,   -- SetVehicleCheatPowerIncrease
+    topSpeedBonus   = 0.5,   -- ModifyVehicleTopSpeed
+
+    -- Multiplicateurs handling (appliqués sur les valeurs natives du modèle)
+    fInitialDriveForce            = 1.0,  -- accélération (x1 = inchangé, le power boost suffit)
+    fClutchChangeRateScaleUpShift = 1.0,  -- passages de vitesses
+    fTractionCurveMax             = 2.0,  -- adhérence max (x2 = moins de patinage)
+    fTractionCurveMin             = 2.0,  -- adhérence min
+    fTractionCurveLateral         = 1.5,  -- traction latérale (moins de dérapage)
+    fLowSpeedTractionLossMult     = 0.3,  -- réduit le patinage basse vitesse (anti-dérapage)
+    fBrakeForce                   = 2.5,  -- freinage x2.5
+    fSuspensionForce              = 2.0,  -- suspension x2
+    fAntiRollBarForce             = 2.0,  -- anti-roulis x2
+    fCollisionDamageMult          = 0.1,  -- dégâts collision -90%
+    fDeformationDamageMult        = 0.1,  -- dégâts déformation -90%
+    fEngineDamageMult             = 0.1,  -- dégâts moteur -90%
 }
 
 -- Couleurs véhicule par équipe (GTA color index)

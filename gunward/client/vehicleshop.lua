@@ -5,16 +5,38 @@ local shopOpen  = false
 
 -- ── BOOST ────────────────────────────────────────────────────────────────────
 
-local boostedVehicle = nil
+local boostedVehicle   = nil
+local originalHandling = {}
+
+local HANDLING_FIELDS = {
+    'fInitialDriveForce', 'fClutchChangeRateScaleUpShift',
+    'fTractionCurveMax', 'fTractionCurveMin', 'fTractionCurveLateral',
+    'fLowSpeedTractionLossMult', 'fBrakeForce', 'fSuspensionForce',
+    'fAntiRollBarForce', 'fCollisionDamageMult', 'fDeformationDamageMult',
+    'fEngineDamageMult',
+}
+
+local function SaveOriginalHandling(vehicle)
+    originalHandling = {}
+    for _, field in ipairs(HANDLING_FIELDS) do
+        originalHandling[field] = GetVehicleHandlingFloat(vehicle, 'CHandlingData', field)
+    end
+end
 
 local function ApplyBoost(vehicle)
     if not DoesEntityExist(vehicle) then return end
     local b = Config.VehicleBoost
 
-    SetVehicleHandlingFloat(vehicle, 'CHandlingData', 'fInitialDriveForce', b.driveForce)
-    SetVehicleHandlingFloat(vehicle, 'CHandlingData', 'fBrakeForce',         b.brakeForce)
-    SetVehicleHandlingFloat(vehicle, 'CHandlingData', 'fTractionCurveMax',   b.tractionMax)
-    SetVehicleHandlingFloat(vehicle, 'CHandlingData', 'fTractionCurveMin',   b.tractionMin)
+    SaveOriginalHandling(vehicle)
+
+    -- Appliquer les multiplicateurs sur les valeurs originales du véhicule
+    for _, field in ipairs(HANDLING_FIELDS) do
+        local mult = b[field]
+        if mult and originalHandling[field] then
+            SetVehicleHandlingFloat(vehicle, 'CHandlingData', field,
+                originalHandling[field] * mult)
+        end
+    end
 
     ModifyVehicleTopSpeed(vehicle, b.topSpeedBonus)
     SetVehicleCheatPowerIncrease(vehicle, b.powerMultiplier)
@@ -23,6 +45,8 @@ local function ApplyBoost(vehicle)
     SetVehicleTyresCanBurst(vehicle, false)
     SetVehicleCanBreak(vehicle, false)
     SetVehicleStrong(vehicle, true)
+    SetVehicleHasStrongAxles(vehicle, true)
+    SetVehicleOnGroundProperly(vehicle, true)
     ToggleVehicleMod(vehicle, 18, true) -- turbo
 
     boostedVehicle = vehicle
@@ -30,12 +54,17 @@ end
 
 local function ClearBoost(vehicle)
     if not DoesEntityExist(vehicle) then return end
+    -- Restaurer les valeurs originales
+    for field, val in pairs(originalHandling) do
+        SetVehicleHandlingFloat(vehicle, 'CHandlingData', field, val)
+    end
     ModifyVehicleTopSpeed(vehicle, 1.0)
     SetVehicleCheatPowerIncrease(vehicle, 0.0)
     SetVehicleCanBeVisiblyDamaged(vehicle, true)
     SetVehicleTyresCanBurst(vehicle, true)
     SetVehicleCanBreak(vehicle, true)
-    boostedVehicle = nil
+    originalHandling = {}
+    boostedVehicle   = nil
 end
 
 function Gunward.Client.VehicleShop.CreatePed(teamName)

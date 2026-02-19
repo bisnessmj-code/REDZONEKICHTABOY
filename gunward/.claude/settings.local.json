@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:fancadev.gitbook.io)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(dir:*)",
+      "Bash(echo:*)",
+      "Bash(cmd.exe /c \"dir C:\\\\Users\\\\devja\\\\Desktop\\\\scriptv1redzone\\\\REDZONEKICHTABOY\\\\redzone\\\\html\")",
+      "Bash(cmd.exe /c \"dir C:\\\\Users\\\\devja\\\\Desktop\\\\scriptv1redzone\\\\REDZONEKICHTABOY\"\")",
+      "Bash(cmd.exe /c dir \"C:\\\\Users\\\\devja\\\\Desktop\\\\scriptv1redzone\\\\REDZONEKICHTABOY\")"
     ]
   }
 }

@@ -1,49 +1,63 @@
 /* ============================================================
-   KILL FEED — Black Ops 2 Style
-   Logo + Killer › Victim, discreet, top-right
+   KILL FEED — Style Redzone (repris à l'identique)
    ============================================================ */
 
-const KILLFEED_MAX      = 6;
-const KILLFEED_DURATION = 6000;
+const KILLFEED_MAX_ENTRIES  = 6;
+const KILLFEED_DISPLAY_TIME = 6000;
 
 function addKillFeed(data) {
     const container = document.getElementById('killfeed-container');
     if (!container) return;
 
-    const row = document.createElement('div');
-    row.className = 'kill-row';
+    const killerName = data.killerName || 'Inconnu';
+    const killerId   = data.killerId   || '?';
+    const victimName = data.victimName || 'Inconnu';
+    const victimId   = data.victimId   || '?';
 
-    row.innerHTML =
-        '<img class="kf-logo" src="assets/logo.png" alt="" onerror="this.style.display=\'none\'">' +
-        '<span class="killfeed-killer-name">' + escapeHtml(data.killerName) + '</span>' +
-        '<span class="killfeed-id">[' + data.killerId + ']</span>' +
-        '<span class="killfeed-sep">&#8250;</span>' +
-        '<span class="killfeed-victim-name">' + escapeHtml(data.victimName) + '</span>' +
-        '<span class="killfeed-id">[' + data.victimId + ']</span>';
+    const killRow = document.createElement('div');
+    killRow.className = 'kill-row';
+    killRow.innerHTML =
+        '<div class="killfeed-player-box killfeed-killer-box">' +
+            '<span class="killfeed-player-id">ID:' + killerId + '</span>' +
+            '<span class="killfeed-killer-name">' + escapeHtml(killerName) + '</span>' +
+        '</div>' +
+        '<div class="killfeed-action-tag">\u00c0 TU\u00c9</div>' +
+        '<div class="killfeed-player-box">' +
+            '<span class="killfeed-victim-name">' + escapeHtml(victimName) + '</span>' +
+            '<span class="killfeed-player-id">ID:' + victimId + '</span>' +
+        '</div>';
 
-    container.appendChild(row);
+    // Nouveau kill en haut
+    container.prepend(killRow);
 
-    // Remove oldest entry if over limit
-    while (container.children.length > KILLFEED_MAX) {
-        container.removeChild(container.children[0]);
+    // Supprimer les entrées en excès avec animation
+    while (container.children.length > KILLFEED_MAX_ENTRIES) {
+        const last = container.lastElementChild;
+        if (last) {
+            last.classList.add('killfeed-exit');
+            setTimeout(function () {
+                if (last.parentNode) last.remove();
+            }, 400);
+        }
     }
 
-    // Auto-remove after duration
+    // Auto-suppression après délai
     setTimeout(function () {
-        row.classList.add('removing');
-        setTimeout(function () {
-            if (row.parentNode) row.parentNode.removeChild(row);
-        }, 250);
-    }, KILLFEED_DURATION);
+        if (killRow.parentNode) {
+            killRow.classList.add('killfeed-exit');
+            setTimeout(function () {
+                if (killRow.parentNode) killRow.remove();
+            }, 400);
+        }
+    }, KILLFEED_DISPLAY_TIME);
 }
 
 function escapeHtml(text) {
     const div = document.createElement('div');
-    div.textContent = text;
+    div.textContent = String(text);
     return div.innerHTML;
 }
 
-// NUI message listener
 window.addEventListener('message', function (event) {
     if (event.data.action === 'addKillFeed') {
         addKillFeed(event.data);

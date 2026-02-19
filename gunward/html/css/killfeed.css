@@ -1,97 +1,116 @@
 /* ============================================================
-   KILL FEED — Black Ops 2 Style
-   Discreet, top-right, 170px from top
+   KILL FEED — Style Redzone (repris à l'identique)
    ============================================================ */
 
 #killfeed-container {
     position: fixed;
-    top: 170px;
-    right: 20px;
-    width: 260px;
-    z-index: 9999;
-    pointer-events: none;
+    top: 160px;
+    right: 25px;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 8px;
+    align-items: flex-end;
+    z-index: 9999;
+    pointer-events: none;
 }
 
 .kill-row {
     display: flex;
     align-items: center;
-    gap: 6px;
-    background: rgba(0, 0, 0, 0.84);
-    border-left: 2px solid #cc0000;
-    padding: 5px 10px 5px 8px;
-    animation: kfIn 0.2s ease-out forwards;
-    overflow: hidden;
+    background: rgba(5, 5, 5, 0.95);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 4px;
+    position: relative;
+    clip-path: polygon(12px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 12px);
+    animation: killfeedSlideIn 0.3s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+    box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.4);
+    font-family: 'Teko', sans-serif;
 }
 
-.kill-row.removing {
-    animation: kfOut 0.25s ease-in forwards;
+/* Barre rouge droite */
+.kill-row::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: #ff0000;
+    box-shadow: -2px 0 10px rgba(255, 0, 0, 0.5);
 }
 
-/* Logo icon before killer name */
-.kf-logo {
-    width: 14px;
-    height: 14px;
-    object-fit: contain;
-    flex-shrink: 0;
-    opacity: 0.85;
+.killfeed-player-box {
+    padding: 2px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .killfeed-killer-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
     color: #ffffff;
-    text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 88px;
-    letter-spacing: 0.5px;
-}
-
-/* Server ID badge [N] */
-.killfeed-id {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    color: #555555;
-    white-space: nowrap;
-    flex-shrink: 0;
-    letter-spacing: 0;
-}
-
-/* Separator arrow */
-.killfeed-sep {
-    color: #cc0000;
-    font-size: 10px;
+    font-size: 1.35rem;
     font-weight: 700;
-    flex-shrink: 0;
-    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+/* Badge "À TUÉ" rouge incliné */
+.killfeed-action-tag {
+    background: #ff0000;
+    color: #000;
+    font-family: 'Syncopate', sans-serif;
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    font-weight: 900;
+    transform: skewX(-15deg);
+    margin: 0 8px;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
 }
 
 .killfeed-victim-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    color: #777777;
+    color: #999;
+    font-size: 1.25rem;
+    font-weight: 500;
     text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex: 1;
-    letter-spacing: 0.3px;
+}
+
+/* Badge ID gris */
+.killfeed-player-id {
+    background: rgba(255, 255, 255, 0.08);
+    color: #666;
+    font-size: 0.8rem;
+    padding: 1px 5px;
+    font-family: monospace;
+    border-radius: 2px;
+}
+
+/* Badge ID du killer en rouge */
+.killfeed-killer-box .killfeed-player-id {
+    color: #ff0000;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.2);
 }
 
 /* Animations */
-@keyframes kfIn {
-    from { opacity: 0; transform: translateX(18px); }
-    to   { opacity: 1; transform: translateX(0); }
+@keyframes killfeedSlideIn {
+    from {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
-@keyframes kfOut {
-    from { opacity: 1; transform: translateX(0); }
-    to   { opacity: 0; transform: translateX(14px); }
+.kill-row.killfeed-exit {
+    animation: killfeedSlideOut 0.4s ease-in forwards;
+}
+
+@keyframes killfeedSlideOut {
+    to {
+        transform: translateX(20px);
+        opacity: 0;
+        filter: blur(8px);
+    }
 }
