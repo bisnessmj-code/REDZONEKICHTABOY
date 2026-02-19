@@ -285,6 +285,33 @@ CreateThread(function()
     end
 end)
 
+-- ── ANTI-CAR KILL — désactive les collisions véhicule-véhicule entre joueurs ──
+CreateThread(function()
+    while true do
+        local sleep = 1000
+
+        if Gunward.Client.Teams.IsInGunward() then
+            local myPed    = PlayerPedId()
+            local myVehicle = GetVehiclePedIsIn(myPed, false)
+
+            if myVehicle ~= 0 then
+                sleep = 500
+                for _, playerId in ipairs(GetActivePlayers()) do
+                    local targetPed = GetPlayerPed(playerId)
+                    if targetPed ~= myPed then
+                        local targetVehicle = GetVehiclePedIsIn(targetPed, false)
+                        if targetVehicle ~= 0 and targetVehicle ~= myVehicle then
+                            SetEntityNoCollisionEntity(myVehicle, targetVehicle, false)
+                        end
+                    end
+                end
+            end
+        end
+
+        Wait(sleep)
+    end
+end)
+
 -- Update balance after purchase
 RegisterNetEvent('gunward:client:updateBank', function(newBalance)
     SendNUIMessage({
