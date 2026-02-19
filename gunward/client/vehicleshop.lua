@@ -38,7 +38,7 @@ local function ApplyBoost(vehicle)
         end
     end
 
-    ModifyVehicleTopSpeed(vehicle, b.topSpeedBonus)
+    SetVehicleMaxSpeed(vehicle, b.topSpeedMs)
     SetVehicleCheatPowerIncrease(vehicle, b.powerMultiplier)
 
     SetVehicleCanBeVisiblyDamaged(vehicle, false)
@@ -58,7 +58,7 @@ local function ClearBoost(vehicle)
     for field, val in pairs(originalHandling) do
         SetVehicleHandlingFloat(vehicle, 'CHandlingData', field, val)
     end
-    ModifyVehicleTopSpeed(vehicle, 1.0)
+    SetVehicleMaxSpeed(vehicle, 0.0)  -- 0.0 = réinitialise la limite (pas de cap)
     SetVehicleCheatPowerIncrease(vehicle, 0.0)
     SetVehicleCanBeVisiblyDamaged(vehicle, true)
     SetVehicleTyresCanBurst(vehicle, true)
@@ -144,6 +144,7 @@ end)
 
 -- Receive vehicle from server
 RegisterNetEvent('gunward:client:spawnVehicle', function(netId)
+    -- Attendre que le netId existe
     local timeout = 0
     while not NetworkDoesNetworkIdExist(netId) and timeout < 100 do
         Wait(50)
@@ -155,7 +156,20 @@ RegisterNetEvent('gunward:client:spawnVehicle', function(netId)
         return
     end
 
-    local vehicle = NetToVeh(netId)
+    -- Attendre que l'entité soit valide localement (NetToVeh peut retourner 0 même si le netId existe)
+    local vehicle = 0
+    timeout = 0
+    while (vehicle == 0 or not DoesEntityExist(vehicle)) and timeout < 60 do
+        vehicle = NetToVeh(netId)
+        Wait(50)
+        timeout = timeout + 1
+    end
+
+    if vehicle == 0 or not DoesEntityExist(vehicle) then
+        Gunward.Client.Utils.Notify('Erreur: entite vehicule introuvable', 'error')
+        return
+    end
+
     local ped = PlayerPedId()
     local team = Gunward.Client.Teams.GetCurrent()
 
@@ -188,6 +202,7 @@ CreateThread(function()
                 if boostedVehicle == vehicle then
                     -- Réappliquer périodiquement (GTA peut réinitialiser certains flags)
                     SetVehicleCheatPowerIncrease(vehicle, Config.VehicleBoost.powerMultiplier)
+                    SetVehicleMaxSpeed(vehicle, Config.VehicleBoost.topSpeedMs)
                     SetVehicleTyresCanBurst(vehicle, false)
                     SetVehicleCanBreak(vehicle, false)
                 end

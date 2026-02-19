@@ -24,11 +24,11 @@ Config.Vehicles = {
 -- Ces valeurs sont appliquées en MULTIPLICATION sur les valeurs originales du véhicule
 Config.VehicleBoost = {
     -- Vitesse
-    powerMultiplier = 5.0,   -- SetVehicleCheatPowerIncrease
-    topSpeedBonus   = 0.5,   -- ModifyVehicleTopSpeed
+    powerMultiplier = 15.0,   -- SetVehicleCheatPowerIncrease (accélération)
+    topSpeedMs      = 65.0,  -- SetVehicleMaxSpeed en m/s (65 m/s ≈ 234 km/h)
 
     -- Multiplicateurs handling (appliqués sur les valeurs natives du modèle)
-    fInitialDriveForce            = 1.0,  -- accélération (x1 = inchangé, le power boost suffit)
+    fInitialDriveForce            = 2.0,  -- accélération (x1 = inchangé, le power boost suffit)
     fClutchChangeRateScaleUpShift = 1.0,  -- passages de vitesses
     fTractionCurveMax             = 2.0,  -- adhérence max (x2 = moins de patinage)
     fTractionCurveMin             = 2.0,  -- adhérence min
