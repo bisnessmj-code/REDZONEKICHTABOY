@@ -4,6 +4,7 @@
 
 -- Kill feed: relay to NUI
 RegisterNetEvent('gunward:client:killfeed', function(data)
+    if not Gunward.Client.Teams.IsInGunward() then return end
     SendNUIMessage({
         action = 'addKillFeed',
         killerName = data.killerName,

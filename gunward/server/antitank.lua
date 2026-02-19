@@ -103,7 +103,13 @@ AddEventHandler('fanca_antitank:kill', function(targetId, playerId)
         victimName = victimName,
         victimId = targetId,
     }
-    TriggerClientEvent('gunward:client:killfeed', -1, killfeedData)
+    -- Kill feed uniquement aux joueurs dans Gunward
+    for _, playerId in ipairs(GetPlayers()) do
+        local src = tonumber(playerId)
+        if Gunward.Server.Teams.IsPlayerInGunward(src) then
+            TriggerClientEvent('gunward:client:killfeed', src, killfeedData)
+        end
+    end
 
     -- Remove victim's purchased weapons (server inventory)
     Gunward.Server.WeaponShop.CleanupPlayerWeapons(targetId)

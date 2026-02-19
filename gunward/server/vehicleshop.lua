@@ -113,6 +113,9 @@ function SpawnVehicleForPlayer(source, model)
     -- Set routing bucket
     SetEntityRoutingBucket(vehicle, Config.Bucket)
 
+    -- Empêche GTA de supprimer le véhicule (garbage collection ambient)
+    SetEntityAsMissionEntity(vehicle, true, true)
+
     local netId = NetworkGetNetworkIdFromEntity(vehicle)
 
     -- Store vehicle reference

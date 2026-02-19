@@ -144,7 +144,7 @@ local function ForceProtect()
     local ped = PlayerPedId()
     local coords = GetEntityCoords(ped)
     local heading = GetEntityHeading(ped)
-    local vehicle = GetVehiclePedIsIn(ped, true)
+    local vehicle = GetVehiclePedIsIn(ped, false)
 
     if IsEntityDead(ped) then
         NetworkResurrectLocalPlayer(coords.x, coords.y, coords.z, heading, true, false)
