@@ -23,9 +23,9 @@ Config.Vehicles = {
 -- Boost véhicule — multiplicateurs identiques à la redzone
 -- Ces valeurs sont appliquées en MULTIPLICATION sur les valeurs originales du véhicule
 Config.VehicleBoost = {
-    -- Vitesse
-    powerMultiplier = 15.0,   -- SetVehicleCheatPowerIncrease (accélération)
-    topSpeedMs      = 65.0,  -- SetVehicleMaxSpeed en m/s (65 m/s ≈ 234 km/h)
+    -- Vitesse (identique redzone)
+    powerMultiplier    = 15.0,  -- SetVehicleCheatPowerIncrease (accélération)
+    topSpeedMultiplier = 0.5,   -- ModifyVehicleTopSpeed (+50% vitesse max)
 
     -- Multiplicateurs handling (appliqués sur les valeurs natives du modèle)
     fInitialDriveForce            = 2.0,  -- accélération (x1 = inchangé, le power boost suffit)

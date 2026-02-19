@@ -38,7 +38,8 @@ local function ApplyBoost(vehicle)
         end
     end
 
-    SetVehicleMaxSpeed(vehicle, b.topSpeedMs)
+    -- Identique redzone: ModifyVehicleTopSpeed + CheatPowerIncrease
+    ModifyVehicleTopSpeed(vehicle, b.topSpeedMultiplier)
     SetVehicleCheatPowerIncrease(vehicle, b.powerMultiplier)
 
     SetVehicleCanBeVisiblyDamaged(vehicle, false)
@@ -54,11 +55,10 @@ end
 
 local function ClearBoost(vehicle)
     if not DoesEntityExist(vehicle) then return end
-    -- Restaurer les valeurs originales
+    -- Restaurer les valeurs originales du handling
     for field, val in pairs(originalHandling) do
         SetVehicleHandlingFloat(vehicle, 'CHandlingData', field, val)
     end
-    SetVehicleMaxSpeed(vehicle, 0.0)  -- 0.0 = réinitialise la limite (pas de cap)
     SetVehicleCheatPowerIncrease(vehicle, 0.0)
     SetVehicleCanBeVisiblyDamaged(vehicle, true)
     SetVehicleTyresCanBurst(vehicle, true)
@@ -182,7 +182,10 @@ RegisterNetEvent('gunward:client:spawnVehicle', function(netId)
     -- Apply boost
     ApplyBoost(vehicle)
 
-    -- Warp player into vehicle
+    -- Libérer le ped de toute tâche en cours avant le warp
+    ClearPedTasksImmediately(ped)
+
+    -- Warp instantané dans le siège conducteur
     TaskWarpPedIntoVehicle(ped, vehicle, -1)
 
     Gunward.Client.Utils.Notify('Vehicule spawn!', 'success')
@@ -202,7 +205,6 @@ CreateThread(function()
                 if boostedVehicle == vehicle then
                     -- Réappliquer périodiquement (GTA peut réinitialiser certains flags)
                     SetVehicleCheatPowerIncrease(vehicle, Config.VehicleBoost.powerMultiplier)
-                    SetVehicleMaxSpeed(vehicle, Config.VehicleBoost.topSpeedMs)
                     SetVehicleTyresCanBurst(vehicle, false)
                     SetVehicleCanBreak(vehicle, false)
                 end
@@ -216,7 +218,9 @@ CreateThread(function()
 end)
 
 -- ── DROP INSTANTANÉ — appuie sur F pour sortir sans animation ────────────────
-local lastExitTime = 0
+local lastExitTime   = 0
+local lastExitWeapon = 0
+local VEHICLE_EXIT_COOLDOWN = 1000  -- ms (identique redzone)
 
 CreateThread(function()
     while true do
@@ -232,6 +236,9 @@ CreateThread(function()
                 local vehicle = GetVehiclePedIsIn(ped, false)
 
                 if DoesEntityExist(vehicle) then
+                    -- Sauvegarder l'arme actuelle avant d'éjecter
+                    lastExitWeapon = GetSelectedPedWeapon(ped)
+
                     -- Calculer le côté de sortie selon le siège du joueur
                     local seat = -2
                     for s = -1, GetVehicleMaxNumberOfPassengers(vehicle) - 1 do
@@ -254,16 +261,30 @@ CreateThread(function()
                     SetEntityCoords(ped, offset.x, offset.y, groundZ + 0.5, false, false, false, false)
                     ClearPedTasksImmediately(ped)
 
+                    -- Remettre l'arme en main directement après la sortie
+                    if lastExitWeapon ~= 0 and lastExitWeapon ~= GetHashKey('WEAPON_UNARMED') then
+                        SetCurrentPedWeapon(ped, lastExitWeapon, true)
+                    end
+
                     lastExitTime = GetGameTimer()
                 end
             end
-        elseif lastExitTime > 0 and (GetGameTimer() - lastExitTime) < 800 then
-            -- Bloquer la réentrée immédiate pendant 800ms
+        elseif lastExitTime > 0 and (GetGameTimer() - lastExitTime) < VEHICLE_EXIT_COOLDOWN then
+            -- Bloquer la réentrée immédiate pendant le cooldown
             sleep = 0
             DisableControlAction(0, 23, true)  -- INPUT_ENTER
             DisableControlAction(0, 75, true)  -- INPUT_VEH_EXIT
+
+            -- Annuler toute tâche d'entrée dans un véhicule (identique redzone)
+            if GetIsTaskActive(ped, 160) then  -- TASK_ENTER_VEHICLE = 160
+                ClearPedTasksImmediately(ped)
+                if lastExitWeapon ~= 0 and lastExitWeapon ~= GetHashKey('WEAPON_UNARMED') then
+                    SetCurrentPedWeapon(ped, lastExitWeapon, true)
+                end
+            end
         else
-            lastExitTime = 0
+            lastExitTime   = 0
+            lastExitWeapon = 0
         end
 
         Wait(sleep)
