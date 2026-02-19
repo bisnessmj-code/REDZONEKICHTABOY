@@ -25,6 +25,23 @@ local function IsPlayerInCVCMode_Drop(playerId)
 end
 -- ═══════════════════════════════════════════════════════════════════════════
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- GUNWARD - Blocage du drop/give d'armes pendant le mode Gunward
+-- ═══════════════════════════════════════════════════════════════════════════
+local function IsGunwardWeapon(itemName)
+	if not itemName then return false end
+	return itemName:lower():find('^weapon_') ~= nil
+end
+
+local function IsPlayerInGunward(playerId)
+	if GetResourceState('gunward') == 'started' then
+		local inMode = exports['gunward']:IsPlayerInGunward(playerId)
+		return inMode == true
+	end
+	return false
+end
+-- ═══════════════════════════════════════════════════════════════════════════
+
 RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(fromInventory, toInventory, fromSlot, toSlot, fromAmount, toAmount, fromInventoryIsClothesInventory, toInventoryIsClothesInventory, craftingKey)
 	local src = source
 	local Player = GetPlayerFromId(src)
@@ -153,6 +170,13 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 				end
 				AddItem(src, fromItemData.name, fromAmount, toSlot, fromItemData.info, nil, fromItemData['created'], nil, true)
 			elseif SplitStr(toInventory, '-')[1] == 'otherplayer' then
+				-- GUNWARD: Bloquer le give d'armes pendant le mode Gunward
+				if IsPlayerInGunward(src) and IsGunwardWeapon(fromItemData.name) then
+					TriggerClientEvent(Config.InventoryPrefix .. ':client:sendTextMessage', src, '~r~Vous ne pouvez pas donner vos armes dans le Gunward', 'error')
+					TriggerClientEvent(Config.InventoryPrefix .. ':client:UpdatePlayerInventory', src, true)
+					return
+				end
+
 				local playerId = tonumber(SplitStr(toInventory, '-')[2])
 				local toItemData = Inventories[playerId][toSlot]
 				RemoveItem(src, fromItemData.name, fromAmount, fromSlot, nil, true)
@@ -172,6 +196,13 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 				AddItem(playerId, itemInfo['name'], fromAmount, toSlot, fromItemData.info, nil, fromItemData['created'], nil, true)
 				TriggerEvent(Config.InventoryPrefix .. ':server:updateCash', src, toItemData, toAmount, 'add')
 			elseif SplitStr(toInventory, '-')[1] == 'trunk' then
+				-- GUNWARD: Bloquer le transfert d'armes dans un coffre pendant le mode Gunward
+				if IsPlayerInGunward(src) and IsGunwardWeapon(fromItemData.name) then
+					TriggerClientEvent(Config.InventoryPrefix .. ':client:sendTextMessage', src, '~r~Vous ne pouvez pas stocker vos armes dans le Gunward', 'error')
+					TriggerClientEvent(Config.InventoryPrefix .. ':client:UpdatePlayerInventory', src, true)
+					return
+				end
+
 				local plate = SplitStr(toInventory, '-')[2]
 				local toItemData = Trunks[plate].items[toSlot]
 				RemoveItem(src, fromItemData.name, fromAmount, fromSlot, nil, true)
@@ -199,6 +230,13 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 				AddItemToOtherInventory('trunk', plate, toSlot, fromSlot, itemInfo['name'], fromAmount, fromItemData.info, fromItemData['created'], src)
 				SendWebhook(Webhooks.trunk, 'Deposit Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') deposit item in trunk!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. fromAmount .. '\n**Plate:** ' .. plate)
 			elseif SplitStr(toInventory, '-')[1] == 'glovebox' then
+				-- GUNWARD: Bloquer le transfert d'armes dans une boite a gants pendant le mode Gunward
+				if IsPlayerInGunward(src) and IsGunwardWeapon(fromItemData.name) then
+					TriggerClientEvent(Config.InventoryPrefix .. ':client:sendTextMessage', src, '~r~Vous ne pouvez pas stocker vos armes dans le Gunward', 'error')
+					TriggerClientEvent(Config.InventoryPrefix .. ':client:UpdatePlayerInventory', src, true)
+					return
+				end
+
 				local plate = SplitStr(toInventory, '-')[2]
 				local toItemData = Gloveboxes[plate].items[toSlot]
 				RemoveItem(src, fromItemData.name, fromAmount, fromSlot, nil, true)
@@ -226,6 +264,13 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 				AddItemToOtherInventory('glovebox', plate, toSlot, fromSlot, itemInfo['name'], fromAmount, fromItemData.info, fromItemData['created'], src)
 				SendWebhook(Webhooks.glovebox, 'Deposit Item', 7393279, '**' .. GetPlayerName(src) .. ' (id: ' .. src .. ') deposit item in glovebox!**\n**Name:** ' .. itemInfo['name'] .. '\n**Amount:** ' .. fromAmount .. '\n**Plate:** ' .. plate)
 			elseif SplitStr(toInventory, '-')[1] == 'stash' then
+				-- GUNWARD: Bloquer le transfert d'armes dans un stash pendant le mode Gunward
+				if IsPlayerInGunward(src) and IsGunwardWeapon(fromItemData.name) then
+					TriggerClientEvent(Config.InventoryPrefix .. ':client:sendTextMessage', src, '~r~Vous ne pouvez pas stocker vos armes dans le Gunward', 'error')
+					TriggerClientEvent(Config.InventoryPrefix .. ':client:UpdatePlayerInventory', src, true)
+					return
+				end
+
 				local stashId = SplitStr(toInventory, '-')[2]
 				local toItemData = Stashes[stashId].items[toSlot]
 				RemoveItem(src, fromItemData.name, fromAmount, fromSlot, nil, true)
@@ -347,6 +392,13 @@ RegisterNetEvent(Config.InventoryPrefix .. ':server:SetInventoryData', function(
 				-- CVC CONVOY: Bloquer le drop d'armes/munitions pendant le mode CVC
 				if IsPlayerInCVCMode_Drop(src) and IsCVCBlockedItem_Drop(fromItemData.name) then
 					TriggerClientEvent(Config.InventoryPrefix .. ':client:sendTextMessage', src, '~r~Vous ne pouvez pas jeter vos armes/munitions pendant le mode CVC', 'error')
+					TriggerClientEvent(Config.InventoryPrefix .. ':client:UpdatePlayerInventory', src, true)
+					return
+				end
+
+				-- GUNWARD: Bloquer le drop d'armes pendant le mode Gunward
+				if IsPlayerInGunward(src) and IsGunwardWeapon(fromItemData.name) then
+					TriggerClientEvent(Config.InventoryPrefix .. ':client:sendTextMessage', src, '~r~Vous ne pouvez pas jeter vos armes dans le Gunward', 'error')
 					TriggerClientEvent(Config.InventoryPrefix .. ':client:UpdatePlayerInventory', src, true)
 					return
 				end

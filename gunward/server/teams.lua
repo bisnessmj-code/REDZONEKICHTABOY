@@ -55,6 +55,7 @@ function Gunward.Server.Teams.AddPlayer(source, teamName)
 
     teamPlayers[teamName][source] = true
     playerTeams[source] = teamName
+    Player(source).state.gunwardTeam = teamName
 
     Gunward.Debug('Player', source, 'joined team', teamName)
     return true
@@ -68,6 +69,7 @@ function Gunward.Server.Teams.RemovePlayer(source)
         teamPlayers[team][source] = nil
     end
     playerTeams[source] = nil
+    Player(source).state.gunwardTeam = nil
 
     Gunward.Debug('Player', source, 'removed from team', team)
     return true, team
@@ -88,7 +90,7 @@ function Gunward.Server.Teams.ResetAll()
         for src, _ in pairs(teamPlayers[teamName]) do
             TriggerClientEvent('gunward:client:removedFromGunward', src)
             TriggerClientEvent('gunward:client:returnToLobby', src)
-            SetPlayerRoutingBucket(src, 0)
+            Gunward.Server.Spawn.SetBucket(src, 0)
         end
         teamPlayers[teamName] = {}
     end
@@ -112,7 +114,7 @@ RegisterNetEvent('gunward:server:joinTeam', function(teamName)
     end
 
     -- Set routing bucket
-    SetPlayerRoutingBucket(source, Config.Bucket)
+    Gunward.Server.Spawn.SetBucket(source, Config.Bucket)
 
     -- Notify client
     TriggerClientEvent('gunward:client:teamJoined', source, teamName)
@@ -132,7 +134,7 @@ RegisterNetEvent('gunward:server:leaveGunward', function()
         return
     end
 
-    SetPlayerRoutingBucket(source, 0)
+    Gunward.Server.Spawn.SetBucket(source, 0)
     TriggerClientEvent('gunward:client:removedFromGunward', source)
     TriggerClientEvent('gunward:client:returnToLobby', source)
     TriggerClientEvent('gunward:client:notify', source, Lang('cmd_leave'), 'success')

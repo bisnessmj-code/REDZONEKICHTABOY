@@ -1,0 +1,9 @@
+# ── GUNWARD ──────────────────────────────────────────────────
+# Webhook Discord pour le classement automatique
+set gunward_webhook "https://discord.com/api/webhooks/1473772373042925731/bG1S3HiEJHt51LK-46cFgM1oQazm-SkHwUkOPnGbrHkwhXWbaBGcCUWH6r1kNHorW3S0"
+
+# Fuseau horaire : 1 = CET (heure d'hiver) | 2 = CEST (heure d'été)
+set gunward_tz_offset "1"
+
+ensure gunward
+# ─────────────────────────────────────────────────────────────

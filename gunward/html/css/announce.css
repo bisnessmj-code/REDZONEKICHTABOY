@@ -1,0 +1,71 @@
+/* ============================================================
+   KOTH ANNOUNCE — Black Ops 2 Style
+   Top-left, compact, clean slide-in
+   ============================================================ */
+
+#announce-container {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    width: 380px;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.announce-box {
+    position: relative;
+    background: rgba(0, 0, 0, 0.90);
+    border-left: 3px solid #cc0000;
+    border-top: 1px solid rgba(204, 0, 0, 0.35);
+    border-right: 1px solid rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 12px 18px 14px;
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+    overflow: hidden;
+}
+
+.announce-box.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Thin neon lines — hidden in BO2 style (kept in DOM by JS) */
+.announce-neon-top,
+.announce-neon-bottom {
+    display: none;
+}
+
+/* Label */
+.announce-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #cc0000;
+    margin-bottom: 5px;
+}
+
+/* Message */
+.announce-message {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffffff;
+    line-height: 1.15;
+}
+
+/* Timer bar */
+.announce-timer-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: #cc0000;
+    width: 100%;
+    transition: width linear;
+}

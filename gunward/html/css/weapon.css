@@ -1,0 +1,332 @@
+/* ============================================================
+   WEAPON SHOP & SELL — Black Ops 2 Style
+   Sharp corners, red/black/white, left panel
+   ============================================================ */
+
+/* ===================== WEAPON SHOP ===================== */
+
+.wshop-container {
+    position: fixed;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.93);
+    border: 1px solid rgba(204, 0, 0, 0.25);
+    border-left: 3px solid #cc0000;
+    width: 370px;
+    max-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    animation: wshopIn 0.2s ease;
+    overflow: hidden;
+}
+
+@keyframes wshopIn {
+    from { opacity: 0; transform: translateY(-50%) translateX(-20px); }
+    to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+
+.wshop-banner {
+    position: relative;
+    width: 100%;
+    height: 72px;
+    overflow: hidden;
+    background: #0d0d0d;
+    border-bottom: 1px solid rgba(204, 0, 0, 0.3);
+}
+
+.wshop-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.4;
+}
+
+.wshop-banner-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.wshop-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 8px;
+    color: #ffffff;
+}
+
+.wshop-balance-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 16px;
+    background: rgba(12, 12, 12, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.wshop-balance-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+}
+
+.wshop-balance-amount {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #cc0000;
+}
+
+.wshop-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+    max-height: calc(82vh - 160px);
+}
+
+.wshop-list::-webkit-scrollbar { width: 2px; }
+.wshop-list::-webkit-scrollbar-track { background: transparent; }
+.wshop-list::-webkit-scrollbar-thumb { background: rgba(204, 0, 0, 0.4); }
+
+/* Category header */
+.wshop-category {
+    padding: 7px 16px 3px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #cc0000;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(204, 0, 0, 0.15);
+    margin-top: 2px;
+}
+
+.wshop-category:first-child {
+    border-top: none;
+    margin-top: 0;
+}
+
+.wshop-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 16px;
+    cursor: pointer;
+    transition: background 0.12s;
+    border-left: 2px solid transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.wshop-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-left-color: rgba(204, 0, 0, 0.5);
+}
+
+.wshop-item.selected {
+    background: rgba(204, 0, 0, 0.10);
+    border-left-color: #cc0000;
+}
+
+.wshop-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #e8e8e8;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.wshop-price {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.4);
+    white-space: nowrap;
+    margin-left: 10px;
+}
+
+.wshop-price.free       { color: #4caf50; }
+.wshop-price.affordable { color: #ffffff; }
+.wshop-price.expensive  { color: #cc0000; }
+
+.wshop-footer {
+    text-align: center;
+    padding: 9px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(8, 8, 8, 0.9);
+}
+
+.wshop-hint {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.20);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* ===================== WEAPON SELL SHOP ===================== */
+
+.wsell-container {
+    position: fixed;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.93);
+    border: 1px solid rgba(76, 175, 80, 0.2);
+    border-left: 3px solid #4caf50;
+    width: 370px;
+    max-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    animation: wsellIn 0.2s ease;
+    overflow: hidden;
+}
+
+@keyframes wsellIn {
+    from { opacity: 0; transform: translateY(-50%) translateX(-20px); }
+    to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+
+.wsell-banner {
+    position: relative;
+    width: 100%;
+    height: 72px;
+    overflow: hidden;
+    background: #0a0d0a;
+    border-bottom: 1px solid rgba(76, 175, 80, 0.25);
+}
+
+.wsell-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.35;
+}
+
+.wsell-banner-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.wsell-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 8px;
+    color: #ffffff;
+}
+
+.wsell-balance-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 16px;
+    background: rgba(12, 12, 12, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.wsell-balance-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+}
+
+.wsell-balance-amount {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #4caf50;
+}
+
+.wsell-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+    max-height: calc(82vh - 160px);
+}
+
+.wsell-list::-webkit-scrollbar { width: 2px; }
+.wsell-list::-webkit-scrollbar-track { background: transparent; }
+.wsell-list::-webkit-scrollbar-thumb { background: rgba(76, 175, 80, 0.3); }
+
+.wsell-empty {
+    padding: 28px 16px;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.wsell-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 16px;
+    cursor: pointer;
+    transition: background 0.12s;
+    border-left: 2px solid transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.wsell-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-left-color: rgba(76, 175, 80, 0.5);
+}
+
+.wsell-item.selected {
+    background: rgba(76, 175, 80, 0.10);
+    border-left-color: #4caf50;
+}
+
+.wsell-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #e8e8e8;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.wsell-price {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #4caf50;
+    white-space: nowrap;
+    margin-left: 10px;
+}
+
+.wsell-price.free {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.wsell-footer {
+    text-align: center;
+    padding: 9px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(8, 8, 8, 0.9);
+}
+
+.wsell-hint {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.20);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}

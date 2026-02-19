@@ -1,0 +1,449 @@
+/* ============================================================
+   AIM TRAINING — Black Ops 2 Style
+   Rouge / Blanc / Noir — Angles nets, propre, militaire
+   ============================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    overflow: hidden;
+    background: transparent;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MENU CONTAINER
+══════════════════════════════════════════════════════════ */
+.menu-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 520px;
+    background: rgba(0, 0, 0, 0.94);
+    border: 1px solid rgba(204, 0, 0, 0.25);
+    border-left: 3px solid #cc0000;
+    animation: menuIn 0.22s ease-out;
+}
+
+@keyframes menuIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -47%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* ══════════════════════════════════════════════════════════
+   MENU HEADER
+══════════════════════════════════════════════════════════ */
+.menu-header {
+    text-align: center;
+    padding: 26px 24px 20px;
+    border-bottom: 1px solid rgba(204, 0, 0, 0.30);
+    background: rgba(0, 0, 0, 0.40);
+    position: relative;
+}
+
+/* Thin top accent line */
+.header-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #cc0000 50%, transparent);
+}
+
+/* Logo dans le menu d'entrée */
+.header-logo {
+    margin-bottom: 14px;
+}
+
+.header-logo img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+.logo-fallback {
+    width: 72px;
+    height: 72px;
+    border: 1px solid #cc0000;
+    background: rgba(204, 0, 0, 0.08);
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 28px;
+    color: #cc0000;
+}
+
+.menu-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    font-weight: 400;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 10px;
+    margin-bottom: 6px;
+    line-height: 1;
+}
+
+.subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: #505050;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MENU CONTENT
+══════════════════════════════════════════════════════════ */
+.menu-content {
+    padding: 14px;
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+.menu-content::-webkit-scrollbar { width: 2px; }
+.menu-content::-webkit-scrollbar-track { background: transparent; }
+.menu-content::-webkit-scrollbar-thumb { background: rgba(204, 0, 0, 0.5); }
+
+/* ══════════════════════════════════════════════════════════
+   MENU ITEM
+══════════════════════════════════════════════════════════ */
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 16px;
+    margin-bottom: 6px;
+    background: rgba(12, 12, 12, 0.85);
+    border: 1px solid #1a1a1a;
+    border-left: 2px solid transparent;
+    cursor: pointer;
+    transition: background 0.14s, border-color 0.14s;
+}
+
+.menu-item:last-child {
+    margin-bottom: 0;
+}
+
+.menu-item:hover {
+    background: rgba(204, 0, 0, 0.07);
+    border-color: rgba(204, 0, 0, 0.25);
+    border-left-color: #cc0000;
+}
+
+.menu-item.close-item {
+    border-left-color: rgba(204, 0, 0, 0.35);
+}
+
+.menu-item.close-item:hover {
+    background: rgba(204, 0, 0, 0.10);
+}
+
+.item-icon {
+    font-size: 20px;
+    color: #cc0000;
+    margin-right: 16px;
+    min-width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.item-text {
+    flex: 1;
+}
+
+.item-text h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: #f2f0ea;
+    letter-spacing: 4px;
+    margin-bottom: 2px;
+    line-height: 1;
+}
+
+.item-text p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: #505050;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.item-arrow {
+    font-size: 12px;
+    color: #cc0000;
+    margin-left: 10px;
+    opacity: 0.55;
+    flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   LEADERBOARD
+══════════════════════════════════════════════════════════ */
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    padding: 11px 16px;
+    margin-bottom: 5px;
+    background: rgba(12, 12, 12, 0.85);
+    border: 1px solid #1a1a1a;
+    border-left: 2px solid transparent;
+}
+
+.leaderboard-item.rank-1 {
+    border-left-color: #D4A017;
+    border-color: rgba(212, 160, 23, 0.15);
+    border-left-color: #D4A017;
+    background: rgba(212, 160, 23, 0.04);
+}
+
+.leaderboard-item.rank-2 {
+    border-left-color: #c0c0c0;
+    border-color: rgba(192, 192, 192, 0.10);
+    border-left-color: #c0c0c0;
+}
+
+.leaderboard-item.rank-3 {
+    border-left-color: #cd7f32;
+    border-color: rgba(205, 127, 50, 0.10);
+    border-left-color: #cd7f32;
+}
+
+.leaderboard-rank {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    min-width: 44px;
+    text-align: center;
+    color: #505050;
+    line-height: 1;
+}
+
+.rank-1 .leaderboard-rank { color: #D4A017; }
+.rank-2 .leaderboard-rank { color: #c0c0c0; }
+.rank-3 .leaderboard-rank { color: #cd7f32; }
+
+.leaderboard-name {
+    flex: 1;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #f2f0ea;
+    margin-left: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.leaderboard-kills {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #cc0000;
+    margin-left: 12px;
+    white-space: nowrap;
+}
+
+.no-scores {
+    text-align: center;
+    padding: 36px 20px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: #404040;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MENU FOOTER
+══════════════════════════════════════════════════════════ */
+.menu-footer {
+    padding: 13px 16px;
+    text-align: center;
+    border-top: 1px solid rgba(204, 0, 0, 0.20);
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.menu-footer p {
+    font-family: 'Share Tech Mono', monospace;
+    color: #404040;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.key {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #cc0000;
+    color: #ffffff;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 1px;
+    margin: 0 3px;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 24px;
+    background: transparent;
+    color: #cc0000;
+    border: 1px solid #cc0000;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 5px;
+    cursor: pointer;
+    transition: background 0.14s, color 0.14s;
+}
+
+.back-button:hover {
+    background: #cc0000;
+    color: #000000;
+}
+
+/* ══════════════════════════════════════════════════════════
+   HUD EN JEU — TOP LEFT
+══════════════════════════════════════════════════════════ */
+.hud-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 340px;
+    pointer-events: none;
+}
+
+.hud-header {
+    margin-bottom: 8px;
+}
+
+.hud-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #cc0000;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}
+
+.hud-stats {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 7px;
+}
+
+.stat-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(0, 0, 0, 0.88);
+    border: 1px solid rgba(204, 0, 0, 0.22);
+    border-left: 3px solid #cc0000;
+}
+
+.stat-icon {
+    font-size: 22px;
+    color: #cc0000;
+    flex-shrink: 0;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: #555555;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    font-weight: 400;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: 3px;
+}
+
+.hud-footer {
+    padding: 7px 12px;
+    background: rgba(0, 0, 0, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-left: 3px solid rgba(204, 0, 0, 0.35);
+}
+
+.hud-footer p {
+    font-family: 'Share Tech Mono', monospace;
+    color: #484848;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════════
+   NOTIFICATION KILL — TOP RIGHT, DISCRET
+══════════════════════════════════════════════════════════ */
+.kill-notification {
+    position: absolute;
+    top: 170px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 14px 6px 10px;
+    background: rgba(0, 0, 0, 0.88);
+    border-left: 2px solid #cc0000;
+    border-top: 1px solid rgba(204, 0, 0, 0.25);
+    border-right: 1px solid rgba(204, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(204, 0, 0, 0.08);
+    animation: killIn 0.18s ease-out;
+    pointer-events: none;
+}
+
+@keyframes killIn {
+    from { opacity: 0; transform: translateX(16px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.kill-notification i {
+    font-size: 13px;
+    color: #cc0000;
+}
+
+.kill-notification span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #ffffff;
+    letter-spacing: 5px;
+    line-height: 1;
+}

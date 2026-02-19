@@ -30,7 +30,7 @@ Gunward.Server.Commands['gw_kick'] = function(source, args)
     end
 
     Gunward.Server.Teams.RemovePlayer(targetId)
-    SetPlayerRoutingBucket(targetId, 0)
+    Gunward.Server.Spawn.SetBucket(targetId, 0)
     TriggerClientEvent('gunward:client:removedFromGunward', targetId)
     TriggerClientEvent('gunward:client:returnToLobby', targetId)
     TriggerClientEvent('gunward:client:notify', source, Lang('cmd_kick', Gunward.Server.Utils.GetPlayerName(targetId)), 'success')
@@ -96,7 +96,7 @@ Gunward.Server.Commands['gw_tp'] = function(source, args)
         return
     end
 
-    SetPlayerRoutingBucket(source, Config.Bucket)
+    Gunward.Server.Spawn.SetBucket(source, Config.Bucket)
     TriggerClientEvent('gunward:client:spawnAtTeam', source, teamName)
     TriggerClientEvent('gunward:client:notify', source, Lang('cmd_tp', teamName), 'success')
 end
@@ -109,6 +109,7 @@ Gunward.Server.Commands['gw_setteam'] = function(source, args)
     -- Remove from current team if in one
     if Gunward.Server.Teams.IsPlayerInGunward(targetId) then
         Gunward.Server.Teams.RemovePlayer(targetId)
+        Gunward.Server.Spawn.SetBucket(targetId, 0)
     end
 
     local success, err = Gunward.Server.Teams.AddPlayer(targetId, teamName)
@@ -117,7 +118,7 @@ Gunward.Server.Commands['gw_setteam'] = function(source, args)
         return
     end
 
-    SetPlayerRoutingBucket(targetId, Config.Bucket)
+    Gunward.Server.Spawn.SetBucket(targetId, Config.Bucket)
     TriggerClientEvent('gunward:client:teamJoined', targetId, teamName)
     TriggerClientEvent('gunward:client:spawnAtTeam', targetId, teamName)
     TriggerClientEvent('gunward:client:notify', source, Lang('cmd_setteam', Gunward.Server.Utils.GetPlayerName(targetId), teamName), 'success')

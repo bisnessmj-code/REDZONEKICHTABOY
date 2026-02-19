@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aim Training</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ══ MENU PRINCIPAL ══ -->
+    <div id="mainMenu" class="menu-container hidden">
+
+        <div class="menu-header">
+            <div class="header-line"></div>
+            <div class="header-logo">
+                <img src="logo.png" alt="Logo"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                <div class="logo-fallback" style="display:none">
+                    <i class="fas fa-crosshairs"></i>
+                </div>
+            </div>
+            <h1>AIM TRAINING</h1>
+            <p class="subtitle">Entraînement de précision — Headshots uniquement</p>
+        </div>
+
+        <div class="menu-content">
+            <div class="menu-item" data-action="start">
+                <div class="item-icon"><i class="fas fa-play"></i></div>
+                <div class="item-text">
+                    <h3>COMMENCER LA PARTIE</h3>
+                    <p>DURÉE : 1 MIN 30 &nbsp;|&nbsp; RÉCOMPENSE : $2000</p>
+                </div>
+                <div class="item-arrow"><i class="fas fa-chevron-right"></i></div>
+            </div>
+
+            <div class="menu-item" data-action="leaderboard">
+                <div class="item-icon"><i class="fas fa-trophy"></i></div>
+                <div class="item-text">
+                    <h3>CLASSEMENT</h3>
+                    <p>TOP 10 DES MEILLEURS TIREURS</p>
+                </div>
+                <div class="item-arrow"><i class="fas fa-chevron-right"></i></div>
+            </div>
+
+            <div class="menu-item close-item" data-action="close">
+                <div class="item-icon"><i class="fas fa-xmark"></i></div>
+                <div class="item-text">
+                    <h3>FERMER</h3>
+                    <p>QUITTER LE MENU</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-footer">
+            <p>Appuyez sur <span class="key">ESC</span> pour fermer</p>
+        </div>
+    </div>
+
+    <!-- ══ CLASSEMENT ══ -->
+    <div id="leaderboardMenu" class="menu-container hidden">
+
+        <div class="menu-header">
+            <div class="header-line"></div>
+            <div class="header-icon"><i class="fas fa-ranking-star"></i></div>
+            <h1>CLASSEMENT</h1>
+            <p class="subtitle">Top 10 des meilleurs tireurs</p>
+        </div>
+
+        <div class="menu-content" id="leaderboardContent">
+            <!-- Injecté par JavaScript -->
+        </div>
+
+        <div class="menu-footer">
+            <div class="back-button" data-action="back">
+                <i class="fas fa-arrow-left"></i> RETOUR
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ HUD EN JEU — TOP LEFT ══ -->
+    <div id="gameHUD" class="hud-container hidden">
+
+        <div class="hud-header">
+            <div class="hud-title">
+                <i class="fas fa-crosshairs"></i>&nbsp; AIM TRAINING
+            </div>
+        </div>
+
+        <div class="hud-stats">
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">TEMPS</span>
+                    <span class="stat-value" id="timeLeft">120</span>
+                </div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-crosshairs"></i></div>
+                <div class="stat-content">
+                    <span class="stat-label">KILLS</span>
+                    <span class="stat-value" id="killCount">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hud-footer">
+            <p>Appuyez sur <span class="key">X</span> pour quitter</p>
+        </div>
+    </div>
+
+    <!-- ══ NOTIFICATION KILL — TOP RIGHT ══ -->
+    <div id="killNotif" class="kill-notification hidden">
+        <i class="fas fa-skull-crossbones"></i>
+        <span>KILL</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

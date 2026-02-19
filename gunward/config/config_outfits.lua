@@ -1,90 +1,102 @@
 Config.Outfits = {
     ['RED'] = {
         male = {
-            ['tshirt_1'] = 15, ['tshirt_2'] = 0,
-            ['torso_1'] = 12, ['torso_2'] = 0,
-            ['arms'] = 1, ['arms_2'] = 0,
-            ['pants_1'] = 6, ['pants_2'] = 0,
-            ['shoes_1'] = 7, ['shoes_2'] = 0,
-            ['bproof_1'] = 0, ['bproof_2'] = 0,
-            ['helmet_1'] = -1, ['helmet_2'] = 0,
-            ['bags_1'] = 0, ['bags_2'] = 0,
+            ['mask_1']   = 237, ['mask_2']   = 4,  -- Le Masque
+            ['tshirt_1'] = 15,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
+            ['torso_1']  = 524, ['torso_2']  = 4,  -- La Veste / Haut
+            ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
+            ['pants_1']  = 193, ['pants_2']  = 4,  -- Le Pantalon
+            ['shoes_1']  = 126, ['shoes_2']  = 0,  -- Les Chaussures
+            ['bproof_1'] = 1,   ['bproof_2'] = 1,  -- Gilet pare-balles (ID 1 dans ton JSON)
+            ['helmet_1'] = -1,  ['helmet_2'] = 0,  -- Pas de casque
+            ['chain_1']  = 0,   ['chain_2']  = 0,  -- Pas de chaîne
+            ['bags_1']   = 0,   ['bags_2']   = 0,  -- Pas de sac
         },
         female = {
-            ['tshirt_1'] = 15, ['tshirt_2'] = 0,
-            ['torso_1'] = 5, ['torso_2'] = 0,
-            ['arms'] = 1, ['arms_2'] = 0,
-            ['pants_1'] = 3, ['pants_2'] = 0,
-            ['shoes_1'] = 3, ['shoes_2'] = 0,
-            ['bproof_1'] = 0, ['bproof_2'] = 0,
-            ['helmet_1'] = -1, ['helmet_2'] = 0,
-            ['bags_1'] = 0, ['bags_2'] = 0,
+            ['mask_1']   = 238, ['mask_2']   = 4,  -- Le Masque
+            ['tshirt_1'] = 9,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
+            ['torso_1']  = 565, ['torso_2']  = 4,  -- La Veste / Haut
+            ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
+            ['pants_1']  = 207, ['pants_2']  = 4,  -- Le Pantalon
+            ['shoes_1']  = 27, ['shoes_2']  = 0,  -- Les Chaussures
+            ['helmet_1'] = -1,  ['helmet_2'] = 0,  -- Pas de casque
+            ['chain_1']  = 0,   ['chain_2']  = 0,  -- Pas de chaîne
+            ['bags_1']   = 0,   ['bags_2']   = 0,  -- Pas de sac
         },
     },
     ['BLUE'] = {
         male = {
-            ['tshirt_1'] = 15, ['tshirt_2'] = 0,
-            ['torso_1'] = 12, ['torso_2'] = 2,
-            ['arms'] = 1, ['arms_2'] = 0,
-            ['pants_1'] = 6, ['pants_2'] = 2,
-            ['shoes_1'] = 7, ['shoes_2'] = 0,
-            ['bproof_1'] = 0, ['bproof_2'] = 0,
-            ['helmet_1'] = -1, ['helmet_2'] = 0,
-            ['bags_1'] = 0, ['bags_2'] = 0,
+            ['mask_1']   = 237, ['mask_2']   = 10,  -- Le Masque
+            ['tshirt_1'] = 15,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
+            ['torso_1']  = 524, ['torso_2']  = 10,  -- La Veste / Haut
+            ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
+            ['pants_1']  = 193, ['pants_2']  = 10,  -- Le Pantalon
+            ['shoes_1']  = 126, ['shoes_2']  = 0,  -- Les Chaussures
+            ['bproof_1'] = 1,   ['bproof_2'] = 1,  -- Gilet pare-balles (ID 1 dans ton JSON)
+            ['helmet_1'] = -1,  ['helmet_2'] = 0,  -- Pas de casque
+            ['chain_1']  = 0,   ['chain_2']  = 0,  -- Pas de chaîne
+            ['bags_1']   = 0,   ['bags_2']   = 0,  -- Pas de sac
         },
         female = {
-            ['tshirt_1'] = 15, ['tshirt_2'] = 0,
-            ['torso_1'] = 5, ['torso_2'] = 2,
-            ['arms'] = 1, ['arms_2'] = 0,
-            ['pants_1'] = 3, ['pants_2'] = 2,
-            ['shoes_1'] = 3, ['shoes_2'] = 0,
-            ['bproof_1'] = 0, ['bproof_2'] = 0,
-            ['helmet_1'] = -1, ['helmet_2'] = 0,
-            ['bags_1'] = 0, ['bags_2'] = 0,
+            ['mask_1']   = 238, ['mask_2']   = 10,  -- Le Masque
+            ['tshirt_1'] = 9,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
+            ['torso_1']  = 565, ['torso_2']  = 10,  -- La Veste / Haut
+            ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
+            ['pants_1']  = 207, ['pants_2']  = 10,  -- Le Pantalon
+            ['shoes_1']  = 27, ['shoes_2']  = 0,  -- Les Chaussures
+            ['helmet_1'] = -1,  ['helmet_2'] = 0,  -- Pas de casque
+            ['chain_1']  = 0,   ['chain_2']  = 0,  -- Pas de chaîne
+            ['bags_1']   = 0,   ['bags_2']   = 0,  -- Pas de sac
         },
     },
     ['GREEN'] = {
         male = {
-            ['tshirt_1'] = 15, ['tshirt_2'] = 0,
-            ['torso_1'] = 12, ['torso_2'] = 4,
-            ['arms'] = 1, ['arms_2'] = 0,
-            ['pants_1'] = 6, ['pants_2'] = 4,
-            ['shoes_1'] = 7, ['shoes_2'] = 0,
-            ['bproof_1'] = 0, ['bproof_2'] = 0,
-            ['helmet_1'] = -1, ['helmet_2'] = 0,
-            ['bags_1'] = 0, ['bags_2'] = 0,
+            ['mask_1']   = 237, ['mask_2']   = 8,  -- Le Masque
+            ['tshirt_1'] = 15,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
+            ['torso_1']  = 524, ['torso_2']  = 8,  -- La Veste / Haut
+            ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
+            ['pants_1']  = 193, ['pants_2']  = 8,  -- Le Pantalon
+            ['shoes_1']  = 126, ['shoes_2']  = 0,  -- Les Chaussures
+            ['bproof_1'] = 1,   ['bproof_2'] = 1,  -- Gilet pare-balles (ID 1 dans ton JSON)
+            ['helmet_1'] = -1,  ['helmet_2'] = 0,  -- Pas de casque
+            ['chain_1']  = 0,   ['chain_2']  = 0,  -- Pas de chaîne
+            ['bags_1']   = 0,   ['bags_2']   = 0,  -- Pas de sac
         },
         female = {
-            ['tshirt_1'] = 15, ['tshirt_2'] = 0,
-            ['torso_1'] = 5, ['torso_2'] = 4,
-            ['arms'] = 1, ['arms_2'] = 0,
-            ['pants_1'] = 3, ['pants_2'] = 4,
-            ['shoes_1'] = 3, ['shoes_2'] = 0,
-            ['bproof_1'] = 0, ['bproof_2'] = 0,
-            ['helmet_1'] = -1, ['helmet_2'] = 0,
-            ['bags_1'] = 0, ['bags_2'] = 0,
+            ['mask_1']   = 238, ['mask_2']   = 8,  -- Le Masque
+            ['tshirt_1'] = 9,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
+            ['torso_1']  = 565, ['torso_2']  = 8,  -- La Veste / Haut
+            ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
+            ['pants_1']  = 207, ['pants_2']  = 8,  -- Le Pantalon
+            ['shoes_1']  = 27, ['shoes_2']  = 0,  -- Les Chaussures
+            ['helmet_1'] = -1,  ['helmet_2'] = 0,  -- Pas de casque
+            ['chain_1']  = 0,   ['chain_2']  = 0,  -- Pas de chaîne
+            ['bags_1']   = 0,   ['bags_2']   = 0,  -- Pas de sac
         },
     },
     ['BLACK'] = {
         male = {
-            ['tshirt_1'] = 15, ['tshirt_2'] = 0,
-            ['torso_1'] = 12, ['torso_2'] = 1,
-            ['arms'] = 1, ['arms_2'] = 0,
-            ['pants_1'] = 6, ['pants_2'] = 1,
-            ['shoes_1'] = 7, ['shoes_2'] = 0,
-            ['bproof_1'] = 0, ['bproof_2'] = 0,
-            ['helmet_1'] = -1, ['helmet_2'] = 0,
-            ['bags_1'] = 0, ['bags_2'] = 0,
+            ['mask_1']   = 237, ['mask_2']   = 0,  -- Le Masque
+            ['tshirt_1'] = 15,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
+            ['torso_1']  = 524, ['torso_2']  = 0,  -- La Veste / Haut
+            ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
+            ['pants_1']  = 193, ['pants_2']  = 0,  -- Le Pantalon
+            ['shoes_1']  = 126, ['shoes_2']  = 0,  -- Les Chaussures
+            ['bproof_1'] = 1,   ['bproof_2'] = 1,  -- Gilet pare-balles (ID 1 dans ton JSON)
+            ['helmet_1'] = -1,  ['helmet_2'] = 0,  -- Pas de casque
+            ['chain_1']  = 0,   ['chain_2']  = 0,  -- Pas de chaîne
+            ['bags_1']   = 0,   ['bags_2']   = 0,  -- Pas de sac
         },
         female = {
-            ['tshirt_1'] = 15, ['tshirt_2'] = 0,
-            ['torso_1'] = 5, ['torso_2'] = 1,
-            ['arms'] = 1, ['arms_2'] = 0,
-            ['pants_1'] = 3, ['pants_2'] = 1,
-            ['shoes_1'] = 3, ['shoes_2'] = 0,
-            ['bproof_1'] = 0, ['bproof_2'] = 0,
-            ['helmet_1'] = -1, ['helmet_2'] = 0,
-            ['bags_1'] = 0, ['bags_2'] = 0,
+            ['mask_1']   = 238, ['mask_2']   = 0,  -- Le Masque
+            ['tshirt_1'] = 9,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
+            ['torso_1']  = 565, ['torso_2']  = 0,  -- La Veste / Haut
+            ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
+            ['pants_1']  = 207, ['pants_2']  = 0,  -- Le Pantalon
+            ['shoes_1']  = 27, ['shoes_2']  = 0,  -- Les Chaussures
+            ['helmet_1'] = -1,  ['helmet_2'] = 0,  -- Pas de casque
+            ['chain_1']  = 0,   ['chain_2']  = 0,  -- Pas de chaîne
+            ['bags_1']   = 0,   ['bags_2']   = 0,  -- Pas de sac
         },
     },
 }

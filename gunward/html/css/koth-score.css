@@ -1,0 +1,160 @@
+/* ============================================================
+   KOTH SCOREBOARD — Black Ops 2 Style
+   Bottom-right panel, sharp corners, clean
+   ============================================================ */
+
+#koth-scoreboard {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    width: 215px;
+    z-index: 9000;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(16px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+#koth-scoreboard.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Header */
+.koth-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 12px;
+    background: rgba(0, 0, 0, 0.92);
+    border-left: 2px solid #cc0000;
+    border-top: 1px solid rgba(204, 0, 0, 0.35);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.koth-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #cc0000;
+}
+
+.koth-timer {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.72);
+    letter-spacing: 1px;
+}
+
+/* Zone label */
+.koth-zone-label {
+    padding: 3px 12px;
+    background: rgba(0, 0, 0, 0.88);
+    border-left: 2px solid rgba(204, 0, 0, 0.45);
+    border-right: 1px solid rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.38);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-align: center;
+}
+
+/* Teams container */
+.koth-teams {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Team row */
+.koth-team-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 12px;
+    background: rgba(0, 0, 0, 0.84);
+    border-left: 2px solid rgba(204, 0, 0, 0.18);
+    border-right: 1px solid rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s ease;
+}
+
+.koth-team-row:last-child {
+    border-bottom: 1px solid rgba(204, 0, 0, 0.25);
+}
+
+.koth-team-row.is-holder {
+    background: rgba(204, 0, 0, 0.09);
+    border-left-color: #cc0000;
+}
+
+.koth-team-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.koth-team-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.koth-team-row.is-holder .koth-team-dot {
+    box-shadow: 0 0 5px currentColor;
+}
+
+.koth-team-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.60);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.koth-team-row.is-holder .koth-team-name {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.koth-team-points {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.50);
+    min-width: 30px;
+    text-align: right;
+}
+
+.koth-team-row.is-holder .koth-team-points {
+    color: #ffffff;
+}
+
+/* Points bump animation */
+.koth-team-points.bump {
+    animation: pointBump 0.3s ease;
+}
+
+@keyframes pointBump {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.25); color: #cc0000; }
+    100% { transform: scale(1); }
+}
+
+/* Progress bar */
+.koth-team-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    transition: width 0.5s ease;
+    opacity: 0.45;
+}

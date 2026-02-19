@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:fancadev.gitbook.io)",
+      "Bash(grep:*)"
+    ]
+  }
+}

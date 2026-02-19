@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Fancazista" />
+    <meta name="github" content="https://github.com/Fancazista/" />
+    <meta name="discord" content="https://discord.gg/cHsUDEhfqn/" />
+    <meta name="tebex" content="https://fanca.tebex.io/" />
+    <title>fanca_antitank</title>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      .killfeed {
+        opacity: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1);
+        width: auto;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .killfeed.show {
+        opacity: 0.5;
+      }
+
+      .killfeed.animating {
+        animation: pop-scale 0.5s ease-out;
+      }
+
+      .killfeed svg {
+        width: 100%;
+        height: 100%;
+        stroke-linecap: round;
+      }
+
+      .killfeed img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      @keyframes pop-scale {
+        0% {
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.2);
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Template for a single cross -->
+    <template id="cross-template">
+      <div class="killfeed">
+        <svg>
+          <!-- two diagonal lines -->
+          <line class="line1" />
+          <line class="line2" />
+          <!-- four diamonds at ends -->
+          <polygon class="diamond1" />
+          <polygon class="diamond2" />
+          <polygon class="diamond3" />
+          <polygon class="diamond4" />
+        </svg>
+      </div>
+    </template>
+
+    <!-- Template for an image -->
+    <template id="image-template">
+      <div class="killfeed">
+        <img src="./icon.png" alt="Killfeed" />
+      </div>
+    </template>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const COLOR = "red"; // Color of the killfeed elements
+        const SCALE_MULTIPLIER = 1.0; // Scale multiplier size
+
+        const LINE_LENGTH = 0.48; // Length of the diagonal lines
+        const LINE_WIDTH = 0.2; // Width of the diagonal lines
+        const SHOW_LINE = false; // Whether to show the diagonal lines
+        const DIAMOND_SIZE = 0.3; // Size of the diamonds at the ends
+
+        // Fallback
+        let duration = 750;
+        let useImage = true;
+        let showAnimation = false;
+
+        // Fetch settings from Lua
+        fetch(`https://${GetParentResourceName()}/getKillfeed`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json; charset=UTF-8" },
+          body: null,
+        })
+          .then((res) => res.json())
+          .then((json) => {
+            if (json.duration) duration = json.duration;
+            if (json.useImage !== undefined) useImage = json.useImage;
+            if (json.showAnimation !== undefined)
+              showAnimation = json.showAnimation;
+          })
+          .catch((e) =>
+            console.warn(
+              "Killfeed error, using default values:",
+              duration,
+              useImage,
+              showAnimation
+            )
+          );
+
+        // Function to generate diamond points based on center and size
+        function diamondPoints(cx, cy, size) {
+          return [
+            `${cx},${cy - size}`,
+            `${cx + size},${cy}`,
+            `${cx},${cy + size}`,
+            `${cx - size},${cy}`,
+          ].join(" ");
+        }
+
+        // Function to style and position the cross element
+        function styleAndPosition(elem) {
+          const half = LINE_LENGTH + DIAMOND_SIZE;
+          elem
+            .querySelector("svg")
+            .setAttribute(
+              "viewBox",
+              [-half, -half, half * 2, half * 2].join(" ")
+            );
+
+          const size = half * SCALE_MULTIPLIER;
+          const vw = window.innerWidth / 100;
+          const vh = window.innerHeight / 100;
+          const computedSize = size * (vh + vw);
+          elem.style.width = `${computedSize}px`;
+          elem.style.height = `${computedSize}px`;
+
+          const [line1, line2] = [
+            elem.querySelector(".line1"),
+            elem.querySelector(".line2"),
+          ];
+
+          if (SHOW_LINE) {
+            line1.setAttribute("x1", -LINE_LENGTH);
+            line1.setAttribute("y1", -LINE_LENGTH);
+            line1.setAttribute("x2", LINE_LENGTH);
+            line1.setAttribute("y2", LINE_LENGTH);
+            line2.setAttribute("x1", LINE_LENGTH);
+            line2.setAttribute("y1", -LINE_LENGTH);
+            line2.setAttribute("x2", -LINE_LENGTH);
+            line2.setAttribute("y2", LINE_LENGTH);
+            [line1, line2].forEach((line) => {
+              line.setAttribute("stroke", COLOR);
+              line.setAttribute("stroke-width", LINE_WIDTH);
+              line.setAttribute("vector-effect", "non-scaling-stroke");
+            });
+          } else {
+            line1.remove();
+            line2.remove();
+          }
+
+          [
+            [-1, -1],
+            [1, 1],
+            [1, -1],
+            [-1, 1],
+          ].forEach((sgn, i) => {
+            const diamond = elem.querySelector(`.diamond${i + 1}`);
+            const cx = sgn[0] * LINE_LENGTH,
+              cy = sgn[1] * LINE_LENGTH;
+            diamond.setAttribute("points", diamondPoints(cx, cy, DIAMOND_SIZE));
+            diamond.setAttribute("fill", COLOR);
+          });
+        }
+
+        function spawnCross() {
+          let clone;
+          if (useImage) {
+            const template = document.getElementById("image-template");
+            clone = template.content.firstElementChild.cloneNode(true);
+
+            // Independent and proportionate size
+            const maxSize = 15; // max width/height in px
+            clone.style.width = `${maxSize}px`;
+            clone.style.height = `${maxSize}px`;
+
+            // Always center the screen
+            clone.style.position = "fixed";
+            clone.style.top = "50%";
+            clone.style.left = "50%";
+            clone.style.transform = "translate(-50%, -50%)";
+            clone.style.zIndex = "9999";
+            clone.style.opacity = "1.0";
+          } else {
+            const template = document.getElementById("cross-template");
+            clone = template.content.firstElementChild.cloneNode(true);
+            styleAndPosition(clone);
+          }
+
+          document.body.appendChild(clone);
+          requestAnimationFrame(() => {
+            clone.classList.add("show");
+            if (showAnimation) clone.classList.add("animating");
+          });
+          setTimeout(() => clone.remove(), duration);
+        }
+
+        // Listen for messages from the client to spawn a cross
+        window.addEventListener("message", (event) => {
+          if (!event.data) return;
+          spawnCross();
+        });
+      });
+    </script>
+  </body>
+</html>

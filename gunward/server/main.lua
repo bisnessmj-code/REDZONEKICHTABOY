@@ -21,7 +21,7 @@ end)
 exports('RemovePlayerFromGunward', function(playerId)
     local removed = Gunward.Server.Teams.RemovePlayer(playerId)
     if removed then
-        SetPlayerRoutingBucket(playerId, 0)
+        Gunward.Server.Spawn.SetBucket(playerId, 0)
         TriggerClientEvent('gunward:client:removedFromGunward', playerId)
         TriggerClientEvent('gunward:client:returnToLobby', playerId)
     end

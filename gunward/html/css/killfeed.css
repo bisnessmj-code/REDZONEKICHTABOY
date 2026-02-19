@@ -1,0 +1,86 @@
+/* ============================================================
+   KILL FEED — Black Ops 2 Style
+   Discreet, top-right, 170px from top
+   ============================================================ */
+
+#killfeed-container {
+    position: fixed;
+    top: 170px;
+    right: 20px;
+    width: 260px;
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.kill-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.84);
+    border-left: 2px solid #cc0000;
+    padding: 5px 10px 5px 8px;
+    animation: kfIn 0.2s ease-out forwards;
+    overflow: hidden;
+}
+
+.kill-row.removing {
+    animation: kfOut 0.25s ease-in forwards;
+}
+
+/* Logo icon before killer name */
+.kf-logo {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+
+.killfeed-killer-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #ffffff;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 88px;
+    letter-spacing: 0.5px;
+}
+
+/* Separator arrow */
+.killfeed-sep {
+    color: #cc0000;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.killfeed-victim-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: #777777;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    letter-spacing: 0.3px;
+}
+
+/* Animations */
+@keyframes kfIn {
+    from { opacity: 0; transform: translateX(18px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes kfOut {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(14px); }
+}

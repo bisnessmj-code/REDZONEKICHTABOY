@@ -16,6 +16,14 @@ local function IsInRedzone()
     return Redzone.Client.Teleport and Redzone.Client.Teleport.IsInRedzone and Redzone.Client.Teleport.IsInRedzone() or false
 end
 
+local function IsInLobby()
+    return GetPlayerRoutingBucket(PlayerId()) == 0
+end
+
+local function CanUsePlayerInteract()
+    return IsInRedzone() or IsInLobby()
+end
+
 local function GetServerIdFromPed(ped)
     for _, playerId in ipairs(GetActivePlayers()) do
         if GetPlayerPed(playerId) == ped then
@@ -87,7 +95,7 @@ CreateThread(function()
     while true do
         local sleep = 0
 
-        local altPressed = IsDisabledControlPressed(0, 19) or IsControlPressed(0, 19)
+        local altPressed = (IsDisabledControlPressed(0, 19) or IsControlPressed(0, 19)) and CanUsePlayerInteract()
 
         if altPressed then
             -- Bloquer TOUS les controles de camera/mouvement/tir
