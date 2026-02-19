@@ -16,8 +16,10 @@ function addKillFeed(data) {
     row.innerHTML =
         '<img class="kf-logo" src="assets/logo.png" alt="" onerror="this.style.display=\'none\'">' +
         '<span class="killfeed-killer-name">' + escapeHtml(data.killerName) + '</span>' +
+        '<span class="killfeed-id">[' + data.killerId + ']</span>' +
         '<span class="killfeed-sep">&#8250;</span>' +
-        '<span class="killfeed-victim-name">' + escapeHtml(data.victimName) + '</span>';
+        '<span class="killfeed-victim-name">' + escapeHtml(data.victimName) + '</span>' +
+        '<span class="killfeed-id">[' + data.victimId + ']</span>';
 
     container.appendChild(row);
 

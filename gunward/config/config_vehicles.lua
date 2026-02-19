@@ -20,6 +20,16 @@ Config.Vehicles = {
     {model = 't20',       label = 'T20',              price = 4000},
 }
 
+-- Boost véhicule (appliqué dès le spawn du véhicule gunward)
+Config.VehicleBoost = {
+    powerMultiplier    = 5.0,   -- SetVehicleCheatPowerIncrease (puissance moteur x5)
+    topSpeedBonus      = 0.5,   -- ModifyVehicleTopSpeed (bonus vitesse max)
+    driveForce         = 2.5,   -- fInitialDriveForce
+    brakeForce         = 2.5,   -- fBrakeForce
+    tractionMax        = 2.0,   -- fTractionCurveMax
+    tractionMin        = 2.0,   -- fTractionCurveMin
+}
+
 -- Couleurs véhicule par équipe (GTA color index)
 Config.TeamVehicleColors = {
     ['RED']   = {primary = 27,  secondary = 27},   -- Rouge

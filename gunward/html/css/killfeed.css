@@ -52,6 +52,17 @@
     letter-spacing: 0.5px;
 }
 
+/* Server ID badge [N] */
+.killfeed-id {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: #555555;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0;
+}
+
 /* Separator arrow */
 .killfeed-sep {
     color: #cc0000;

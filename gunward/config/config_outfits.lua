@@ -3,7 +3,7 @@ Config.Outfits = {
         male = {
             ['mask_1']   = 237, ['mask_2']   = 4,  -- Le Masque
             ['tshirt_1'] = 15,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
-            ['torso_1']  = 524, ['torso_2']  = 4,  -- La Veste / Haut
+            ['torso_1']  = 524, ['torso_2']  = 12,  -- La Veste / Haut
             ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
             ['pants_1']  = 193, ['pants_2']  = 4,  -- Le Pantalon
             ['shoes_1']  = 126, ['shoes_2']  = 0,  -- Les Chaussures
@@ -15,7 +15,7 @@ Config.Outfits = {
         female = {
             ['mask_1']   = 238, ['mask_2']   = 4,  -- Le Masque
             ['tshirt_1'] = 9,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
-            ['torso_1']  = 565, ['torso_2']  = 4,  -- La Veste / Haut
+            ['torso_1']  = 565, ['torso_2']  = 12,  -- La Veste / Haut
             ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
             ['pants_1']  = 207, ['pants_2']  = 4,  -- Le Pantalon
             ['shoes_1']  = 27, ['shoes_2']  = 0,  -- Les Chaussures
@@ -28,7 +28,7 @@ Config.Outfits = {
         male = {
             ['mask_1']   = 237, ['mask_2']   = 10,  -- Le Masque
             ['tshirt_1'] = 15,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
-            ['torso_1']  = 524, ['torso_2']  = 10,  -- La Veste / Haut
+            ['torso_1']  = 524, ['torso_2']  = 18,  -- La Veste / Haut
             ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
             ['pants_1']  = 193, ['pants_2']  = 10,  -- Le Pantalon
             ['shoes_1']  = 126, ['shoes_2']  = 0,  -- Les Chaussures
@@ -40,7 +40,7 @@ Config.Outfits = {
         female = {
             ['mask_1']   = 238, ['mask_2']   = 10,  -- Le Masque
             ['tshirt_1'] = 9,  ['tshirt_2'] = 0,  -- Le t-shirt (Vide pour éviter les bugs)
-            ['torso_1']  = 565, ['torso_2']  = 10,  -- La Veste / Haut
+            ['torso_1']  = 565, ['torso_2']  = 5,  -- La Veste / Haut
             ['arms']     = 6,   ['arms_2']   = 0,  -- Les gants / mains
             ['pants_1']  = 207, ['pants_2']  = 10,  -- Le Pantalon
             ['shoes_1']  = 27, ['shoes_2']  = 0,  -- Les Chaussures

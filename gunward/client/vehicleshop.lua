@@ -1,7 +1,42 @@
 Gunward.Client.VehicleShop = {}
 
-local shopPed = nil
-local shopOpen = false
+local shopPed   = nil
+local shopOpen  = false
+
+-- ── BOOST ────────────────────────────────────────────────────────────────────
+
+local boostedVehicle = nil
+
+local function ApplyBoost(vehicle)
+    if not DoesEntityExist(vehicle) then return end
+    local b = Config.VehicleBoost
+
+    SetVehicleHandlingFloat(vehicle, 'CHandlingData', 'fInitialDriveForce', b.driveForce)
+    SetVehicleHandlingFloat(vehicle, 'CHandlingData', 'fBrakeForce',         b.brakeForce)
+    SetVehicleHandlingFloat(vehicle, 'CHandlingData', 'fTractionCurveMax',   b.tractionMax)
+    SetVehicleHandlingFloat(vehicle, 'CHandlingData', 'fTractionCurveMin',   b.tractionMin)
+
+    ModifyVehicleTopSpeed(vehicle, b.topSpeedBonus)
+    SetVehicleCheatPowerIncrease(vehicle, b.powerMultiplier)
+
+    SetVehicleCanBeVisiblyDamaged(vehicle, false)
+    SetVehicleTyresCanBurst(vehicle, false)
+    SetVehicleCanBreak(vehicle, false)
+    SetVehicleStrong(vehicle, true)
+    ToggleVehicleMod(vehicle, 18, true) -- turbo
+
+    boostedVehicle = vehicle
+end
+
+local function ClearBoost(vehicle)
+    if not DoesEntityExist(vehicle) then return end
+    ModifyVehicleTopSpeed(vehicle, 1.0)
+    SetVehicleCheatPowerIncrease(vehicle, 0.0)
+    SetVehicleCanBeVisiblyDamaged(vehicle, true)
+    SetVehicleTyresCanBurst(vehicle, true)
+    SetVehicleCanBreak(vehicle, true)
+    boostedVehicle = nil
+end
 
 function Gunward.Client.VehicleShop.CreatePed(teamName)
     Gunward.Client.VehicleShop.DeletePed()
@@ -101,10 +136,94 @@ RegisterNetEvent('gunward:client:spawnVehicle', function(netId)
         SetVehicleColours(vehicle, colors.primary, colors.secondary)
     end
 
+    -- Apply boost
+    ApplyBoost(vehicle)
+
     -- Warp player into vehicle
     TaskWarpPedIntoVehicle(ped, vehicle, -1)
 
     Gunward.Client.Utils.Notify('Vehicule spawn!', 'success')
+end)
+
+-- ── BOOST THREAD — maintient le boost si le joueur change de véhicule ────────
+CreateThread(function()
+    while true do
+        Wait(1000)
+        local ped = PlayerPedId()
+        if IsPedInAnyVehicle(ped, false) then
+            local vehicle = GetVehiclePedIsIn(ped, false)
+            if DoesEntityExist(vehicle) and GetPedInVehicleSeat(vehicle, -1) == ped then
+                if boostedVehicle and boostedVehicle ~= vehicle then
+                    ClearBoost(boostedVehicle)
+                end
+                if boostedVehicle == vehicle then
+                    -- Réappliquer périodiquement (GTA peut réinitialiser certains flags)
+                    SetVehicleCheatPowerIncrease(vehicle, Config.VehicleBoost.powerMultiplier)
+                    SetVehicleTyresCanBurst(vehicle, false)
+                    SetVehicleCanBreak(vehicle, false)
+                end
+            end
+        else
+            if boostedVehicle and DoesEntityExist(boostedVehicle) then
+                ClearBoost(boostedVehicle)
+            end
+        end
+    end
+end)
+
+-- ── DROP INSTANTANÉ — appuie sur F pour sortir sans animation ────────────────
+local lastExitTime = 0
+
+CreateThread(function()
+    while true do
+        local sleep = 200
+        local ped = PlayerPedId()
+
+        if Gunward.Client.Teams.GetCurrent() and IsPedInAnyVehicle(ped, false) then
+            sleep = 0
+            -- Intercepte la touche F (control 75 = INPUT_VEH_EXIT)
+            DisableControlAction(0, 75, true)
+
+            if IsDisabledControlJustPressed(0, 75) then
+                local vehicle = GetVehiclePedIsIn(ped, false)
+
+                if DoesEntityExist(vehicle) then
+                    -- Calculer le côté de sortie selon le siège du joueur
+                    local seat = -2
+                    for s = -1, GetVehicleMaxNumberOfPassengers(vehicle) - 1 do
+                        if GetPedInVehicleSeat(vehicle, s) == ped then
+                            seat = s
+                            break
+                        end
+                    end
+
+                    local side = (seat == -1 or seat == 1) and -2.5 or 2.5
+                    local offset = GetOffsetFromEntityInWorldCoords(vehicle, side, 0.0, 0.0)
+
+                    -- Trouver le sol
+                    local groundZ = GetEntityCoords(vehicle).z
+                    local found, z = GetGroundZFor_3dCoord(offset.x, offset.y, offset.z + 2.0, false)
+                    if found then groundZ = z end
+
+                    -- Éjecter et repositionner instantanément
+                    SetPedIntoVehicle(ped, vehicle, -2)
+                    SetEntityCoords(ped, offset.x, offset.y, groundZ + 0.5, false, false, false, false)
+                    ClearPedTasksImmediately(ped)
+
+                    lastExitTime = GetGameTimer()
+                end
+            end
+        elseif lastExitTime > 0 and (GetGameTimer() - lastExitTime) < 800 then
+            -- Bloquer la réentrée immédiate pendant 800ms
+            sleep = 0
+            DisableControlAction(0, 23, true)  -- INPUT_ENTER
+            DisableControlAction(0, 75, true)  -- INPUT_VEH_EXIT
+        else
+            lastExitTime = 0
+        end
+
+        Wait(sleep)
+    end
 end)
 
 -- Update balance after purchase
@@ -149,5 +268,8 @@ end)
 AddEventHandler('onResourceStop', function(resource)
     if resource == GetCurrentResourceName() then
         Gunward.Client.VehicleShop.DeletePed()
+        if boostedVehicle and DoesEntityExist(boostedVehicle) then
+            ClearBoost(boostedVehicle)
+        end
     end
 end)
