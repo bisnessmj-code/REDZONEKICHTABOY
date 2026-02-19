@@ -12,12 +12,21 @@ local targetServerId = nil
 local targetPed = nil
 local isCursorActive = false
 
+-- rzBucket est un state bag positionné côté serveur (REDZONE_BUCKET=10, DEFAULT_BUCKET=0)
+-- GetPlayerRoutingBucket n'est pas fiable côté client, on utilise donc le state bag
+local REDZONE_BUCKET = 10
+local DEFAULT_BUCKET = 0
+
+local function GetLocalBucket()
+    return LocalPlayer.state.rzBucket or DEFAULT_BUCKET
+end
+
 local function IsInRedzone()
-    return Redzone.Client.Teleport and Redzone.Client.Teleport.IsInRedzone and Redzone.Client.Teleport.IsInRedzone() or false
+    return GetLocalBucket() == REDZONE_BUCKET
 end
 
 local function IsInLobby()
-    return GetPlayerRoutingBucket(PlayerId()) == 0
+    return GetLocalBucket() == DEFAULT_BUCKET
 end
 
 local function CanUsePlayerInteract()

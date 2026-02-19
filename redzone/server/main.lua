@@ -226,6 +226,7 @@ local function AddPlayerToRedzone(source, spawnId)
 
     -- Mettre le joueur dans l'instance Redzone (bucket 10)
     SetPlayerRoutingBucket(source, REDZONE_BUCKET)
+    Player(source).state:set('rzBucket', REDZONE_BUCKET, true)
     Redzone.Shared.Debug('[SERVER] Joueur ', source, ' mis dans l\'instance ', REDZONE_BUCKET)
 
     Redzone.Shared.Debug(Config.DebugMessages.PlayerEntered, source)
@@ -240,6 +241,7 @@ local function RemovePlayerFromRedzone(source)
 
     -- Remettre le joueur dans l'instance par défaut (bucket 0)
     SetPlayerRoutingBucket(source, DEFAULT_BUCKET)
+    Player(source).state:set('rzBucket', DEFAULT_BUCKET, true)
     Redzone.Shared.Debug('[SERVER] Joueur ', source, ' remis dans l\'instance ', DEFAULT_BUCKET)
 
     playersInRedzone[source] = nil
