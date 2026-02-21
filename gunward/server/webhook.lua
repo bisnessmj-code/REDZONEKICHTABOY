@@ -104,7 +104,7 @@ local function SendLeaderboard(notifySource)
                ROUND(kills / GREATEST(deaths, 1), 2) AS kd
         FROM gunward_stats
         WHERE kills > 0 OR deaths > 0
-        ORDER BY kd DESC, kills DESC
+        ORDER BY kills DESC, kd DESC
         LIMIT 15
     ]], {}, function(rows)
         rows = rows or {}
@@ -117,7 +117,7 @@ local function SendLeaderboard(notifySource)
         if podiumLine ~= '' then
             desc = podiumLine .. '\n\u{200B}'
         end
-        desc = desc .. '*Top ' .. math.max(#rows, 1) .. ' joueurs  —  classement par K/D*'
+        desc = desc .. '*Top ' .. math.max(#rows, 1) .. ' joueurs  —  classement par kills*'
 
         -- Date French
         local t       = GetFrenchTime()

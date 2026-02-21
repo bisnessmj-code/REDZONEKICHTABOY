@@ -157,7 +157,7 @@ ESX.RegisterServerCallback('gunward:server:getStatsUI', function(source, cb)
                        ROUND(kills / GREATEST(deaths, 1), 2) AS kd
                 FROM gunward_stats
                 WHERE kills > 0 OR deaths > 0 OR bank > 0
-                ORDER BY kd DESC, kills DESC
+                ORDER BY kills DESC, kd DESC
                 LIMIT 20
             ]], {}, function(leaderboard)
                 leaderboard = leaderboard or {}

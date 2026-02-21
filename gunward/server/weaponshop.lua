@@ -156,8 +156,10 @@ RegisterNetEvent('gunward:server:buyWeapon', function(weapon)
                 return
             end
 
-            -- Give weapon via qs-inventory
+            -- Give weapon via qs-inventory (inventory tracking)
             exports['qs-inventory']:GiveWeaponToPlayer(source, itemName, Config.WeaponAmmo)
+            -- Donner directement au PED (CanUseInventory est bloqué en Gunward)
+            TriggerClientEvent('gunward:client:giveWeaponToPed', source, itemName, Config.WeaponAmmo)
 
             -- Track weapon for cleanup on leave
             if not playerWeapons[source] then
@@ -175,6 +177,7 @@ RegisterNetEvent('gunward:server:buyWeapon', function(weapon)
     else
         -- Free weapon, give directly
         exports['qs-inventory']:GiveWeaponToPlayer(source, itemName, Config.WeaponAmmo)
+        TriggerClientEvent('gunward:client:giveWeaponToPed', source, itemName, Config.WeaponAmmo)
 
         if not playerWeapons[source] then
             playerWeapons[source] = {}
@@ -182,5 +185,15 @@ RegisterNetEvent('gunward:server:buyWeapon', function(weapon)
         playerWeapons[source][#playerWeapons[source] + 1] = itemName
 
         Gunward.Server.Utils.Notify(source, 'Arme achetee!', 'success')
+    end
+end)
+
+-- Re-donner toutes les armes Gunward au PED après mort/respawn
+RegisterNetEvent('gunward:server:requestWeaponRestore', function()
+    local source = source
+    if not Gunward.Server.Teams.IsPlayerInGunward(source) then return end
+    local weapons = playerWeapons[source] or {}
+    for _, itemName in ipairs(weapons) do
+        TriggerClientEvent('gunward:client:giveWeaponToPed', source, itemName, Config.WeaponAmmo)
     end
 end)

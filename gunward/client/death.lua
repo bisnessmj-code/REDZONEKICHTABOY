@@ -49,5 +49,8 @@ RegisterNetEvent('gunward:client:onDeath', function(attackerId, teamName)
     Wait(100)
     DoScreenFadeIn(300)
 
+    -- Re-donner les armes Gunward achetées (retirées par RemoveAllPedWeapons)
+    TriggerServerEvent('gunward:server:requestWeaponRestore')
+
     Gunward.Debug('Respawned at team spawn:', teamName)
 end)

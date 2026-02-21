@@ -161,10 +161,12 @@
         renderPodium(cachedLB);
     }
 
-    /* ── PODIUM TOP 3 (sorted by K/D) ── */
+    /* ── PODIUM TOP 3 (sorted by kills) ── */
     function renderPodium(rows) {
         if (!podiumEl) return;
         var sorted = (rows || []).slice().sort(function (a, b) {
+            var killsDiff = (b.kills || 0) - (a.kills || 0);
+            if (killsDiff !== 0) return killsDiff;
             var kdA = a.kd !== undefined ? parseFloat(a.kd) : parseFloat(fmtKD(a.kills, a.deaths));
             var kdB = b.kd !== undefined ? parseFloat(b.kd) : parseFloat(fmtKD(b.kills, b.deaths));
             return kdB - kdA;
@@ -233,6 +235,8 @@
             if (myRow) {
                 // Recalculate my position from sorted cache
                 var sorted = cachedLB.slice().sort(function (a, b) {
+                    var killsDiff = (b.kills || 0) - (a.kills || 0);
+                    if (killsDiff !== 0) return killsDiff;
                     var kdA = a.kd !== undefined ? parseFloat(a.kd) : parseFloat(fmtKD(a.kills, a.deaths));
                     var kdB = b.kd !== undefined ? parseFloat(b.kd) : parseFloat(fmtKD(b.kills, b.deaths));
                     return kdB - kdA;

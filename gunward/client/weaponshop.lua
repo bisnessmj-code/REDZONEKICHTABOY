@@ -3,6 +3,34 @@ Gunward.Client.WeaponShop = {}
 local weaponPed = nil
 local weaponShopOpen = false
 
+-- ── RESTRICTION D'ARMES ───────────────────────────────────────────────────────
+-- Pré-calculer les hashes des armes autorisées (celles du shop Gunward)
+local allowedWeaponHashes = {}
+for _, wep in ipairs(Config.Weapons) do
+    allowedWeaponHashes[GetHashKey(wep.weapon)] = true
+end
+local UNARMED_HASH = GetHashKey('WEAPON_UNARMED')
+
+-- Sur join: retirer toutes les armes du PED (pas de l'inventaire)
+RegisterNetEvent('gunward:client:teamJoined', function()
+    Wait(500)
+    RemoveAllPedWeapons(PlayerPedId(), true)
+end)
+
+-- Thread d'enforcement: retirer toute arme non-Gunward sélectionnée
+CreateThread(function()
+    while true do
+        if Gunward.Client.Teams.IsInGunward() then
+            local ped           = PlayerPedId()
+            local currentWeapon = GetSelectedPedWeapon(ped)
+            if currentWeapon ~= UNARMED_HASH and not allowedWeaponHashes[currentWeapon] then
+                RemoveWeaponFromPed(ped, currentWeapon)
+            end
+        end
+        Wait(200)
+    end
+end)
+
 function Gunward.Client.WeaponShop.CreatePed(teamName)
     Gunward.Client.WeaponShop.DeletePed()
 
@@ -97,6 +125,11 @@ end)
 -- Retirer uniquement l'arme vendue du ped
 RegisterNetEvent('gunward:client:removeSoldWeapon', function(itemName)
     RemoveWeaponFromPed(PlayerPedId(), GetHashKey(itemName))
+end)
+
+-- Donner une arme Gunward directement au PED (contourne CanUseInventory bloqué)
+RegisterNetEvent('gunward:client:giveWeaponToPed', function(itemName, ammo)
+    GiveWeaponToPed(PlayerPedId(), GetHashKey(itemName), ammo, false, false)
 end)
 
 -- Interaction thread for weapon shop PED
