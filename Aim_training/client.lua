@@ -88,7 +88,7 @@ end)
 -- Fonction pour démarrer la partie
 function StartGame()
     if inGame then
-        ESX.ShowNotification('~r~Vous êtes déjà en partie!')
+        exports['brutal_notify']:SendAlert('Aim Training', 'Vous êtes déjà en partie!', 4000, 'error', true)
         return
     end
 
@@ -123,11 +123,11 @@ AddEventHandler('aim_training:startGameInInstance', function()
     FreezeEntityPosition(playerPed, true)
 
     for i = 3, 1, -1 do
-        ESX.ShowNotification('~y~Début dans ' .. i .. '...')
+        exports['brutal_notify']:SendAlert('Aim Training', 'Début dans ' .. i .. '...', 1000, 'info', false)
         Wait(1000)
     end
 
-    ESX.ShowNotification('~g~C\'EST PARTI!')
+    exports['brutal_notify']:SendAlert('Aim Training', 'C\'EST PARTI!', 3000, 'success', true)
     FreezeEntityPosition(playerPed, false)
 
     -- Donner le Pistol .50 avec munitions illimitées
@@ -159,7 +159,7 @@ function RunGame()
 
             -- Vérifier si X est pressé pour quitter
             if IsControlJustPressed(0, 73) then -- X key
-                ESX.ShowNotification('~r~Partie annulée!')
+                exports['brutal_notify']:SendAlert('Aim Training', 'Partie annulée!', 4000, 'error', true)
                 EndGame(false)
                 break
             end
@@ -312,10 +312,10 @@ function EndGame(completed)
 
     -- Si la partie est complétée, donner la récompense
     if completed then
-        ESX.ShowNotification('~g~Partie terminée! ' .. killCount .. ' kills | +$2000')
+        exports['brutal_notify']:SendAlert('Aim Training', 'Partie terminée! ' .. killCount .. ' kills | +$2000', 6000, 'success', true)
         TriggerServerEvent('aim_training:completeGame', killCount)
     else
-        ESX.ShowNotification('~o~Partie abandonnée. ' .. killCount .. ' kills | Pas de récompense')
+        exports['brutal_notify']:SendAlert('Aim Training', 'Partie abandonnée. ' .. killCount .. ' kills | Pas de récompense', 5000, 'warning', true)
         TriggerServerEvent('aim_training:exitInstance')
     end
 
@@ -361,8 +361,9 @@ function CreateMenuPed()
         Wait(100)
     end
 
-    menuPed = CreatePed(4, modelHash, Config.MenuPedPosition.x, Config.MenuPedPosition.y, Config.MenuPedPosition.z - 1.0, Config.MenuPedPosition.heading, false, true)
+    menuPed = CreatePed(4, modelHash, Config.MenuPedPosition.x, Config.MenuPedPosition.y, Config.MenuPedPosition.z, Config.MenuPedPosition.heading, false, true)
 
+    PlaceObjectOnGroundProperly(menuPed)
     SetEntityAsMissionEntity(menuPed, true, true)
     SetPedFleeAttributes(menuPed, 0, false)
     SetBlockingOfNonTemporaryEvents(menuPed, true)
@@ -391,11 +392,11 @@ CreateThread(function()
             local pedCoords = vector3(Config.MenuPedPosition.x, Config.MenuPedPosition.y, Config.MenuPedPosition.z)
             local distance = #(playerCoords - pedCoords)
 
-            if distance < 10.0 then
-                if distance < Config.InteractionDistance then
-                    -- Afficher le texte d'interaction
-                    DrawText3D(Config.MenuPedPosition.x, Config.MenuPedPosition.y, Config.MenuPedPosition.z + 1.0, '[~r~E~w~] Parler avec l\'instructeur')
+            if distance < 30.0 then
+                -- Afficher le label [AIM TRAINING] visible de loin
+                DrawText3D(Config.MenuPedPosition.x, Config.MenuPedPosition.y, Config.MenuPedPosition.z + 2.2, '~w~[ AIM TRAINING ]')
 
+                if distance < Config.InteractionDistance then
                     if IsControlJustPressed(0, 38) then -- E key
                         OpenMainMenu()
                     end

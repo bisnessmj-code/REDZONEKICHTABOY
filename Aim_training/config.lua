@@ -2,36 +2,36 @@ Config = {}
 
 -- Position de départ du joueur
 Config.PlayerStartPosition = {
-    x = 13.081318,
-    y = -1097.340698,
-    z = 29.819092,
-    heading = 337.322846
+    x = -1965.191162,
+    y = 3332.742920,
+    z = 32.953125,
+    heading = 240.944886
 }
 
 -- 10 positions où les bots vont spawn (rotation 1-10 puis recommence)
 Config.BotSpawnPositions = {
-    {x = 14.676924, y = -1083.824218, z = 29.785400, heading = 155.905518},
-    {x = 21.956046, y = -1083.336304, z = 29.785400, heading = 161.574798},
-    {x = 16.773626, y = -1079.551636, z = 29.785400, heading = 161.574798},
-    {x = 21.296704, y = -1077.679078, z = 29.785400, heading = 153.070878},
-    {x = 20.123078, y = -1087.898926, z = 29.785400, heading = 153.070878},
-    {x = 13.239560, y = -1086.843994, z = 29.785400, heading = 161.574798},
-    {x = 23.248352, y = -1077.876954, z = 29.785400, heading = 153.070878},
-    {x = 16.575824, y = -1088.070312, z = 29.785400, heading = 153.070878},
-    {x = 19.648352, y = -1088.940674, z = 29.785400, heading = 164.409454},
-    {x = 18.698902, y = -1079.512084, z = 29.785400, heading = 164.409454}
+    {x = -1954.114258, y = 3326.742920, z = 32.953125, heading = 48.188972},
+    {x = -1948.971436, y = 3328.786866, z = 32.953125, heading = 56.692914},
+    {x = -1947.665894, y = 3322.180176, z = 32.953125, heading = 65.196854},
+    {x = -1957.714234, y = 3322.773682, z = 32.953125, heading = 53.858268},
+    {x = -1955.037354, y = 3330.329590, z = 32.953125, heading = 59.527558},
+    {x = -1954.852784, y = 3323.063720, z = 32.953125, heading = 53.858268},
+    {x = -1948.865966, y = 3331.595704, z = 32.953125, heading = 59.527558},
+    {x = -1958.241700, y = 3325.753906, z = 32.953125, heading = 59.527558},
+    {x = -1956.817626, y = 3332.281250, z = 32.953125, heading = 65.196854},
+    {x = -1954.391236, y = 3320.861572, z = 32.953125, heading = 59.527558}
 }
 
 -- Position du PED pour ouvrir le menu
 Config.MenuPedPosition = {
-    x = -5809.081542,
-    y = -932.479126,
-    z = 501.489990, -- -1 pour que le ped soit au sol
-    heading = 351.496064
+    x = -5825.327636,
+    y = -905.472534,
+    z = 501.489990,
+    heading = 269.291352
 }
 
 -- Modèle du PED pour le menu
-Config.MenuPedModel = "a_m_m_business_01" -- Modèle du PED (peut être changé)
+Config.MenuPedModel = "s_m_y_swat_01" -- Modèle du PED (peut être changé)
 
 -- Distance d'interaction avec le PED
 Config.InteractionDistance = 2.0

@@ -11,7 +11,7 @@ AddEventHandler('aim_training:requestInstance', function()
 
     -- Vérifier si le joueur est déjà en instance
     if playersInInstance[_source] then
-        TriggerClientEvent('esx:showNotification', _source, '~r~Vous êtes déjà en partie!')
+        TriggerClientEvent('brutal_notify:SendAlert', _source, 'Aim Training', 'Vous êtes déjà en partie!', 4000, 'error', true)
         return
     end
 
@@ -67,7 +67,7 @@ AddEventHandler('aim_training:completeGame', function(kills)
             end
         end)
 
-        TriggerClientEvent('esx:showNotification', _source, '~g~Vous avez reçu $' .. Config.Reward .. ' dans votre banque!')
+        TriggerClientEvent('brutal_notify:SendAlert', _source, 'Aim Training', 'Vous avez reçu $' .. Config.Reward .. ' dans votre banque!', 5000, 'success', true)
 
         -- Sortir de l'instance
         if playersInInstance[_source] then
